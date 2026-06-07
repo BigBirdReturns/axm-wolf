@@ -1,0 +1,31 @@
+{
+  "name": "axm-wolf",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p tsconfig.build.json && node scripts/vite-build-smoke.mjs",
+    "test": "tsc -p tsconfig.test.json && node --test dist-tests/tests/**/*.js",
+    "test:watch": "node --test --watch dist-tests/tests/**/*.js",
+    "test:e2e": "node scripts/e2e-smoke.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "node scripts/lint-boundary.mjs",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest",
+    "typescript": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "zod": "latest",
+    "dexie": "latest"
+  },
+  "devDependencies": {
+    "vitest": "latest",
+    "playwright": "latest",
+    "fake-indexeddb": "latest",
+    "eslint": "latest"
+  }
+}

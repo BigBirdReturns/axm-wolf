@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "packId": "departing-engineer-handoff",
+  "packVersion": "1.0.0",
+  "engineVersion": ">=0.1.0 <1.0.0",
+  "title": "Departing Engineer Handoff",
+  "subtitle": "A generic operational knowledge capture fixture.",
+  "description": "A deliberately small fixture proving that the engine accepts non-Wolf capture packs.",
+  "subjectDefaults": {
+    "displayName": "Departing Engineer",
+    "subtitle": "Knowledge Transfer",
+    "organization": null,
+    "role": "Engineer"
+  },
+  "theme": {
+    "accent": "#215f6d"
+  },
+  "lenses": [
+    { "id": "system", "label": "System" },
+    { "id": "failure-mode", "label": "Failure Mode" },
+    { "id": "handoff", "label": "Handoff" }
+  ],
+  "sections": [
+    {
+      "id": "operations",
+      "label": "Operations",
+      "rangeLabel": null,
+      "description": null,
+      "promptIds": [
+        "operations.normal-day",
+        "operations.hidden-dependency",
+        "operations.first-alert"
+      ]
+    },
+    {
+      "id": "continuity",
+      "label": "Continuity",
+      "rangeLabel": null,
+      "description": null,
+      "promptIds": [
+        "continuity.safe-change",
+        "continuity-next-owner"
+      ]
+    }
+  ],
+  "prompts": [
+    { "id": "operations.normal-day", "kind": "long_text", "lensId": "system", "text": "Describe a normal operating day for the system you know best.", "context": null, "tags": [] },
+    { "id": "operations.hidden-dependency", "kind": "long_text", "lensId": "failure-mode", "text": "What dependency would surprise a new owner if it disappeared tomorrow?", "context": null, "tags": [] },
+    { "id": "operations.first-alert", "kind": "long_text", "lensId": "failure-mode", "text": "What is the earliest sign that the system is drifting toward trouble?", "context": null, "tags": [] },
+    { "id": "continuity.safe-change", "kind": "long_text", "lensId": "handoff", "text": "What change can be made safely by a new owner, and what should wait?", "context": null, "tags": [] },
+    { "id": "continuity-next-owner", "kind": "long_text", "lensId": "handoff", "text": "What should the next owner read, watch, or ask before making decisions?", "context": null, "tags": [] }
+  ],
+  "exportDefaults": {
+    "basename": "departing-engineer-handoff"
+  }
+}

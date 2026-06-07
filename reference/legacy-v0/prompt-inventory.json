@@ -1,0 +1,478 @@
+{
+  "source": "reference/legacy-v0/index.html",
+  "sourceLibraryComment": "QUESTION LIBRARY — 62 questions, 7 eras",
+  "auditedAt": "1970-01-01T00:00:00.000Z",
+  "actualSectionCount": 7,
+  "actualPromptCount": 58,
+  "sections": [
+    {
+      "legacyId": "early",
+      "sectionId": "early",
+      "label": "The Early Years",
+      "rangeLabel": "1976–1987",
+      "promptCount": 7,
+      "prompts": [
+        {
+          "legacyKey": "early__0",
+          "promptId": "early.describe-your-first-day-managing-a-jack-in",
+          "lensLabel": "The Room",
+          "text": "Describe your first day managing a Jack in the Box in Brooklyn. What did the physical space look like and who was already there when you arrived?",
+          "context": "Brooklyn, 1976."
+        },
+        {
+          "legacyKey": "early__1",
+          "promptId": "early.you-went-from-managing-fast-food-in-new",
+          "lensLabel": "The Decision",
+          "text": "You went from managing fast food in New York to IT systems analysis at SMU in Dallas. What happened in between that made that jump feel logical?",
+          "context": "Long Island University MBA, 1973–1976."
+        },
+        {
+          "legacyKey": "early__2",
+          "promptId": "early.who-was-the-most-technically-capable-person-you",
+          "lensLabel": "The Person",
+          "text": "Who was the most technically capable person you worked with at SMU, and what did they know that you did not?",
+          "context": "Southern Methodist University, 1977–1979."
+        },
+        {
+          "legacyKey": "early__3",
+          "promptId": "early.when-did-you-first-understand-that-it-was",
+          "lensLabel": "The Moment",
+          "text": "When did you first understand that IT was not a support function but a strategic one? What triggered that realization?",
+          "context": null
+        },
+        {
+          "legacyKey": "early__4",
+          "promptId": "early.describe-the-it-infrastructure-at-lone-star-gas",
+          "lensLabel": "The Room",
+          "text": "Describe the IT infrastructure at Lone Star Gas in 1979. What was the oldest system still running and what was everyone pretending still worked?",
+          "context": "TXU / Enserch, 1979–1981."
+        },
+        {
+          "legacyKey": "early__5",
+          "promptId": "early.what-was-the-unofficial-rule-everyone-followed-at",
+          "lensLabel": "The Thing Nobody Said",
+          "text": "What was the unofficial rule everyone followed at Maxus Energy that nobody ever wrote down?",
+          "context": "Dallas, 1985–1987."
+        },
+        {
+          "legacyKey": "early__6",
+          "promptId": "early.you-spent-years-in-the-energy-sector-before",
+          "lensLabel": "The Decision",
+          "text": "You spent years in the energy sector before moving to law firm IT at Jones Day. What drove that move and what surprised you most about legal IT?",
+          "context": null
+        }
+      ]
+    },
+    {
+      "legacyId": "jones_arco",
+      "sectionId": "jones-arco",
+      "label": "Law & Oil",
+      "rangeLabel": "1987–1993",
+      "promptCount": 7,
+      "prompts": [
+        {
+          "legacyKey": "jones_arco__0",
+          "promptId": "jones-arco.what-did-the-server-room-at-jones-day",
+          "lensLabel": "The Room",
+          "text": "What did the server room at Jones Day look like in 1987? How many people understood what was actually in it?",
+          "context": "Jones Day, 1987–1993."
+        },
+        {
+          "legacyKey": "jones_arco__1",
+          "promptId": "jones-arco.who-was-the-senior-partner-at-jones-day",
+          "lensLabel": "The Person",
+          "text": "Who was the senior partner at Jones Day who most understood technology, and how did they use that understanding?",
+          "context": null
+        },
+        {
+          "legacyKey": "jones_arco__2",
+          "promptId": "jones-arco.law-firms-run-on-billable-hours-how-did",
+          "lensLabel": "The Thing Nobody Said",
+          "text": "Law firms run on billable hours. How did that model shape every IT decision you made, even when it should not have?",
+          "context": null
+        },
+        {
+          "legacyKey": "jones_arco__3",
+          "promptId": "jones-arco.you-ran-it-at-both-jones-day-and",
+          "lensLabel": "The Decision",
+          "text": "You ran IT at both Jones Day and ARCO during overlapping years. How did those two environments differ in their relationship to technology?",
+          "context": "Jones Day and ARCO, 1987–1993."
+        },
+        {
+          "legacyKey": "jones_arco__4",
+          "promptId": "jones-arco.describe-a-specific-room-at-arco-a-data",
+          "lensLabel": "The Room",
+          "text": "Describe a specific room at ARCO — a data center, a conference room, a drilling site — that captured what the company was in that era.",
+          "context": "ARCO (now BP), 1987–1993."
+        },
+        {
+          "legacyKey": "jones_arco__5",
+          "promptId": "jones-arco.what-was-the-moment-at-arco-when-you",
+          "lensLabel": "The Moment",
+          "text": "What was the moment at ARCO when you understood that oil companies were going to be late to every major technology shift?",
+          "context": null
+        },
+        {
+          "legacyKey": "jones_arco__6",
+          "promptId": "jones-arco.what-was-the-thing-everyone-at-arco-knew",
+          "lensLabel": "The Thing Nobody Said",
+          "text": "What was the thing everyone at ARCO knew about their IT infrastructure that nobody in the executive suite was willing to hear?",
+          "context": null
+        }
+      ]
+    },
+    {
+      "legacyId": "agilent",
+      "sectionId": "agilent",
+      "label": "HP & Agilent",
+      "rangeLabel": "1993–2003",
+      "promptCount": 10,
+      "prompts": [
+        {
+          "legacyKey": "agilent__0",
+          "promptId": "agilent.describe-what-the-hp-culture-felt-like-before",
+          "lensLabel": "The Room",
+          "text": "Describe what the HP culture felt like before the Agilent split — the campus, the unwritten rules, the rituals. What made it distinctly HP?",
+          "context": "HP / Agilent, 1993–2003."
+        },
+        {
+          "legacyKey": "agilent__1",
+          "promptId": "agilent.hp-spun-off-agilent-in-1999-were-people",
+          "lensLabel": "The Decision",
+          "text": "HP spun off Agilent in 1999. Were people surprised? Who saw it coming and who did not?",
+          "context": null
+        },
+        {
+          "legacyKey": "agilent__2",
+          "promptId": "agilent.name-the-most-technically-dangerous-person-you-worked",
+          "lensLabel": "The Person",
+          "text": "Name the most technically dangerous person you worked with at Agilent — someone who could see around corners everyone else thought were walls.",
+          "context": null
+        },
+        {
+          "legacyKey": "agilent__3",
+          "promptId": "agilent.ss7-was-the-backbone-of-telecom-signaling-in",
+          "lensLabel": "The Room",
+          "text": "SS7 was the backbone of telecom signaling in the 1990s. Describe a room — a NOC, a carrier facility, a lab — where you saw that infrastructure up close.",
+          "context": "District Manager, Telecommunications, 1993–2003."
+        },
+        {
+          "legacyKey": "agilent__4",
+          "promptId": "agilent.telecom-in-the-late-1990s-was-running-on",
+          "lensLabel": "The Thing Nobody Said",
+          "text": "Telecom in the late 1990s was running on infrastructure older than most of the people maintaining it. What was the real maintenance doctrine everyone followed unofficially?",
+          "context": null
+        },
+        {
+          "legacyKey": "agilent__5",
+          "promptId": "agilent.when-did-you-first-understand-that-the-telecom",
+          "lensLabel": "The Moment",
+          "text": "When did you first understand that the telecom industry was going to collapse under its own infrastructure debt? Was there a specific meeting, a number, a customer?",
+          "context": null
+        },
+        {
+          "legacyKey": "agilent__6",
+          "promptId": "agilent.you-helped-build-hps-software-development-center-in",
+          "lensLabel": "The Decision",
+          "text": "You helped build HP's software development center in Pudong, Shanghai. What was the conversation that made that happen and who in the room was most skeptical?",
+          "context": "Shanghai, 2000–2003."
+        },
+        {
+          "legacyKey": "agilent__7",
+          "promptId": "agilent.describe-the-hp-software-lab-in-chennai-how",
+          "lensLabel": "The Room",
+          "text": "Describe the HP software lab in Chennai. How many people, what kind of work, what was the physical experience of managing a 300-person collaboration center in India?",
+          "context": "Chennai, 2000–2003."
+        },
+        {
+          "legacyKey": "agilent__8",
+          "promptId": "agilent.what-did-the-indian-engineers-at-tcs-know",
+          "lensLabel": "The Thing Nobody Said",
+          "text": "What did the Indian engineers at TCS know about the HP systems they were maintaining that their HP counterparts in the US did not?",
+          "context": "HP/TCS collaboration, Chennai."
+        },
+        {
+          "legacyKey": "agilent__9",
+          "promptId": "agilent.who-was-your-most-important-counterpart-on-the",
+          "lensLabel": "The Person",
+          "text": "Who was your most important counterpart on the TCS side in Chennai, and what did working with them teach you about how large organizations actually transfer knowledge?",
+          "context": null
+        }
+      ]
+    },
+    {
+      "legacyId": "hp_rise",
+      "sectionId": "hp-rise",
+      "label": "HP: The Rise",
+      "rangeLabel": "2003–2008",
+      "promptCount": 8,
+      "prompts": [
+        {
+          "legacyKey": "hp_rise__0",
+          "promptId": "hp-rise.describe-hp-in-2003-the-campus-the-culture",
+          "lensLabel": "The Room",
+          "text": "Describe HP in 2003 — the campus, the culture, the sense of what the company believed it was. How did that compare to what you had seen at Agilent?",
+          "context": "HP, 2003–2008."
+        },
+        {
+          "legacyKey": "hp_rise__1",
+          "promptId": "hp-rise.carly-fiorina-was-ceo-until-2005-what-was",
+          "lensLabel": "The Decision",
+          "text": "Carly Fiorina was CEO until 2005. What was the unofficial view of her strategy among the people you worked with — what did people say in the hallway that they would not say in the meeting?",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_rise__2",
+          "promptId": "hp-rise.who-was-the-most-effective-operational-leader-you",
+          "lensLabel": "The Person",
+          "text": "Who was the most effective operational leader you worked under at HP between 2003 and 2008, and what made them effective at that scale?",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_rise__3",
+          "promptId": "hp-rise.hp-had-a-culture-of-engineering-excellence-that",
+          "lensLabel": "The Thing Nobody Said",
+          "text": "HP had a culture of engineering excellence that predated most of its management structure. By 2005, what was the relationship between that engineering culture and the people running the company?",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_rise__4",
+          "promptId": "hp-rise.when-did-you-first-sense-that-hp-was",
+          "lensLabel": "The Moment",
+          "text": "When did you first sense that HP was going to miss the shift from hardware to services as the primary revenue engine?",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_rise__5",
+          "promptId": "hp-rise.describe-a-bpo-customer-engagement-from-this-period",
+          "lensLabel": "The Room",
+          "text": "Describe a BPO customer engagement from this period. Who was the customer, what were they trying to do, and what was HP actually delivering versus what had been sold?",
+          "context": "BPO Program Manager, 2005–2008."
+        },
+        {
+          "legacyKey": "hp_rise__6",
+          "promptId": "hp-rise.hps-bpo-business-was-selling-it-as-a",
+          "lensLabel": "The Decision",
+          "text": "HP's BPO business was selling IT-as-a-service before that had a name. What was the internal conversation about whether HP was a services company or a hardware company pretending to be one?",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_rise__7",
+          "promptId": "hp-rise.what-was-the-gap-between-what-hp-sold",
+          "lensLabel": "The Thing Nobody Said",
+          "text": "What was the gap between what HP sold to BPO customers and what it could actually deliver, and how was that gap managed day to day?",
+          "context": null
+        }
+      ]
+    },
+    {
+      "legacyId": "hp_eds",
+      "sectionId": "hp-eds",
+      "label": "EDS & The Bloat",
+      "rangeLabel": "2008–2011",
+      "promptCount": 9,
+      "prompts": [
+        {
+          "legacyKey": "hp_eds__0",
+          "promptId": "hp-eds.hp-acquired-eds-for-14-billion-in-2008",
+          "lensLabel": "The Moment",
+          "text": "HP acquired EDS for $14 billion in 2008 and added 140,000 employees overnight. What did that feel like from inside the company? Describe the week the news broke.",
+          "context": "EDS acquisition, 2008."
+        },
+        {
+          "legacyKey": "hp_eds__1",
+          "promptId": "hp-eds.after-eds-hp-was-suddenly-one-of-the",
+          "lensLabel": "The Room",
+          "text": "After EDS, HP was suddenly one of the largest IT employers on earth. Describe what a routine meeting felt like differently — the overhead, the layers, the velocity.",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_eds__2",
+          "promptId": "hp-eds.who-inside-hp-best-understood-what-eds-actually",
+          "lensLabel": "The Person",
+          "text": "Who inside HP best understood what EDS actually was — its culture, its liabilities, its people — and was that person listened to?",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_eds__3",
+          "promptId": "hp-eds.eds-had-a-culture-built-around-government-contracts",
+          "lensLabel": "The Thing Nobody Said",
+          "text": "EDS had a culture built around government contracts and cost-plus billing. HP had a culture built around product margins. What happened when those two cultures met at the working level?",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_eds__4",
+          "promptId": "hp-eds.the-bpo-division-you-managed-was-directly-affected",
+          "lensLabel": "The Decision",
+          "text": "The BPO division you managed was directly affected by the EDS integration. What decision did you have to make that year that you could not have anticipated before the acquisition?",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_eds__5",
+          "promptId": "hp-eds.when-did-you-know-the-eds-acquisition-was",
+          "lensLabel": "The Moment",
+          "text": "When did you know the EDS acquisition was not going to deliver what had been promised? Was it a number, a meeting, a project that went sideways?",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_eds__6",
+          "promptId": "hp-eds.what-was-the-internal-narrative-hp-told-itself",
+          "lensLabel": "The Thing Nobody Said",
+          "text": "What was the internal narrative HP told itself about why EDS was working, and what was the version of events the people on the ground knew was true?",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_eds__7",
+          "promptId": "hp-eds.describe-the-india-operations-during-the-eds-integration",
+          "lensLabel": "The Room",
+          "text": "Describe the India operations during the EDS integration period. How did the offshore center absorb the bureaucracy that came with 140,000 new colleagues?",
+          "context": "BPO operations, India, 2008–2011."
+        },
+        {
+          "legacyKey": "hp_eds__8",
+          "promptId": "hp-eds.mark-hurd-was-ceo-during-the-eds-integration",
+          "lensLabel": "The Decision",
+          "text": "Mark Hurd was CEO during the EDS integration and was forced out in 2010. What was the ground-level read on his leadership style and what changed when he left?",
+          "context": null
+        }
+      ]
+    },
+    {
+      "legacyId": "hp_autonomy",
+      "sectionId": "hp-autonomy",
+      "label": "Autonomy & The Fall",
+      "rangeLabel": "2011–2013",
+      "promptCount": 9,
+      "prompts": [
+        {
+          "legacyKey": "hp_autonomy__0",
+          "promptId": "hp-autonomy.hp-acquired-autonomy-for-11-billion-in-2011",
+          "lensLabel": "The Moment",
+          "text": "HP acquired Autonomy for $11 billion in 2011 and wrote off $8.8 billion a year later. Describe the internal reaction when the acquisition was announced. Who was skeptical and who was not?",
+          "context": "Autonomy acquisition, 2011."
+        },
+        {
+          "legacyKey": "hp_autonomy__1",
+          "promptId": "hp-autonomy.what-did-people-at-hp-who-had-done",
+          "lensLabel": "The Thing Nobody Said",
+          "text": "What did people at HP who had done software acquisition due diligence before believe about the Autonomy deal that the decision-makers apparently did not know?",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_autonomy__2",
+          "promptId": "hp-autonomy.describe-the-atmosphere-at-hp-in-the-months",
+          "lensLabel": "The Room",
+          "text": "Describe the atmosphere at HP in the months after the Autonomy write-down was announced. What happened to meetings? What changed in the building?",
+          "context": "2012."
+        },
+        {
+          "legacyKey": "hp_autonomy__3",
+          "promptId": "hp-autonomy.meg-whitman-took-over-as-ceo-in-2011",
+          "lensLabel": "The Person",
+          "text": "Meg Whitman took over as CEO in 2011 and inherited the Autonomy disaster. What was the operational reality she walked into and what did the people around her understand that she was still learning?",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_autonomy__4",
+          "promptId": "hp-autonomy.by-2012-splitting-hp-into-two-companies-was",
+          "lensLabel": "The Decision",
+          "text": "By 2012 splitting HP into two companies was being discussed internally. When did you first hear that conversation and how serious did it seem?",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_autonomy__5",
+          "promptId": "hp-autonomy.autonomy-was-an-accounting-fraud-from-inside-hps",
+          "lensLabel": "The Thing Nobody Said",
+          "text": "Autonomy was an accounting fraud. From inside HP's services division, what were the signs visible to operational people that something was structurally wrong with the acquisition thesis?",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_autonomy__6",
+          "promptId": "hp-autonomy.what-was-the-specific-moment-you-decided-to",
+          "lensLabel": "The Moment",
+          "text": "What was the specific moment you decided to retire? Was it a meeting, a number, a conversation, a realization about where the company was going?",
+          "context": "Retirement, August 2013."
+        },
+        {
+          "legacyKey": "hp_autonomy__7",
+          "promptId": "hp-autonomy.who-was-the-last-person-at-hp-you",
+          "lensLabel": "The Person",
+          "text": "Who was the last person at HP you truly respected and what were they still trying to build when you left?",
+          "context": null
+        },
+        {
+          "legacyKey": "hp_autonomy__8",
+          "promptId": "hp-autonomy.when-you-left-in-2013-what-was-the",
+          "lensLabel": "The Thing Nobody Said",
+          "text": "When you left in 2013, what was the thing you knew about HP's trajectory that you could not say out loud in an exit interview?",
+          "context": null
+        }
+      ]
+    },
+    {
+      "legacyId": "aftermath",
+      "sectionId": "aftermath",
+      "label": "The Aftermath",
+      "rangeLabel": "2013–present",
+      "promptCount": 8,
+      "prompts": [
+        {
+          "legacyKey": "aftermath__0",
+          "promptId": "aftermath.hp-split-into-hp-inc-and-hpe-in",
+          "lensLabel": "The Moment",
+          "text": "HP split into HP Inc. and HPE in 2015. Watching from retirement, what was your reaction? Did it feel like the right diagnosis of the problem?",
+          "context": "HP split, 2015."
+        },
+        {
+          "legacyKey": "aftermath__1",
+          "promptId": "aftermath.hpe-sold-its-services-division-including-the-bpo",
+          "lensLabel": "The Decision",
+          "text": "HPE sold its services division — including the BPO arm you ran — into the merger that became DXC Technology in 2017. What did you think when you saw that?",
+          "context": "DXC formation, 2017."
+        },
+        {
+          "legacyKey": "aftermath__2",
+          "promptId": "aftermath.looking-back-across-forty-years-what-is-the",
+          "lensLabel": "The Thing Nobody Said",
+          "text": "Looking back across forty years, what is the one structural truth about large IT organizations that every competent operational person knows and that management consistently refuses to acknowledge?",
+          "context": null
+        },
+        {
+          "legacyKey": "aftermath__3",
+          "promptId": "aftermath.name-one-person-from-across-your-entire-career",
+          "lensLabel": "The Person",
+          "text": "Name one person from across your entire career who understood what technology actually was — not as a product or a cost center, but as an operational doctrine.",
+          "context": null
+        },
+        {
+          "legacyKey": "aftermath__4",
+          "promptId": "aftermath.if-you-could-put-one-room-from-your",
+          "lensLabel": "The Room",
+          "text": "If you could put one room from your career on the record — the room where something important actually happened, where the real decision was made or the real problem was visible — what room would it be?",
+          "context": null
+        },
+        {
+          "legacyKey": "aftermath__5",
+          "promptId": "aftermath.your-father-left-a-set-of-memoirs-what",
+          "lensLabel": "The Decision",
+          "text": "Your father left a set of memoirs. What is the single biggest difference between the world he documented and the one you spent forty years inside?",
+          "context": null
+        },
+        {
+          "legacyKey": "aftermath__6",
+          "promptId": "aftermath.what-do-you-know-now-in-retirement-in",
+          "lensLabel": "The Thing Nobody Said",
+          "text": "What do you know now, in retirement in Austin, that you wish you had known in 1979 when you were managing IT for a polyethylene pipe manufacturer in Dallas?",
+          "context": null
+        },
+        {
+          "legacyKey": "aftermath__7",
+          "promptId": "aftermath.when-did-you-first-feel-like-you-understood",
+          "lensLabel": "The Moment",
+          "text": "When did you first feel like you understood what was actually happening inside a large organization — not the org chart version, but the real one?",
+          "context": null
+        }
+      ]
+    }
+  ]
+}

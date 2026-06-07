@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#7a4a1e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Wolf's Dep.">
+<title>The Wolf's Deposition · William Sandhu</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&family=Barlow+Condensed:wght@600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper:     #f0ebe0;
+  --paper-alt: #e8e2d5;
+  --paper-dk:  #e0d9ca;
+  --ink:       #0e0d0c;
+  --ink-2:     #2c2a27;
+  --muted:     #5e5850;
+  --dim:       #948c80;
+  --rule:      #b8afa0;
+  --rule-dk:   #9a9088;
+  --accent:    #7a4a1e;
+  --accent-lt: #f0e3d4;
+  --accent-mid: rgba(122,74,30,0.15);
+  --accent-dp: #5a3412;
+  --positive:  #4a7a52;
+  --positive-lt: #e3f0e5;
+  --serif:     'Lora', Georgia, serif;
+  --display:   'Barlow Condensed', 'Arial Narrow', sans-serif;
+  --mono:      'IBM Plex Mono', ui-monospace, monospace;
+  --imprint:   'Playfair Display', Georgia, serif;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--paper-alt);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--ink-2);
+  display: flex;
+  flex-direction: column;
+  max-width: 900px;
+  margin: 0 auto;
+  background: var(--paper);
+  min-height: 100%;
+}
+
+/* ── TOP BAR ── */
+.topbar {
+  background: var(--ink);
+  color: var(--paper);
+  padding: calc(12px + var(--safe-top)) 20px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-shrink: 0;
+}
+.topbar-title {
+  font-family: var(--imprint);
+  font-style: italic;
+  font-weight: 900;
+  font-size: 15px;
+  color: var(--paper);
+  letter-spacing: 0.01em;
+}
+.topbar-sub {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: 1px;
+}
+.topbar-stats {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+  text-align: right;
+}
+.topbar-stats .words {
+  color: var(--dim);
+  font-size: 9px;
+  margin-top: 1px;
+}
+
+/* ── PROGRESS BAR ── */
+.progress-strip {
+  height: 3px;
+  background: var(--rule);
+  flex-shrink: 0;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.4s ease;
+}
+
+/* ── VIEW ROUTER ── */
+#viewHome, #viewEra, #viewQuestion { display: none; }
+#viewHome.active, #viewEra.active, #viewQuestion.active { display: flex; flex-direction: column; flex: 1; }
+
+/* ── HOME VIEW ── */
+.home-masthead {
+  padding: 40px 24px 28px;
+  border-bottom: 1px solid var(--rule);
+}
+.kicker {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.kicker::before {
+  content: '';
+  width: 24px;
+  height: 2px;
+  background: var(--accent);
+  flex-shrink: 0;
+}
+h1.home-title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(40px, 10vw, 64px);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+h1.home-title .accent { color: var(--accent); }
+.home-abstract {
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--muted);
+  max-width: 520px;
+  border-left: 2px solid var(--rule);
+  padding-left: 16px;
+}
+
+.era-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 0 calc(20px + var(--safe-bottom));
+}
+.era-card {
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: background 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+.era-card:active { background: var(--paper-alt); }
+.era-card-body { flex: 1; min-width: 0; }
+.era-card-label {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+.era-card-years {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.era-card-progress {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.era-pill {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: var(--paper-dk);
+  color: var(--muted);
+  white-space: nowrap;
+}
+.era-pill.has-answers {
+  background: var(--positive-lt);
+  color: var(--positive);
+}
+.era-pill.complete {
+  background: var(--positive);
+  color: #fff;
+}
+.era-mini-bar {
+  width: 60px;
+  height: 3px;
+  background: var(--rule);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.era-mini-fill {
+  height: 100%;
+  background: var(--positive);
+  border-radius: 2px;
+}
+.era-chevron {
+  color: var(--rule-dk);
+  flex-shrink: 0;
+}
+
+/* ── ERA VIEW ── */
+.era-header {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid var(--rule);
+}
+.back-btn {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  -webkit-tap-highlight-color: transparent;
+}
+.era-header h2 {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(28px, 7vw, 40px);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.era-header-years {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.question-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 0 calc(20px + var(--safe-bottom));
+}
+.q-card {
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--rule);
+  cursor: pointer;
+  transition: background 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.q-card:active { background: var(--paper-alt); }
+.q-card.answered { border-left: 3px solid var(--positive); }
+.q-card-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rule);
+  flex-shrink: 0;
+  margin-top: 7px;
+}
+.q-card.answered .q-card-dot { background: var(--positive); }
+.q-card-body { flex: 1; min-width: 0; }
+.q-card-type {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 4px;
+}
+.q-card.answered .q-card-type { color: var(--positive); }
+.q-card-text {
+  font-family: var(--serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink-2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.q-card-answered-preview {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--positive);
+  margin-top: 4px;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ── QUESTION VIEW ── */
+.q-view-header {
+  padding: 24px 24px 20px;
+  border-bottom: 1px solid var(--rule);
+}
+.q-view-era {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.q-view-era::before {
+  content: '';
+  width: 20px;
+  height: 2px;
+  background: var(--accent);
+}
+.q-view-type {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.q-view-text {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(20px, 5vw, 28px);
+  line-height: 1.15;
+  color: var(--ink);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin-bottom: 12px;
+}
+.q-view-sub {
+  font-family: var(--serif);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted);
+  font-style: italic;
+  border-left: 2px solid var(--rule);
+  padding-left: 12px;
+}
+
+.q-view-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px calc(20px + var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Saved state */
+.saved-block {
+  background: var(--paper-alt);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--positive);
+  border-radius: 2px;
+  padding: 18px 20px;
+}
+.saved-block-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--positive);
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.saved-block-label .ts {
+  color: var(--dim);
+  font-weight: 400;
+}
+.saved-block-text {
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--ink-2);
+  white-space: pre-wrap;
+}
+.edit-link {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 12px;
+  display: block;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Input state */
+.answer-textarea {
+  font-family: var(--serif);
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--ink-2);
+  background: var(--paper-alt);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 16px;
+  resize: vertical;
+  min-height: 200px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.answer-textarea:focus { border-color: var(--accent); }
+.answer-textarea::placeholder { color: var(--dim); font-style: italic; }
+
+.answer-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.btn {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+}
+.btn-primary { background: var(--accent); color: #fff; }
+.btn-primary:active { background: var(--accent-dp); }
+.btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--rule);
+}
+.btn-ghost:active { background: var(--paper-dk); }
+.btn-mic {
+  background: var(--paper-dk);
+  color: var(--muted);
+  border: 1px solid var(--rule);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.btn-mic.recording {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #dc2626;
+  animation: pulse 1.2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.55} }
+
+.char-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--dim);
+  margin-left: auto;
+}
+
+/* ── NAV PILLS (prev/next) ── */
+.q-nav {
+  display: flex;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule);
+  margin-top: 4px;
+}
+.btn-nav {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px;
+  background: var(--paper-dk);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  cursor: pointer;
+  color: var(--muted);
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn-nav:active { background: var(--paper-alt); }
+.btn-nav:disabled { opacity: 0.35; cursor: default; }
+
+/* ── EXPORT SHEET ── */
+.export-sheet {
+  border-top: 1px solid var(--rule);
+  padding: 20px 24px calc(20px + var(--safe-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.export-label {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.export-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ── INSTALL BANNER ── */
+.install-banner {
+  background: var(--accent-lt);
+  border-bottom: 1px solid var(--accent-mid);
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.install-banner-text {
+  font-family: var(--serif);
+  font-size: 13px;
+  color: var(--accent-dp);
+  flex: 1;
+  line-height: 1.4;
+}
+.install-banner-text strong {
+  font-weight: 600;
+}
+.btn-install {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+  padding: 8px 14px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.btn-dismiss {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 18px;
+  line-height: 1;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div>
+    <div class="topbar-title">The Wolf's Deposition</div>
+    <div class="topbar-sub">William Sandhu · Oral History</div>
+  </div>
+  <div class="topbar-stats">
+    <div id="topbarAnswered">0 / 0 answered</div>
+    <div class="words" id="topbarWords">0 words on record</div>
+  </div>
+</div>
+
+<!-- PROGRESS STRIP -->
+<div class="progress-strip">
+  <div class="progress-fill" id="progressFill" style="width:0%"></div>
+</div>
+
+<!-- INSTALL BANNER -->
+<div class="install-banner" id="installBanner" style="display:none">
+  <div class="install-banner-text"><strong>Add to Home Screen</strong> — works offline, saves your record.</div>
+  <button class="btn-install" id="installBtn">Install</button>
+  <button class="btn-dismiss" onclick="dismissInstall()">×</button>
+</div>
+
+<!-- HOME VIEW -->
+<div id="viewHome">
+  <div class="home-masthead">
+    <div class="kicker">Oral History · Primary Source</div>
+    <h1 class="home-title">The Wolf's <span class="accent">Deposition</span></h1>
+    <p class="home-abstract">Forty years of primary source material. Pick any era, any question, any day. No order required. The record builds itself.</p>
+  </div>
+  <div class="era-list" id="eraList"></div>
+  <div class="export-sheet">
+    <div class="export-label">Export your record</div>
+    <div class="export-row">
+      <button class="btn btn-ghost" onclick="exportJSON()">JSON</button>
+      <button class="btn btn-ghost" onclick="exportText()">Plain Text</button>
+      <button class="btn btn-ghost" onclick="exportMarkdown()">Markdown</button>
+    </div>
+  </div>
+</div>
+
+<!-- ERA VIEW -->
+<div id="viewEra">
+  <div class="era-header" id="eraHeader"></div>
+  <div class="question-list" id="questionList"></div>
+</div>
+
+<!-- QUESTION VIEW -->
+<div id="viewQuestion">
+  <div class="q-view-header" id="qViewHeader"></div>
+  <div class="q-view-body" id="qViewBody"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+// QUESTION LIBRARY — 62 questions, 7 eras
+// ══════════════════════════════════════════════════════════════
+const ERAS = [
+  {
+    id: 'early',
+    label: 'The Early Years',
+    years: '1976–1987',
+    questions: [
+      { type: 'The Room', text: 'Describe your first day managing a Jack in the Box in Brooklyn. What did the physical space look like and who was already there when you arrived?', sub: 'Brooklyn, 1976.' },
+      { type: 'The Decision', text: 'You went from managing fast food in New York to IT systems analysis at SMU in Dallas. What happened in between that made that jump feel logical?', sub: 'Long Island University MBA, 1973–1976.' },
+      { type: 'The Person', text: 'Who was the most technically capable person you worked with at SMU, and what did they know that you did not?', sub: 'Southern Methodist University, 1977–1979.' },
+      { type: 'The Moment', text: 'When did you first understand that IT was not a support function but a strategic one? What triggered that realization?', sub: null },
+      { type: 'The Room', text: 'Describe the IT infrastructure at Lone Star Gas in 1979. What was the oldest system still running and what was everyone pretending still worked?', sub: 'TXU / Enserch, 1979–1981.' },
+      { type: 'The Thing Nobody Said', text: 'What was the unofficial rule everyone followed at Maxus Energy that nobody ever wrote down?', sub: 'Dallas, 1985–1987.' },
+      { type: 'The Decision', text: 'You spent years in the energy sector before moving to law firm IT at Jones Day. What drove that move and what surprised you most about legal IT?', sub: null },
+    ]
+  },
+  {
+    id: 'jones_arco',
+    label: 'Law & Oil',
+    years: '1987–1993',
+    questions: [
+      { type: 'The Room', text: 'What did the server room at Jones Day look like in 1987? How many people understood what was actually in it?', sub: 'Jones Day, 1987–1993.' },
+      { type: 'The Person', text: 'Who was the senior partner at Jones Day who most understood technology, and how did they use that understanding?', sub: null },
+      { type: 'The Thing Nobody Said', text: 'Law firms run on billable hours. How did that model shape every IT decision you made, even when it should not have?', sub: null },
+      { type: 'The Decision', text: 'You ran IT at both Jones Day and ARCO during overlapping years. How did those two environments differ in their relationship to technology?', sub: 'Jones Day and ARCO, 1987–1993.' },
+      { type: 'The Room', text: 'Describe a specific room at ARCO — a data center, a conference room, a drilling site — that captured what the company was in that era.', sub: 'ARCO (now BP), 1987–1993.' },
+      { type: 'The Moment', text: 'What was the moment at ARCO when you understood that oil companies were going to be late to every major technology shift?', sub: null },
+      { type: 'The Thing Nobody Said', text: 'What was the thing everyone at ARCO knew about their IT infrastructure that nobody in the executive suite was willing to hear?', sub: null },
+    ]
+  },
+  {
+    id: 'agilent',
+    label: 'HP & Agilent',
+    years: '1993–2003',
+    questions: [
+      { type: 'The Room', text: 'Describe what the HP culture felt like before the Agilent split — the campus, the unwritten rules, the rituals. What made it distinctly HP?', sub: 'HP / Agilent, 1993–2003.' },
+      { type: 'The Decision', text: 'HP spun off Agilent in 1999. Were people surprised? Who saw it coming and who did not?', sub: null },
+      { type: 'The Person', text: 'Name the most technically dangerous person you worked with at Agilent — someone who could see around corners everyone else thought were walls.', sub: null },
+      { type: 'The Room', text: 'SS7 was the backbone of telecom signaling in the 1990s. Describe a room — a NOC, a carrier facility, a lab — where you saw that infrastructure up close.', sub: 'District Manager, Telecommunications, 1993–2003.' },
+      { type: 'The Thing Nobody Said', text: 'Telecom in the late 1990s was running on infrastructure older than most of the people maintaining it. What was the real maintenance doctrine everyone followed unofficially?', sub: null },
+      { type: 'The Moment', text: 'When did you first understand that the telecom industry was going to collapse under its own infrastructure debt? Was there a specific meeting, a number, a customer?', sub: null },
+      { type: 'The Decision', text: 'You helped build HP\'s software development center in Pudong, Shanghai. What was the conversation that made that happen and who in the room was most skeptical?', sub: 'Shanghai, 2000–2003.' },
+      { type: 'The Room', text: 'Describe the HP software lab in Chennai. How many people, what kind of work, what was the physical experience of managing a 300-person collaboration center in India?', sub: 'Chennai, 2000–2003.' },
+      { type: 'The Thing Nobody Said', text: 'What did the Indian engineers at TCS know about the HP systems they were maintaining that their HP counterparts in the US did not?', sub: 'HP/TCS collaboration, Chennai.' },
+      { type: 'The Person', text: 'Who was your most important counterpart on the TCS side in Chennai, and what did working with them teach you about how large organizations actually transfer knowledge?', sub: null },
+    ]
+  },
+  {
+    id: 'hp_rise',
+    label: 'HP: The Rise',
+    years: '2003–2008',
+    questions: [
+      { type: 'The Room', text: 'Describe HP in 2003 — the campus, the culture, the sense of what the company believed it was. How did that compare to what you had seen at Agilent?', sub: 'HP, 2003–2008.' },
+      { type: 'The Decision', text: 'Carly Fiorina was CEO until 2005. What was the unofficial view of her strategy among the people you worked with — what did people say in the hallway that they would not say in the meeting?', sub: null },
+      { type: 'The Person', text: 'Who was the most effective operational leader you worked under at HP between 2003 and 2008, and what made them effective at that scale?', sub: null },
+      { type: 'The Thing Nobody Said', text: 'HP had a culture of engineering excellence that predated most of its management structure. By 2005, what was the relationship between that engineering culture and the people running the company?', sub: null },
+      { type: 'The Moment', text: 'When did you first sense that HP was going to miss the shift from hardware to services as the primary revenue engine?', sub: null },
+      { type: 'The Room', text: 'Describe a BPO customer engagement from this period. Who was the customer, what were they trying to do, and what was HP actually delivering versus what had been sold?', sub: 'BPO Program Manager, 2005–2008.' },
+      { type: 'The Decision', text: 'HP\'s BPO business was selling IT-as-a-service before that had a name. What was the internal conversation about whether HP was a services company or a hardware company pretending to be one?', sub: null },
+      { type: 'The Thing Nobody Said', text: 'What was the gap between what HP sold to BPO customers and what it could actually deliver, and how was that gap managed day to day?', sub: null },
+    ]
+  },
+  {
+    id: 'hp_eds',
+    label: 'EDS & The Bloat',
+    years: '2008–2011',
+    questions: [
+      { type: 'The Moment', text: 'HP acquired EDS for $14 billion in 2008 and added 140,000 employees overnight. What did that feel like from inside the company? Describe the week the news broke.', sub: 'EDS acquisition, 2008.' },
+      { type: 'The Room', text: 'After EDS, HP was suddenly one of the largest IT employers on earth. Describe what a routine meeting felt like differently — the overhead, the layers, the velocity.', sub: null },
+      { type: 'The Person', text: 'Who inside HP best understood what EDS actually was — its culture, its liabilities, its people — and was that person listened to?', sub: null },
+      { type: 'The Thing Nobody Said', text: 'EDS had a culture built around government contracts and cost-plus billing. HP had a culture built around product margins. What happened when those two cultures met at the working level?', sub: null },
+      { type: 'The Decision', text: 'The BPO division you managed was directly affected by the EDS integration. What decision did you have to make that year that you could not have anticipated before the acquisition?', sub: null },
+      { type: 'The Moment', text: 'When did you know the EDS acquisition was not going to deliver what had been promised? Was it a number, a meeting, a project that went sideways?', sub: null },
+      { type: 'The Thing Nobody Said', text: 'What was the internal narrative HP told itself about why EDS was working, and what was the version of events the people on the ground knew was true?', sub: null },
+      { type: 'The Room', text: 'Describe the India operations during the EDS integration period. How did the offshore center absorb the bureaucracy that came with 140,000 new colleagues?', sub: 'BPO operations, India, 2008–2011.' },
+      { type: 'The Decision', text: 'Mark Hurd was CEO during the EDS integration and was forced out in 2010. What was the ground-level read on his leadership style and what changed when he left?', sub: null },
+    ]
+  },
+  {
+    id: 'hp_autonomy',
+    label: 'Autonomy & The Fall',
+    years: '2011–2013',
+    questions: [
+      { type: 'The Moment', text: 'HP acquired Autonomy for $11 billion in 2011 and wrote off $8.8 billion a year later. Describe the internal reaction when the acquisition was announced. Who was skeptical and who was not?', sub: 'Autonomy acquisition, 2011.' },
+      { type: 'The Thing Nobody Said', text: 'What did people at HP who had done software acquisition due diligence before believe about the Autonomy deal that the decision-makers apparently did not know?', sub: null },
+      { type: 'The Room', text: 'Describe the atmosphere at HP in the months after the Autonomy write-down was announced. What happened to meetings? What changed in the building?', sub: '2012.' },
+      { type: 'The Person', text: 'Meg Whitman took over as CEO in 2011 and inherited the Autonomy disaster. What was the operational reality she walked into and what did the people around her understand that she was still learning?', sub: null },
+      { type: 'The Decision', text: 'By 2012 splitting HP into two companies was being discussed internally. When did you first hear that conversation and how serious did it seem?', sub: null },
+      { type: 'The Thing Nobody Said', text: 'Autonomy was an accounting fraud. From inside HP\'s services division, what were the signs visible to operational people that something was structurally wrong with the acquisition thesis?', sub: null },
+      { type: 'The Moment', text: 'What was the specific moment you decided to retire? Was it a meeting, a number, a conversation, a realization about where the company was going?', sub: 'Retirement, August 2013.' },
+      { type: 'The Person', text: 'Who was the last person at HP you truly respected and what were they still trying to build when you left?', sub: null },
+      { type: 'The Thing Nobody Said', text: 'When you left in 2013, what was the thing you knew about HP\'s trajectory that you could not say out loud in an exit interview?', sub: null },
+    ]
+  },
+  {
+    id: 'aftermath',
+    label: 'The Aftermath',
+    years: '2013–present',
+    questions: [
+      { type: 'The Moment', text: 'HP split into HP Inc. and HPE in 2015. Watching from retirement, what was your reaction? Did it feel like the right diagnosis of the problem?', sub: 'HP split, 2015.' },
+      { type: 'The Decision', text: 'HPE sold its services division — including the BPO arm you ran — into the merger that became DXC Technology in 2017. What did you think when you saw that?', sub: 'DXC formation, 2017.' },
+      { type: 'The Thing Nobody Said', text: 'Looking back across forty years, what is the one structural truth about large IT organizations that every competent operational person knows and that management consistently refuses to acknowledge?', sub: null },
+      { type: 'The Person', text: 'Name one person from across your entire career who understood what technology actually was — not as a product or a cost center, but as an operational doctrine.', sub: null },
+      { type: 'The Room', text: 'If you could put one room from your career on the record — the room where something important actually happened, where the real decision was made or the real problem was visible — what room would it be?', sub: null },
+      { type: 'The Decision', text: 'Your father left a set of memoirs. What is the single biggest difference between the world he documented and the one you spent forty years inside?', sub: null },
+      { type: 'The Thing Nobody Said', text: 'What do you know now, in retirement in Austin, that you wish you had known in 1979 when you were managing IT for a polyethylene pipe manufacturer in Dallas?', sub: null },
+      { type: 'The Moment', text: 'When did you first feel like you understood what was actually happening inside a large organization — not the org chart version, but the real one?', sub: null },
+    ]
+  }
+];
+
+// ══════════════════════════════════════════════════════════════
+// INDEXEDDB STORAGE
+// ══════════════════════════════════════════════════════════════
+const DB_NAME = 'WolfsDeposition';
+const DB_VERSION = 1;
+const STORE_NAME = 'answers';
+let db = null;
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => {
+      e.target.result.createObjectStore(STORE_NAME, { keyPath: 'qid' });
+    };
+    req.onsuccess = e => { db = e.target.result; resolve(db); };
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function dbGet(qid) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const req = tx.objectStore(STORE_NAME).get(qid);
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function dbPut(record) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readwrite');
+    const req = tx.objectStore(STORE_NAME).put(record);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function dbGetAll() {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const req = tx.objectStore(STORE_NAME).getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════════════
+let allAnswers = {}; // qid -> {text, timestamp}
+let currentEraId = null;
+let currentQIndex = null;
+let isEditing = false;
+let recognition = null;
+let isRecording = false;
+let deferredInstall = null;
+
+function makeQid(eraId, qIndex) { return `${eraId}__${qIndex}`; }
+
+// ══════════════════════════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════════════════════════
+function computeStats() {
+  const total = ERAS.reduce((s, e) => s + e.questions.length, 0);
+  const answered = Object.keys(allAnswers).length;
+  const words = Object.values(allAnswers).reduce((s, a) => {
+    return s + (a.text ? a.text.trim().split(/\s+/).filter(Boolean).length : 0);
+  }, 0);
+  return { total, answered, words, pct: total ? Math.round(answered / total * 100) : 0 };
+}
+
+function renderStats() {
+  const { total, answered, words, pct } = computeStats();
+  document.getElementById('topbarAnswered').textContent = `${answered} / ${total} answered`;
+  document.getElementById('topbarWords').textContent = `${words.toLocaleString()} words on record`;
+  document.getElementById('progressFill').style.width = `${pct}%`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// VIEW ROUTER
+// ══════════════════════════════════════════════════════════════
+function showView(id) {
+  ['viewHome','viewEra','viewQuestion'].forEach(v => {
+    document.getElementById(v).classList.toggle('active', v === id);
+  });
+}
+
+// ══════════════════════════════════════════════════════════════
+// HOME VIEW
+// ══════════════════════════════════════════════════════════════
+function renderHome() {
+  renderStats();
+  const list = document.getElementById('eraList');
+  list.innerHTML = ERAS.map(era => {
+    const answered = era.questions.filter((_, i) => allAnswers[makeQid(era.id, i)]).length;
+    const total = era.questions.length;
+    const pct = Math.round(answered / total * 100);
+    const pillClass = answered === 0 ? '' : answered === total ? 'complete' : 'has-answers';
+    return `<div class="era-card" onclick="openEra('${era.id}')">
+      <div class="era-card-body">
+        <div class="era-card-label">${era.label}</div>
+        <div class="era-card-years">${era.years}</div>
+      </div>
+      <div class="era-card-progress">
+        <div class="era-pill ${pillClass}">${answered}/${total}</div>
+        <div class="era-mini-bar"><div class="era-mini-fill" style="width:${pct}%"></div></div>
+      </div>
+      <svg class="era-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </div>`;
+  }).join('');
+  showView('viewHome');
+}
+
+// ══════════════════════════════════════════════════════════════
+// ERA VIEW
+// ══════════════════════════════════════════════════════════════
+function openEra(eraId) {
+  currentEraId = eraId;
+  const era = ERAS.find(e => e.id === eraId);
+
+  document.getElementById('eraHeader').innerHTML = `
+    <button class="back-btn" onclick="renderHome()">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      All Eras
+    </button>
+    <h2>${era.label}</h2>
+    <div class="era-header-years">${era.years}</div>
+  `;
+
+  const list = document.getElementById('questionList');
+  list.innerHTML = era.questions.map((q, i) => {
+    const qid = makeQid(eraId, i);
+    const saved = allAnswers[qid];
+    return `<div class="q-card ${saved ? 'answered' : ''}" onclick="openQuestion('${eraId}', ${i})">
+      <div class="q-card-dot"></div>
+      <div class="q-card-body">
+        <div class="q-card-type">${q.type}</div>
+        <div class="q-card-text">${q.text}</div>
+        ${saved ? `<div class="q-card-answered-preview">✓ ${saved.text.slice(0,80)}${saved.text.length > 80 ? '…' : ''}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  showView('viewEra');
+}
+
+// ══════════════════════════════════════════════════════════════
+// QUESTION VIEW
+// ══════════════════════════════════════════════════════════════
+async function openQuestion(eraId, qIndex) {
+  currentEraId = eraId;
+  currentQIndex = qIndex;
+  isEditing = false;
+  const era = ERAS.find(e => e.id === eraId);
+  const q = era.questions[qIndex];
+  const qid = makeQid(eraId, qIndex);
+  const saved = allAnswers[qid];
+
+  document.getElementById('qViewHeader').innerHTML = `
+    <button class="back-btn" onclick="openEra('${eraId}')">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      ${era.label}
+    </button>
+    <div class="q-view-era">${era.label} · ${era.years}</div>
+    <div class="q-view-type">${q.type}</div>
+    <div class="q-view-text">${q.text}</div>
+    ${q.sub ? `<div class="q-view-sub">${q.sub}</div>` : ''}
+  `;
+
+  renderQBody(saved, qid, eraId, qIndex, era);
+  showView('viewQuestion');
+}
+
+function renderQBody(saved, qid, eraId, qIndex, era) {
+  const prevDisabled = qIndex === 0 ? 'disabled' : '';
+  const nextDisabled = qIndex === era.questions.length - 1 ? 'disabled' : '';
+
+  const navHtml = `
+    <div class="q-nav">
+      <button class="btn-nav" ${prevDisabled} onclick="openQuestion('${eraId}', ${qIndex - 1})">← Prev</button>
+      <button class="btn-nav" ${nextDisabled} onclick="openQuestion('${eraId}', ${qIndex + 1})">Next →</button>
+    </div>
+  `;
+
+  if (saved && !isEditing) {
+    document.getElementById('qViewBody').innerHTML = `
+      <div class="saved-block">
+        <div class="saved-block-label">
+          On the record
+          <span class="ts">${new Date(saved.timestamp).toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric'})}</span>
+        </div>
+        <div class="saved-block-text">${escHtml(saved.text)}</div>
+        <button class="edit-link" onclick="startEdit('${qid}','${eraId}',${qIndex})">Edit this answer</button>
+      </div>
+      ${navHtml}
+    `;
+  } else {
+    document.getElementById('qViewBody').innerHTML = `
+      <textarea class="answer-textarea" id="answerText"
+        placeholder="Start writing. Or tap the mic. No word limit. Take as long as you need."
+        oninput="updateCharCount(this)">${saved ? escHtml(saved.text) : ''}</textarea>
+      <div class="answer-actions">
+        <button class="btn btn-primary" onclick="submitAnswer('${qid}','${eraId}',${qIndex})">Save to Record</button>
+        <button class="btn btn-mic" id="micBtn" onclick="toggleMic()">
+          ${micIcon()} Voice
+        </button>
+        ${saved ? `<button class="btn btn-ghost" onclick="cancelEdit('${qid}','${eraId}',${qIndex})">Cancel</button>` : ''}
+        <span class="char-count" id="charCount"></span>
+      </div>
+      ${navHtml}
+    `;
+    // Auto-focus textarea on desktop
+    if (window.innerWidth > 640) {
+      setTimeout(() => document.getElementById('answerText')?.focus(), 100);
+    }
+  }
+}
+
+function startEdit(qid, eraId, qIndex) {
+  isEditing = true;
+  const era = ERAS.find(e => e.id === eraId);
+  const saved = allAnswers[qid];
+  renderQBody(saved, qid, eraId, qIndex, era);
+}
+
+function cancelEdit(qid, eraId, qIndex) {
+  isEditing = false;
+  const era = ERAS.find(e => e.id === eraId);
+  const saved = allAnswers[qid];
+  renderQBody(saved, qid, eraId, qIndex, era);
+}
+
+async function submitAnswer(qid, eraId, qIndex) {
+  const text = document.getElementById('answerText')?.value?.trim();
+  if (!text) return;
+  const record = { qid, text, timestamp: new Date().toISOString() };
+  await dbPut(record);
+  allAnswers[qid] = record;
+  isEditing = false;
+  renderStats();
+  const era = ERAS.find(e => e.id === eraId);
+  renderQBody(record, qid, eraId, qIndex, era);
+  // Refresh era view in background
+}
+
+function updateCharCount(el) {
+  const words = el.value.trim().split(/\s+/).filter(Boolean).length;
+  const cc = document.getElementById('charCount');
+  if (cc) cc.textContent = words > 0 ? `${words} words` : '';
+}
+
+function escHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+// ══════════════════════════════════════════════════════════════
+// VOICE INPUT
+// ══════════════════════════════════════════════════════════════
+function micIcon(recording = false) {
+  if (recording) {
+    return `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18l5.98 5.99zM4.27 3L3 4.27l6.01 6.01V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73 4.27 3z"/></svg>`;
+  }
+  return `<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>`;
+}
+
+function toggleMic() {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    alert('Voice input not supported. Use Chrome on Android or desktop Chrome.');
+    return;
+  }
+  if (isRecording) { recognition?.stop(); return; }
+
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+
+  const ta = document.getElementById('answerText');
+  const btn = document.getElementById('micBtn');
+  let finalText = ta ? ta.value : '';
+
+  recognition.onstart = () => {
+    isRecording = true;
+    if (btn) { btn.classList.add('recording'); btn.innerHTML = `${micIcon(true)} Stop`; }
+  };
+  recognition.onresult = e => {
+    let interim = '', final = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript + ' ';
+      else interim += e.results[i][0].transcript;
+    }
+    if (final) finalText += final;
+    if (ta) { ta.value = finalText + interim; updateCharCount(ta); }
+  };
+  recognition.onend = () => {
+    isRecording = false;
+    if (btn) { btn.classList.remove('recording'); btn.innerHTML = `${micIcon()} Voice`; }
+  };
+  recognition.start();
+}
+
+// ══════════════════════════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════════════════════════
+function buildExport() {
+  return ERAS.flatMap(era =>
+    era.questions.map((q, i) => {
+      const saved = allAnswers[makeQid(era.id, i)];
+      return { era: era.label, years: era.years, type: q.type, question: q.text, answer: saved?.text || null, timestamp: saved?.timestamp || null };
+    })
+  );
+}
+
+function dl(content, name, type) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([content], {type}));
+  a.download = name;
+  a.click();
+}
+
+function exportJSON() { dl(JSON.stringify(buildExport(), null, 2), 'wolfs_deposition.json', 'application/json'); }
+
+function exportText() {
+  const data = buildExport().filter(d => d.answer);
+  let t = "THE WOLF'S DEPOSITION\nWilliam Sandhu\n\n" + '='.repeat(60) + '\n\n';
+  let era = '';
+  data.forEach(d => {
+    if (d.era !== era) { era = d.era; t += `\n${'─'.repeat(60)}\n${d.era.toUpperCase()} · ${d.years}\n${'─'.repeat(60)}\n\n`; }
+    t += `[${d.type.toUpperCase()}]\n${d.question}\n\n${d.answer}\n\n`;
+  });
+  dl(t, 'wolfs_deposition.txt', 'text/plain');
+}
+
+function exportMarkdown() {
+  const data = buildExport().filter(d => d.answer);
+  let md = "# The Wolf's Deposition\n## William Sandhu\n\n";
+  let era = '';
+  data.forEach(d => {
+    if (d.era !== era) { era = d.era; md += `\n---\n\n## ${d.era} · ${d.years}\n\n`; }
+    md += `### ${d.type}: ${d.question}\n\n${d.answer}\n\n`;
+  });
+  dl(md, 'wolfs_deposition.md', 'text/markdown');
+}
+
+// ══════════════════════════════════════════════════════════════
+// PWA INSTALL
+// ══════════════════════════════════════════════════════════════
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredInstall = e;
+  document.getElementById('installBanner').style.display = 'flex';
+});
+
+document.getElementById('installBtn')?.addEventListener('click', async () => {
+  if (!deferredInstall) return;
+  deferredInstall.prompt();
+  const { outcome } = await deferredInstall.userChoice;
+  if (outcome === 'accepted') dismissInstall();
+  deferredInstall = null;
+});
+
+function dismissInstall() {
+  document.getElementById('installBanner').style.display = 'none';
+}
+
+window.addEventListener('appinstalled', dismissInstall);
+
+// ══════════════════════════════════════════════════════════════
+// SERVICE WORKER
+// ══════════════════════════════════════════════════════════════
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
+// ══════════════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════════════
+async function init() {
+  await openDB();
+  const records = await dbGetAll();
+  records.forEach(r => { allAnswers[r.qid] = r; });
+  renderHome();
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,3 +1,11 @@
 export { WolfValidationError } from './errors.js';
 export { validatePack } from './schema.js';
+export { canonicalizePack } from './canonicalize.js';
+export { digestPack } from './digest.js';
+export { createRecord, commitResponse, getCurrentResponse, computeProgress } from './record.js';
+export { searchRecords } from './search.js';
+export { buildRecordBundle, importRecordBundle } from './bundle.js';
+export { renderMarkdown, renderPlainText } from './render.js';
+export { sanitizeFilename } from './filenames.js';
+export { countWords } from './text.js';
 export type * from './types.js';

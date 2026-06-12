@@ -1,5 +1,7 @@
 import { AppHeader } from './components/AppHeader.js';
+import { UpdateBanner } from './components/UpdateBanner.js';
 import { navigate, useHashRoute } from './hooks/useHashRoute.js';
+import { useServiceWorkerUpdate } from './hooks/useServiceWorkerUpdate.js';
 import { useWolfApp } from './hooks/useWolfApp.js';
 import { LaunchScreen } from './screens/LaunchScreen.js';
 import { RecordHomeScreen } from './screens/RecordHomeScreen.js';
@@ -15,9 +17,11 @@ import { SettingsScreen } from './screens/SettingsScreen.js';
 export function App(): JSX.Element {
   const route = useHashRoute();
   const wolfApp = useWolfApp();
+  const swUpdate = useServiceWorkerUpdate();
 
   return (
     <div className="app-shell">
+      <UpdateBanner {...swUpdate} />
       <AppHeader>
         <a className="btn btn--secondary" href="#/records">
           Records

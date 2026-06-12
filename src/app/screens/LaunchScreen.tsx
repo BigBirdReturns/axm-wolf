@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { appConfig } from '../config.js';
 import { navigate } from '../hooks/useHashRoute.js';
+import { useInstallPrompt } from '../hooks/useInstallPrompt.js';
 import { createAndSaveRecord, type WolfAppState } from '../hooks/useWolfApp.js';
 
 /**
@@ -13,6 +14,7 @@ import { createAndSaveRecord, type WolfAppState } from '../hooks/useWolfApp.js';
 export function LaunchScreen({ db, packs, records, refreshRecords }: WolfAppState): JSX.Element {
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
+  const install = useInstallPrompt();
 
   const isSinglePack = appConfig.deployMode === 'single-pack';
   const defaultPackId = appConfig.defaultPackId;
@@ -133,14 +135,41 @@ export function LaunchScreen({ db, packs, records, refreshRecords }: WolfAppStat
 
       <hr className="section-rule" />
 
-      <section aria-labelledby="install-heading">
-        <h2 id="install-heading">Install this app</h2>
-        <button type="button" className="btn btn--secondary" disabled aria-disabled="true">
-          Install app (coming in wave 3)
-        </button>
-      </section>
+      {!install.isStandalone ? (
+        <>
+          <section aria-labelledby="install-heading">
+            <h2 id="install-heading">Install this app</h2>
+            {install.canInstall ? (
+              <p>
+                <button type="button" className="btn btn--secondary" onClick={() => void install.promptInstall()}>
+                  Install app
+                </button>
+              </p>
+            ) : !install.dismissed ? (
+              <details>
+                <summary>How to install</summary>
+                <div className="stack">
+                  <p>
+                    <strong>Android (Chrome):</strong> open the browser menu (&#8942;) and choose{' '}
+                    <em>Add to Home screen</em>.
+                  </p>
+                  <p>
+                    <strong>iOS (Safari):</strong> tap <em>Share</em>, then choose{' '}
+                    <em>Add to Home Screen</em>.
+                  </p>
+                  <p>
+                    <button type="button" className="btn btn--secondary" onClick={install.dismiss}>
+                      Dismiss
+                    </button>
+                  </p>
+                </div>
+              </details>
+            ) : null}
+          </section>
 
-      <hr className="section-rule" />
+          <hr className="section-rule" />
+        </>
+      ) : null}
 
       <section aria-labelledby="data-heading">
         <h2 id="data-heading">Your data</h2>

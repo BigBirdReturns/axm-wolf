@@ -1,0 +1,169 @@
+/* Record home and section view styles (DESIGN.md 10.1, 10.5, 10.6).
+ *
+ * Builds on the shared house style in theme.css -- reuses CSS variables
+ * (--paper, --ink, --accent, --rule, --mono, --display, --serif, etc.) and
+ * existing utility classes (.card, .card-list, .card-link, .btn, .meta,
+ * .status-pill). New rules here are additive only.
+ */
+
+/* ------------------------------------------------------------------ */
+/* Progress strip (DESIGN 10.6: screen-reader-readable progress)        */
+/* ------------------------------------------------------------------ */
+
+.progress-strip {
+  height: 8px;
+  background: var(--rule);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-strip__fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 4px 0 0 4px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .progress-strip__fill {
+    transition: width 0.4s ease;
+  }
+}
+
+.progress-strip--mini {
+  height: 4px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Record home summary                                                  */
+/* ------------------------------------------------------------------ */
+
+.summary-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  font-family: var(--mono);
+}
+
+.summary-grid__item {
+  min-width: 8rem;
+}
+
+.summary-grid__value {
+  font-family: var(--display);
+  font-size: 1.5rem;
+  color: var(--ink);
+  display: block;
+}
+
+.summary-grid__label {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ------------------------------------------------------------------ */
+/* Section cards                                                        */
+/* ------------------------------------------------------------------ */
+
+.section-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.section-card__range {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.section-card__counts {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.35rem;
+}
+
+.section-card__progress {
+  margin-top: 0.5rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* State chips (DESIGN 10.6: no color-only response state)              */
+/* ------------------------------------------------------------------ */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: 20px;
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--rule-dk);
+  color: var(--muted);
+  background: var(--paper-dk);
+}
+
+.chip--answered {
+  background: var(--positive-lt);
+  color: var(--positive);
+  border-color: var(--positive);
+}
+
+.chip--draft {
+  background: var(--accent-lt);
+  color: var(--accent-dp);
+  border-color: var(--accent);
+}
+
+/* ------------------------------------------------------------------ */
+/* Prompt list (section view)                                           */
+/* ------------------------------------------------------------------ */
+
+.prompt-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.prompt-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.35rem;
+}
+
+.prompt-card__lens {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-dp);
+}
+
+.prompt-card__text {
+  font-size: 1rem;
+  color: var(--ink-2);
+  margin-bottom: 0.35rem;
+}
+
+.prompt-card__preview {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+  border-left: 2px solid var(--rule);
+  padding-left: 0.6rem;
+  margin-top: 0.35rem;
+  overflow-wrap: anywhere;
+}

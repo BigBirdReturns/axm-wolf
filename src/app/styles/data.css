@@ -1,0 +1,77 @@
+/* Search and export/data screens (DESIGN.md 10.1). Extends theme.css. */
+
+.search-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.search-results {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.search-results .card h3 {
+  margin-bottom: 0.25rem;
+}
+
+.field-chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  border: 1px solid var(--rule-dk);
+  border-radius: 4px;
+  padding: 0.1rem 0.5rem;
+  color: var(--muted);
+  margin-right: 0.5rem;
+}
+
+.snippet {
+  font-family: var(--serif);
+  margin: 0.5rem 0;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+}
+
+.checkbox-row input[type='checkbox'] {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex: none;
+}
+
+.checkbox-row label {
+  margin: 0;
+}
+
+.danger-zone {
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 1rem;
+  background: var(--accent-lt);
+}
+
+.danger-zone h2 {
+  color: var(--accent-dp);
+}
+
+.conflict-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 480px) {
+  .conflict-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}

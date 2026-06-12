@@ -106,6 +106,49 @@ export type WolfRecordBundle = {
   };
 };
 
+// ---------------------------------------------------------------------------
+// Phase 2 engine interface contracts (locked by the architect; agents fill in
+// the implementations against these signatures and must not change them).
+// ---------------------------------------------------------------------------
+
+export type CreateRecordInput = {
+  recordId: string;
+  pack: CapturePack;
+  packDigest: string;
+  appVersion: string;
+  /** Defaults to pack.subjectDefaults when omitted. */
+  subject?: SubjectMetadata;
+  /** Defaults to pack.title when omitted. */
+  title?: string;
+  /** ISO-8601; defaults to now. Injected for deterministic tests. */
+  now?: string;
+};
+
+export type ExportOptions = {
+  /** Include active drafts in the full record bundle. Default false. */
+  includeDrafts?: boolean;
+  /** ISO-8601 export timestamp. Injected for deterministic tests. */
+  exportedAt?: string;
+  engineVersion?: string;
+  appVersion?: string;
+};
+
+export type HumanExportOptions = {
+  /** Include the full revision chain, not just the current revision. */
+  includeRevisionHistory?: boolean;
+  /** Include prompts that have no committed response. Default false. */
+  includeUnanswered?: boolean;
+};
+
+export type SearchResult = {
+  recordId: string;
+  sectionId: string;
+  promptId: string;
+  field: 'prompt' | 'response' | 'metadata';
+  snippet: string;
+  score: number;
+};
+
 export type ProgressSummary = {
   totalPrompts: number;
   answeredPrompts: number;

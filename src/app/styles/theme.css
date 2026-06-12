@@ -1,0 +1,363 @@
+/* AXM Wolf house style (DESIGN.md 10.5, 10.6).
+ *
+ * Palette extracted from reference/legacy-v0/index.html (the AXM paper
+ * interface). Remote fonts (Lora / Barlow Condensed / IBM Plex Mono /
+ * Playfair Display via Google Fonts) are NOT loaded -- per DESIGN.md 9.2 /
+ * AGENTS.md, no runtime network requests. Instead we use robust local font
+ * stacks that approximate each role:
+ *   --serif    body copy            -> Georgia, serif (legacy used Lora)
+ *   --display  headings/section     -> condensed system sans (legacy used Barlow Condensed)
+ *   --mono     metadata/timestamps   -> ui-monospace stack (legacy used IBM Plex Mono)
+ *   --imprint  large display title  -> Georgia, serif, bold (legacy used Playfair Display)
+ * The app remains fully usable with these fallbacks; no custom font files
+ * are bundled in this wave.
+ */
+
+:root {
+  --paper: #f0ebe0;
+  --paper-alt: #e8e2d5;
+  --paper-dk: #e0d9ca;
+  --ink: #0e0d0c;
+  --ink-2: #2c2a27;
+  --muted: #5e5850;
+  --dim: #948c80;
+  --rule: #b8afa0;
+  --rule-dk: #9a9088;
+  --accent: #7a4a1e;
+  --accent-lt: #f0e3d4;
+  --accent-dp: #5a3412;
+  --positive: #4a7a52;
+  --positive-lt: #e3f0e5;
+
+  --serif: Georgia, 'Times New Roman', serif;
+  --display: 'Arial Narrow', 'Helvetica Neue Condensed', Oswald, system-ui, sans-serif;
+  --mono: ui-monospace, 'SF Mono', 'Cascadia Mono', 'Consolas', 'Liberation Mono', monospace;
+  --imprint: Georgia, 'Times New Roman', serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  background: var(--paper-alt);
+  color: var(--ink-2);
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.55;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: var(--accent-dp);
+}
+
+img {
+  max-width: 100%;
+}
+
+/* ------------------------------------------------------------------ */
+/* Layout shell                                                         */
+/* ------------------------------------------------------------------ */
+
+.app-shell {
+  min-height: 100vh;
+  background: var(--paper);
+}
+
+.app-header {
+  background: var(--ink);
+  color: var(--paper);
+  border-bottom: 4px solid var(--accent);
+}
+
+.app-header__inner {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.app-header__title {
+  font-family: var(--imprint);
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.02em;
+  color: var(--paper);
+  text-decoration: none;
+}
+
+.app-header__nav {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.app-main {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 3rem;
+}
+
+.app-footer {
+  border-top: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--dim);
+  text-align: center;
+  padding: 1rem;
+}
+
+/* ------------------------------------------------------------------ */
+/* Typography                                                           */
+/* ------------------------------------------------------------------ */
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--display);
+  color: var(--ink);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+h3 {
+  font-size: 1.15rem;
+  margin-bottom: 0.4rem;
+}
+
+.section-rule {
+  border: none;
+  border-top: 2px solid var(--rule);
+  margin: 1.5rem 0;
+}
+
+.meta {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* ------------------------------------------------------------------ */
+/* Cards / sections                                                     */
+/* ------------------------------------------------------------------ */
+
+.card {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.card-link .card {
+  transition: background 0.12s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-link .card {
+    transition: none;
+  }
+}
+
+.card-link:hover .card,
+.card-link:focus-visible .card {
+  background: var(--paper-alt);
+}
+
+/* ------------------------------------------------------------------ */
+/* Buttons / actions                                                    */
+/* ------------------------------------------------------------------ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  background: var(--accent);
+  color: var(--paper);
+  font-family: var(--display);
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  line-height: 1.2;
+}
+
+.btn:hover {
+  background: var(--accent-dp);
+  border-color: var(--accent-dp);
+}
+
+.btn--secondary {
+  background: transparent;
+  color: var(--accent-dp);
+  border-color: var(--rule-dk);
+}
+
+.btn--secondary:hover {
+  background: var(--accent-lt);
+}
+
+.btn:disabled,
+.btn[aria-disabled='true'] {
+  background: var(--paper-dk);
+  border-color: var(--rule);
+  color: var(--dim);
+  cursor: not-allowed;
+}
+
+.btn:focus-visible,
+a:focus-visible,
+button:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Notices / status                                                     */
+/* ------------------------------------------------------------------ */
+
+.notice {
+  background: var(--accent-lt);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  color: var(--ink-2);
+  margin-bottom: 1rem;
+}
+
+.update-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  border-radius: 20px;
+  padding: 0.15rem 0.65rem;
+  background: var(--paper-dk);
+  color: var(--muted);
+}
+
+.status-pill--positive {
+  background: var(--positive-lt);
+  color: var(--positive);
+}
+
+/* ------------------------------------------------------------------ */
+/* Forms                                                                */
+/* ------------------------------------------------------------------ */
+
+label {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+textarea,
+input {
+  font-family: var(--serif);
+  font-size: 1rem;
+  color: var(--ink-2);
+  background: var(--paper);
+  border: 1px solid var(--rule-dk);
+  border-radius: 4px;
+  padding: 0.6rem;
+  width: 100%;
+}
+
+textarea:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Utility                                                              */
+/* ------------------------------------------------------------------ */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}

@@ -1,12 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   getCurrentResponse,
   type ResponseRevision,
   type WolfRecord,
 } from '../../engine/index.js';
 import { commitResponseAtomic, getDraft, loadRecord, type WolfDb } from '../../storage/index.js';
+import type { CaptureSource } from '../../engine/types.js';
 import { useDraftAutosave } from '../hooks/useDraftAutosave.js';
 import { RevisionHistory } from '../components/RevisionHistory.js';
+import { useSpeechInput } from '../speech/useSpeechInput.js';
+import type { SpeechErrorKind } from '../speech/speechAdapter.js';
 import '../styles/prompt.css';
 
 export type PromptScreenProps = {
@@ -206,6 +209,30 @@ function PromptScreenBody({
 }: PromptScreenBodyProps): JSX.Element {
   const { text, setText, status, flush } = useDraftAutosave(db, recordId, promptId, initialText);
 
+  // Source attribution for the next commit (DESIGN 10.3): two booleans
+  // tracking whether the text currently in the textarea includes any
+  // content the subject typed by hand vs. appended via voice transcript
+  // since the last commit. Reset together after each commit.
+  const [hasTypedSinceCommit, setHasTypedSinceCommit] = useState(false);
+  const [hasTranscriptSinceCommit, setHasTranscriptSinceCommit] = useState(false);
+
+  const textRef = useRef(text);
+  textRef.current = text;
+
+  const speech = useSpeechInput(
+    'en-US',
+    () => textRef.current,
+    (next) => {
+      setText(next);
+      setHasTranscriptSinceCommit(true);
+    },
+  );
+
+  function handleTextChange(value: string): void {
+    setText(value);
+    setHasTypedSinceCommit(true);
+  }
+
   const trimmed = text.trim();
   const unchanged = currentRevisionText !== null && text === currentRevisionText;
   const commitDisabled = trimmed.length === 0 || unchanged || commitStatus === 'committing';
@@ -219,11 +246,19 @@ function PromptScreenBody({
     setCommitError(null);
     try {
       await flush();
-      await commitResponseAtomic(db, recordId, promptId, text, 'typed');
+      const source: CaptureSource =
+        hasTranscriptSinceCommit && hasTypedSinceCommit
+          ? 'mixed'
+          : hasTranscriptSinceCommit
+            ? 'speech_transcript'
+            : 'typed';
+      await commitResponseAtomic(db, recordId, promptId, text, source);
       const reloaded = await loadRecord(db, recordId);
       if (reloaded) {
         setRecord(reloaded);
       }
+      setHasTypedSinceCommit(false);
+      setHasTranscriptSinceCommit(false);
       setCommitStatus('committed');
     } catch (err) {
       setCommitError(err instanceof Error ? err.message : String(err));
@@ -258,7 +293,7 @@ function PromptScreenBody({
           aria-labelledby="prompt-text prompt-response-label"
           rows={10}
           value={text}
-          onChange={(event) => setText(event.target.value)}
+          onChange={(event) => handleTextChange(event.target.value)}
         />
         <span id="prompt-response-label" className="visually-hidden">
           Your response
@@ -269,16 +304,46 @@ function PromptScreenBody({
         <button type="button" className="btn" disabled={commitDisabled} onClick={() => void handleCommit()}>
           Save to Record
         </button>
-        <button
-          type="button"
-          className="btn btn--secondary"
-          disabled
-          aria-disabled="true"
-          title="Voice input arrives in a later phase"
-        >
-          Voice input
-        </button>
+        {speech.supported ? (
+          <button
+            type="button"
+            className="btn btn--secondary"
+            aria-pressed={speech.listening}
+            onClick={() => {
+              if (speech.listening) {
+                speech.stop();
+              } else {
+                speech.start();
+              }
+            }}
+          >
+            {speech.listening ? (
+              <>
+                <span className="speech-dot" aria-hidden="true" /> Stop listening
+              </>
+            ) : (
+              'Start voice input'
+            )}
+          </button>
+        ) : null}
       </div>
+
+      {speech.supported ? (
+        <div className="prompt-screen__speech">
+          {speech.listening ? (
+            <p className="prompt-screen__speech-status">Listening…</p>
+          ) : null}
+          {speech.error ? (
+            <p role="alert" className="notice">
+              {describeSpeechError(speech.error)}
+            </p>
+          ) : null}
+          <p className="muted prompt-screen__speech-disclosure">
+            Voice input availability and network use depend on your browser; transcription may be processed by the
+            browser vendor and is not part of offline support.
+          </p>
+        </div>
+      ) : null}
 
       <p aria-live="polite" className="prompt-screen__status">
         {autosaveStatusText}
@@ -328,6 +393,19 @@ function PromptScreenBody({
       </nav>
     </div>
   );
+}
+
+function describeSpeechError(kind: SpeechErrorKind): string {
+  switch (kind) {
+    case 'permission-denied':
+      return 'Microphone access was denied. Allow microphone access for this site in your browser settings to use voice input.';
+    case 'no-speech':
+      return 'No speech detected.';
+    case 'network':
+      return 'Voice input needs a network connection in this browser.';
+    case 'unknown':
+      return 'Voice input is unavailable right now.';
+  }
 }
 
 function describeAutosaveStatus(status: 'idle' | 'saving' | 'saved' | 'save-failed'): string {

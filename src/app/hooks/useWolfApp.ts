@@ -12,7 +12,10 @@ import {
   type CapturePack,
   type PackTrust,
 } from '../../engine/index.js';
+import type { LegacyMigrationSummary } from '../../storage/index.js';
 import wolfsDepositionPackJson from '../../packs/wolfs-deposition/wolfs-deposition.wolfpack.json' with { type: 'json' };
+import { runLegacyMigrationIfNeeded } from '../lib/legacyMigrationRunner.js';
+import { APP_VERSION } from '../config.js';
 
 /**
  * A row in the 'packs' object store. Not exported from src/storage (no
@@ -44,11 +47,16 @@ export type WolfAppState = {
   error: string | null;
   /** Re-reads the records list from storage (e.g. after creating one). */
   refreshRecords: () => Promise<void>;
+  /**
+   * Result of the one-time legacy database migration (DESIGN.md 8.4), if it
+   * ran during this bootstrap and migrated at least one answer or recorded a
+   * recovery report entry. `null` if no migration happened (already
+   * complete, nothing to migrate, or indexedDB unavailable).
+   */
+  migrationSummary: LegacyMigrationSummary | null;
 };
 
 const BUNDLED_PACK = wolfsDepositionPackJson as unknown;
-
-const APP_VERSION = '0.1.0';
 
 /**
  * On first load: opens the database, validates and installs the bundled
@@ -61,6 +69,7 @@ export function useWolfApp(): WolfAppState {
   const [records, setRecords] = useState<RecordSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [migrationSummary, setMigrationSummary] = useState<LegacyMigrationSummary | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -87,12 +96,19 @@ export function useWolfApp(): WolfAppState {
         }
 
         const installedPacks = await wolfDb.getAll<StoredPack>('packs');
+
+        const migration = await runLegacyMigrationIfNeeded(wolfDb);
+        if (cancelled) return;
+
         const recordSummaries = await listRecords(wolfDb);
 
         if (cancelled) return;
         setDb(wolfDb);
         setPacks(installedPacks);
         setRecords(recordSummaries);
+        if (migration && (migration.migrated > 0 || migration.skippedUnknown > 0)) {
+          setMigrationSummary(migration);
+        }
         setLoading(false);
       } catch (err) {
         if (cancelled) return;
@@ -112,7 +128,7 @@ export function useWolfApp(): WolfAppState {
     setRecords(recordSummaries);
   }
 
-  return { db, packs, records, loading, error, refreshRecords };
+  return { db, packs, records, loading, error, refreshRecords, migrationSummary };
 }
 
 /**

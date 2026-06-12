@@ -290,14 +290,10 @@ function PromptScreenBody({
         <label htmlFor="prompt-response">Your response</label>
         <textarea
           id="prompt-response"
-          aria-labelledby="prompt-text prompt-response-label"
           rows={10}
           value={text}
           onChange={(event) => handleTextChange(event.target.value)}
         />
-        <span id="prompt-response-label" className="visually-hidden">
-          Your response
-        </span>
       </div>
 
       <div className="row prompt-screen__actions">

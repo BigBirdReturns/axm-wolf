@@ -30,10 +30,6 @@ function Placeholder({
   );
 }
 
-export function RecordsScreen(): JSX.Element {
-  return <Placeholder heading="Records" params={{}} />;
-}
-
 export function RecordHomeScreen({ recordId }: { recordId: string }): JSX.Element {
   return <Placeholder heading="Record home" params={{ recordId }} />;
 }
@@ -64,14 +60,6 @@ export function RecordSearchScreen({ recordId }: { recordId: string }): JSX.Elem
 
 export function RecordExportScreen({ recordId }: { recordId: string }): JSX.Element {
   return <Placeholder heading="Export and data" params={{ recordId }} />;
-}
-
-export function PacksScreen(): JSX.Element {
-  return <Placeholder heading="Packs" params={{}} />;
-}
-
-export function SettingsScreen(): JSX.Element {
-  return <Placeholder heading="Settings" params={{}} />;
 }
 
 export function NotFoundScreen({ path }: { path: string }): JSX.Element {

@@ -7,7 +7,10 @@ import { SectionScreen } from './screens/SectionScreen.js';
 import { PromptScreen } from './screens/PromptScreen.js';
 import { SearchScreen } from './screens/SearchScreen.js';
 import { ExportScreen } from './screens/ExportScreen.js';
-import { NotFoundScreen, PacksScreen, RecordsScreen, SettingsScreen } from './screens/PlaceholderScreens.js';
+import { NotFoundScreen } from './screens/PlaceholderScreens.js';
+import { RecordsScreen } from './screens/RecordsScreen.js';
+import { PacksScreen } from './screens/PacksScreen.js';
+import { SettingsScreen } from './screens/SettingsScreen.js';
 
 export function App(): JSX.Element {
   const route = useHashRoute();
@@ -27,7 +30,7 @@ export function App(): JSX.Element {
         </a>
       </AppHeader>
 
-      <main className="app-main" aria-live="polite">
+      <main className="app-main">
         {wolfApp.loading ? (
           <p>Loading AXM Wolf…</p>
         ) : wolfApp.error ? (
@@ -59,7 +62,7 @@ function renderRoute(route: ReturnType<typeof useHashRoute>, wolfApp: ReturnType
     case 'launch':
       return <LaunchScreen {...wolfApp} />;
     case 'records':
-      return <RecordsScreen />;
+      return <RecordsScreen {...wolfApp} />;
     case 'record':
       return <RecordHomeScreen db={db} recordId={route.recordId} onNavigate={navigate} />;
     case 'record-section':
@@ -81,7 +84,7 @@ function renderRoute(route: ReturnType<typeof useHashRoute>, wolfApp: ReturnType
         />
       );
     case 'packs':
-      return <PacksScreen />;
+      return <PacksScreen {...wolfApp} />;
     case 'settings':
       return <SettingsScreen />;
     case 'not-found':

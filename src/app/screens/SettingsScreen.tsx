@@ -4,8 +4,8 @@ import '../styles/data.css';
 /**
  * Settings screen (DESIGN.md 10.1, 12.1). States the local-first storage
  * model plainly, reports the app version and deploy mode, and points to the
- * per-record delete flow for now (a true wipe-all arrives with Phase 5
- * polish).
+ * per-record delete flow (a true wipe-all action is a known gap tracked in
+ * STATUS.md).
  */
 export function SettingsScreen(): JSX.Element {
   return (
@@ -17,7 +17,7 @@ export function SettingsScreen(): JSX.Element {
         <p className="notice">
           Responses are stored only in this browser profile, on this device. Clearing browser data
           (or this site&rsquo;s storage) may remove a local record permanently. Exporting a record is
-          the backup and transfer mechanism &mdash; no server receives your testimony in v1.
+          the backup and transfer mechanism &mdash; no server receives your testimony in v0.1.
         </p>
       </section>
 

@@ -11,8 +11,8 @@ Where AXM Wolf is, and what's next. Read this cold before picking up work.
 | 2 | Pure engine (records, progress, search, digest, bundles, rendering) | Done -- `src/engine/` |
 | 3 | Storage (IndexedDB, repositories, draft autosave, atomic commit, legacy migration) | Done -- `src/storage/` |
 | 4 | UI parity and improvement (screens, navigation, export/import, search) | Done -- `src/app/` |
-| 5 | PWA and deployment modes (service worker, manifest, install flow, update banner, platform/single-pack) | In progress on this branch, concurrent with this documentation pass -- see "PWA" below |
-| 6 | Documentation and release | This pass: README, `docs/PACK_AUTHORING.md`, `docs/PRIVACY.md`, `docs/DEPLOY.md`, this file |
+| 5 | PWA and deployment modes (service worker, manifest, install flow, update banner, platform/single-pack) | Done -- `vite.config.ts` (vite-plugin-pwa), `src/app/hooks/useServiceWorkerUpdate.ts`, `src/app/hooks/useInstallPrompt.ts`, `src/app/components/UpdateBanner.tsx`. Both deploy-mode builds produce `dist/sw.js` and a mode-specific manifest. See "PWA" below for the e2e caveat. |
+| 6 | Documentation and release | Done -- README, `docs/PACK_AUTHORING.md`, `docs/PRIVACY.md`, `docs/DEPLOY.md`, this file. Screenshots and an Arc-style public landing page are still to come. |
 
 ## What's live on this branch
 
@@ -63,15 +63,54 @@ Screens in `src/app/screens/`:
 
 Routing is hash-based and pure-function parsed (`src/app/routes.ts`, unit-tested independent of React/DOM). Deployment mode is read and validated at startup from `import.meta.env` (`src/app/config.ts`): `VITE_DEPLOY_MODE` (`platform` default, or `single-pack`) and `VITE_DEFAULT_PACK_ID`.
 
-### PWA (Phase 5, concurrent work)
+### PWA
 
-Phase 5 (service worker, manifest generation, offline precache, install flow, update banner, confirming root and subpath builds) is being implemented concurrently with this documentation pass. `vite.config.ts` already sets `base: './'` for subpath safety (DESIGN.md 11.3). Treat the PWA install/offline/update-banner behavior described in the README and `docs/DEPLOY.md` as the target for that work landing on this branch; verify against the actual Phase 5 commit notes if it has not yet merged.
+Phase 5 is implemented and the gate is green in both deploy modes.
+
+- `vite.config.ts` uses `vite-plugin-pwa` with `registerType: 'prompt'` (the user controls update activation; the app never auto-reloads), `base: './'` for root/subpath safety (DESIGN.md 11.3), and a mode-aware manifest (name, short_name, description switch on `VITE_DEPLOY_MODE` via `loadEnv`).
+- Icons live in `public/icons/` (copied forward from `reference/legacy-v0/`). The Workbox `globPatterns` precache covers js/css/html/svg/png/woff2/webmanifest, including the bundled pack JSON chunk.
+- `src/app/hooks/useServiceWorkerUpdate.ts` wraps `virtual:pwa-register` and exposes `{ updateAvailable, offlineReady, applyUpdate }`. `src/app/components/UpdateBanner.tsx` renders the "Update available -- Reload to update" banner.
+- `src/app/hooks/useInstallPrompt.ts` captures `beforeinstallprompt`, detects standalone mode, and persists a dismissal in sessionStorage so we never re-nag. `LaunchScreen` renders a real "Install app" button when supported and falls back to a collapsible manual Android Chrome / iOS Safari instructions block otherwise.
+- `npm run test:e2e` runs `scripts/e2e-smoke.mjs`, which builds and asserts that `dist/sw.js`, `dist/workbox-*.js`, and `dist/manifest.webmanifest` are produced and that `index.html` references only relative assets. This is a static smoke; see "Known gaps" for the missing browser-driven flow.
+
+## Definition of Done matrix (DESIGN.md 16)
+
+| Area | Status |
+| --- | --- |
+| Engine contains no first-pack knowledge | Done (lint enforces) |
+| First pack as validated portable data | Done |
+| Generic fixture runs the same engine paths | Done |
+| Imported packs cannot execute or inject markup | Done (HTML/script rejection in `schema.ts`; bundle import rejects tampered prototypes) |
+| Stable semantic IDs everywhere | Done |
+| Drafts survive reloads | Done (autosave + flush on visibilitychange) |
+| Edits append revisions, never overwrite | Done |
+| Export/import round trip is lossless | Done (tested) |
+| Pack snapshots travel with records | Done |
+| Legacy answers can migrate on the same origin | Done (`legacyMigration.ts`, idempotent, with recovery report) |
+| No hard-coded prompt totals | Done (lint scans `src/app` for `62`, count derived everywhere) |
+| App opens offline after first load | Implemented; verified statically, not yet under a real headless browser |
+| Bundled packs work offline | Done (precached in Workbox glob) |
+| Capture / edit / search / export work offline | Implemented; same caveat |
+| All core fonts and assets are local | Done (no remote Google Fonts) |
+| Speech labeled as optional and potentially network-dependent | Done (disclosure line + adapter) |
+| Any-order answering works | Done |
+| Progress is derived correctly | Done |
+| Single-pack build feels like The Wolf's Deposition | Done (mode-aware manifest + LaunchScreen framing) |
+| Platform build feels like AXM Wolf | Done |
+| Install guidance works without promising an automatic banner | Done |
+| Save state is always visible | Done (status text + aria-live) |
+| Accessibility requirements (WCAG 2.2 AA) | Done (audit pass: focus-visible, reduced-motion, 44px targets, text chips alongside color) |
+| `npm ci && npm run check` succeeds | Done (200/200 + lint + typecheck + build) |
+| `npm run test:e2e` succeeds | Done as a static smoke; full Playwright flow is a known gap |
 
 ## Known gaps
 
-- **End-to-end tests (Playwright)**: `npm run test:e2e` currently runs `scripts/e2e-smoke.mjs`, a smoke script, not the full Playwright flow described in DESIGN.md 14.6 (draft survival, offline reload, export/import round trip). Playwright is a declared dependency but its full e2e suite status should be checked against Phase 5 notes.
+- **End-to-end tests (Playwright)**: `npm run test:e2e` currently runs `scripts/e2e-smoke.mjs`, a static build-output smoke (sw/manifest exist, asset refs relative). The full Playwright flow from DESIGN.md 14.6 (create record, draft, reload, commit, edit, export, clear data, import, go offline, reload, continue, export Markdown offline) is not yet implemented. Note: in our remote-execution environment the Playwright browser download host (`cdn.playwright.dev`) is currently not in the network allowlist; running the real suite requires either an allowlisted environment or a self-hosted browser binary.
 - **Component tests (React Testing Library)**: DESIGN.md 14.5 describes component-level tests (launch screen in both modes, save-status announcements, speech states, import validation errors, etc.). These are not yet present as a distinct RTL suite; current coverage is engine/storage/route unit tests under `tests/engine/`, `tests/storage/`, `tests/app/`, `tests/packs/`, `tests/scripts/`.
-- **Pack import UI**: record bundle import (`.wolfrecord.json`) is implemented in `ExportScreen.tsx` with conflict handling. Importing a new *capture pack* file (producing an `imported_unsigned` row in the `packs` store) has no UI entry point yet -- see `docs/PACK_AUTHORING.md` for current status.
+- **Pack import UI**: record bundle import (`.wolfrecord.json`) is implemented in `ExportScreen.tsx` with conflict handling. Importing a new *capture pack* file (producing an `imported_unsigned` row in the `packs` store) has no UI entry point yet. The engine validation (`validatePack`), digest (`digestPack`), and the `bundled` / `imported_unsigned` / `quarantined` trust vocabulary already exist; only the UI is missing. (Compare AXM Arc's library/trust UX for the target shape.)
+- **Wipe-all action**: Settings currently points to per-record delete on each record's export screen. A true "delete everything" action that drops the whole IndexedDB database with explicit confirmation is not yet built.
+- **Screenshots and a public landing page**: DESIGN.md 17 calls for screenshots "only after the UI is stable" -- it now is, but they have not been captured. AXM Arc's `docs/index.html` style landing page is a good model worth borrowing.
+- **AXM Arc transfer audit**: a written `docs/AXM_ARC_TRANSFER.md` capturing what Wolf copied from Arc, what it deliberately did not copy, and why, would help future contributors and the family-level docs.
 
 ## How to pick this up
 

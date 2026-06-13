@@ -75,3 +75,19 @@
     flex-wrap: wrap;
   }
 }
+
+.field-chip--trust-bundled {
+  border-color: var(--rule-dk);
+  color: var(--muted);
+}
+
+.field-chip--trust-imported {
+  border-color: var(--accent);
+  color: var(--accent-dp);
+}
+
+.field-chip--trust-quarantined {
+  border-color: var(--accent-dp);
+  color: var(--accent-dp);
+  background: var(--accent-lt);
+}

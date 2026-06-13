@@ -47,6 +47,8 @@ export type WolfAppState = {
   error: string | null;
   /** Re-reads the records list from storage (e.g. after creating one). */
   refreshRecords: () => Promise<void>;
+  /** Re-reads the installed packs list (e.g. after importing one). */
+  refreshPacks: () => Promise<void>;
   /**
    * Result of the one-time legacy database migration (DESIGN.md 8.4), if it
    * ran during this bootstrap and migrated at least one answer or recorded a
@@ -128,7 +130,13 @@ export function useWolfApp(): WolfAppState {
     setRecords(recordSummaries);
   }
 
-  return { db, packs, records, loading, error, refreshRecords, migrationSummary };
+  async function refreshPacks(): Promise<void> {
+    if (!db) return;
+    const installedPacks = await db.getAll<StoredPack>('packs');
+    setPacks(installedPacks);
+  }
+
+  return { db, packs, records, loading, error, refreshRecords, refreshPacks, migrationSummary };
 }
 
 /**

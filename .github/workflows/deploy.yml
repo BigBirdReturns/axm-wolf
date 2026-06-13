@@ -1,0 +1,77 @@
+# Pages deploy for AXM Wolf.
+#
+# Actions-based GitHub Pages deployment, mirroring AXM Arc's pattern. The
+# built PWA is published directly to Pages as an artifact -- it is NEVER
+# committed to the repo. `docs/app/` is gitignored. This makes the whole
+# class of "branch bundle vs. bot-rebuilt bundle" merge conflicts impossible:
+# `docs/app/` does not exist in git history at all.
+#
+# REQUIRES (one-time, owner action): repository Settings -> Pages -> Build
+# and deployment -> Source = "GitHub Actions". Until that's set, this
+# workflow runs but Pages won't serve from it.
+#
+# The artifact is the whole docs/ tree: the hand-authored landing page
+# (`docs/index.html`), the family + authoring + privacy + deploy docs
+# (markdown files), and the freshly built PWA (`docs/app/`, produced by
+# `npm run build` at deploy time).
+
+name: deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never run two Pages deploys at once; let the latest win.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # Full history is harmless and keeps room for future SHA stamping.
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check (lint + typecheck + tests + build)
+        run: npm run check
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Publish the whole docs tree: landing page + the just-built PWA
+          # at docs/app/. `npm run check` already invoked `npm run build`,
+          # which writes to `docs/app/` per `vite.config.ts`.
+          path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

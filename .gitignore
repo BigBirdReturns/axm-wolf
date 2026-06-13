@@ -4,3 +4,6 @@ dist-ts/
 dist-tests/
 coverage/
 .playwright/
+# Built PWA bundle published to GitHub Pages alongside docs/index.html.
+# Built fresh in CI by .github/workflows/deploy.yml -- never committed.
+docs/app/

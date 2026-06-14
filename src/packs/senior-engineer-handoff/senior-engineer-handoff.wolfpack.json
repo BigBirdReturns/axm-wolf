@@ -1,0 +1,378 @@
+{
+  "schemaVersion": 1,
+  "packId": "senior-engineer-handoff",
+  "packVersion": "1.0.0",
+  "engineVersion": ">=0.1.0 <1.0.0",
+  "title": "The Departing Engineer's Handoff",
+  "subtitle": "The system in your head, before you go.",
+  "description": "A structured handoff for a senior engineer leaving a team. Thirty prompts across five sections capture the operational knowledge that lives nowhere but your head: how the system really breaks, why it is built the way it is, who actually knows what, and the unwritten rules the next owner will otherwise learn the hard way. A post-mortem of a system that is still running. Answer in any order.",
+  "subjectDefaults": {
+    "displayName": "The Departing Engineer",
+    "subtitle": "Engineering Handoff",
+    "organization": null,
+    "role": "Senior Engineer"
+  },
+  "theme": {
+    "accent": "#3f6d57"
+  },
+  "recommendedCadence": "campaign",
+  "lenses": [
+    { "id": "outage", "label": "The Outage" },
+    { "id": "trade-off", "label": "The Trade-off" },
+    { "id": "hire", "label": "The Hire" },
+    { "id": "rewrite", "label": "The Rewrite" },
+    { "id": "unwritten-rule", "label": "The Unwritten Rule" }
+  ],
+  "sections": [
+    {
+      "id": "the-system",
+      "label": "The System",
+      "rangeLabel": null,
+      "description": "What you own, what is load-bearing, and what is older than anyone admits.",
+      "promptIds": [
+        "the-system.load-bearing-overview",
+        "the-system.oldest-component",
+        "the-system.core-architecture-decision",
+        "the-system.do-not-touch",
+        "the-system.manual-step",
+        "the-system.bus-factor"
+      ]
+    },
+    {
+      "id": "the-failure-modes",
+      "label": "The Failure Modes",
+      "rangeLabel": null,
+      "description": "How it breaks, what you fear, and what the monitoring never sees.",
+      "promptIds": [
+        "the-failure-modes.worst-outage",
+        "the-failure-modes.feared-outage",
+        "the-failure-modes.ignored-alert",
+        "the-failure-modes.monitoring-blind-spot",
+        "the-failure-modes.accepted-single-point",
+        "the-failure-modes.real-recovery"
+      ]
+    },
+    {
+      "id": "the-decisions",
+      "label": "The Decisions",
+      "rangeLabel": null,
+      "description": "Why it is built this way. The debt, the trade-offs, the rewrite that stalled.",
+      "promptIds": [
+        "the-decisions.biggest-tech-debt",
+        "the-decisions.unfinished-migration",
+        "the-decisions.hidden-dependency",
+        "the-decisions.design-review-you-lost",
+        "the-decisions.wrong-but-works",
+        "the-decisions.fix-you-never-made"
+      ]
+    },
+    {
+      "id": "the-people",
+      "label": "The People",
+      "rangeLabel": null,
+      "description": "Who knows what, who to ask, and the knowledge that already walked out.",
+      "promptIds": [
+        "the-people.most-capable-person",
+        "the-people.who-to-ask",
+        "the-people.knowledge-that-left",
+        "the-people.informal-authority",
+        "the-people.conways-law",
+        "the-people.team-self-image"
+      ]
+    },
+    {
+      "id": "the-handoff",
+      "label": "The Handoff",
+      "rangeLabel": null,
+      "description": "What the next owner must know, must not touch first, and will never find written down.",
+      "promptIds": [
+        "the-handoff.only-in-your-head",
+        "the-handoff.innocent-change-that-breaks",
+        "the-handoff.introductions-week-one",
+        "the-handoff.impossible-expectation",
+        "the-handoff.do-not-change-first",
+        "the-handoff.for-the-record"
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "id": "the-system.load-bearing-overview",
+      "kind": "long_text",
+      "lensId": "rewrite",
+      "text": "Describe the system you owned that mattered most: the one that would hurt the most if it went down. What does it actually do, who depends on it, and which part of it is genuinely load-bearing versus the part that just looks important?",
+      "context": "The thing your name is on. The thing that pages you.",
+      "tags": ["system", "ownership", "load-bearing"],
+      "required": false
+    },
+    {
+      "id": "the-system.oldest-component",
+      "kind": "long_text",
+      "lensId": "rewrite",
+      "text": "Which part of the system is the oldest, and what is everyone quietly pretending still works fine? Describe the component you would not trust under real load, and what you have personally watched it do when pushed.",
+      "context": "The service from three reorgs ago. The cron job nobody will claim.",
+      "tags": ["legacy", "debt", "fragile"],
+      "required": false
+    },
+    {
+      "id": "the-system.core-architecture-decision",
+      "kind": "long_text",
+      "lensId": "trade-off",
+      "text": "Walk through the core architecture and the single biggest design decision baked into it. Why is it built this way, what was the live alternative at the time, and would you make the same choice today knowing what you know now?",
+      "context": "The decision the whole thing rests on.",
+      "tags": ["architecture", "design", "trade-off"],
+      "required": false
+    },
+    {
+      "id": "the-system.do-not-touch",
+      "kind": "long_text",
+      "lensId": "unwritten-rule",
+      "text": "Which part of this system does everyone treat as do-not-touch: the code or config nobody will modify because the last person who did caused an outage? Why is it scary, and is the fear still justified or just inherited?",
+      "context": "The file with the comment that only says: do not change this.",
+      "tags": ["fragile", "fear", "tribal-knowledge"],
+      "required": false
+    },
+    {
+      "id": "the-system.manual-step",
+      "kind": "long_text",
+      "lensId": "unwritten-rule",
+      "text": "What manual step exists that should be automated but is not: the thing someone has to remember to do by hand that breaks badly when they forget? Who currently remembers it, and what happens the first time the next owner does not?",
+      "context": "The deploy step that lives in one person's head.",
+      "tags": ["manual", "automation-gap", "tribal-knowledge"],
+      "required": false
+    },
+    {
+      "id": "the-system.bus-factor",
+      "kind": "long_text",
+      "lensId": "hire",
+      "text": "Besides you, who actually understands this system end to end? If nobody, say so plainly, then map which person understands which piece, and what happens to the parts only you understand the day after you leave.",
+      "context": "The bus factor. Name the number, then name the names.",
+      "tags": ["bus-factor", "people", "risk"],
+      "required": false,
+      "suggestedFollowUp": "Push for the specific subsystems where the bus factor is one, and who is the least-bad second choice for each."
+    },
+    {
+      "id": "the-failure-modes.worst-outage",
+      "kind": "long_text",
+      "lensId": "outage",
+      "text": "Describe the worst outage you personally handled on this system. Set the scene: when it happened, what broke, what you saw first, and how long it took before you actually understood what was wrong rather than what looked wrong.",
+      "context": "The page at 3am. Start there.",
+      "tags": ["outage", "incident", "debugging"],
+      "required": false,
+      "suggestedFollowUp": "Ask what the root cause turned out to be versus the first three things they suspected, and whether the fix is still in place."
+    },
+    {
+      "id": "the-failure-modes.feared-outage",
+      "kind": "long_text",
+      "lensId": "outage",
+      "text": "What is the failure mode you are most afraid of that has not happened yet? Describe how it would unfold, why the current safeguards would not catch it in time, and what you would do in the first five minutes.",
+      "context": "The outage you have already rehearsed in your head.",
+      "tags": ["risk", "resilience", "failure-mode"],
+      "required": false
+    },
+    {
+      "id": "the-failure-modes.ignored-alert",
+      "kind": "long_text",
+      "lensId": "outage",
+      "text": "What alert fires regularly that everyone has learned to ignore, and what real problem is hiding inside that noise? How does the team currently tell a real fire from the usual smoke, and is that judgment written down anywhere?",
+      "context": "The alert everyone has quietly built a filter for.",
+      "tags": ["alerting", "noise", "tribal-knowledge"],
+      "required": false
+    },
+    {
+      "id": "the-failure-modes.monitoring-blind-spot",
+      "kind": "long_text",
+      "lensId": "outage",
+      "text": "Describe a time the system failed in a way the monitoring did not catch: you found out from a customer, a coworker, or pure luck. What was blind, why was it blind, and is it still blind today?",
+      "context": "The dashboard was green. The customer was not.",
+      "tags": ["monitoring", "blind-spot", "observability"],
+      "required": false
+    },
+    {
+      "id": "the-failure-modes.accepted-single-point",
+      "kind": "long_text",
+      "lensId": "trade-off",
+      "text": "What did you consciously decide not to make resilient: the single point of failure you left in place on purpose? Why was that the right call given the constraints, and is it still the right call now?",
+      "context": "The risk you accepted with your eyes open.",
+      "tags": ["single-point-of-failure", "trade-off", "risk"],
+      "required": false
+    },
+    {
+      "id": "the-failure-modes.real-recovery",
+      "kind": "long_text",
+      "lensId": "outage",
+      "text": "When this system breaks badly, what does the runbook not tell you that you actually do? Walk through the real recovery, including the step you would never write down because it sounds insane until it is the only thing that works.",
+      "context": "The runbook says restart the service. You know the other thing.",
+      "tags": ["runbook", "recovery", "tribal-knowledge"],
+      "required": false
+    },
+    {
+      "id": "the-decisions.biggest-tech-debt",
+      "kind": "long_text",
+      "lensId": "trade-off",
+      "text": "What is the biggest piece of technical debt in this system, why does it exist, and what did the team get in exchange for taking it on? Be specific about who decided, what the deadline was, and whether the trade was worth it.",
+      "context": "Debt is a choice someone made under pressure. Whose, and why.",
+      "tags": ["tech-debt", "trade-off", "history"],
+      "required": false,
+      "suggestedFollowUp": "Ask what it would actually take to pay it down, and what keeps making that not worth it."
+    },
+    {
+      "id": "the-decisions.unfinished-migration",
+      "kind": "long_text",
+      "lensId": "rewrite",
+      "text": "Describe the rewrite or migration that was started and never finished: the half-migrated state the system is stuck in. Why did it stall, who championed it, and what is the ongoing cost of living in the in-between?",
+      "context": "Two systems running in parallel. The cutover that never came.",
+      "tags": ["migration", "rewrite", "debt"],
+      "required": false
+    },
+    {
+      "id": "the-decisions.hidden-dependency",
+      "kind": "long_text",
+      "lensId": "rewrite",
+      "text": "What dependency would surprise the next owner if it disappeared tomorrow: the library, service, vendor, or person you quietly rely on that is not obviously load-bearing and is not in the architecture diagram?",
+      "context": "The thing holding it up that the diagram never shows.",
+      "tags": ["dependency", "hidden", "risk"],
+      "required": false
+    },
+    {
+      "id": "the-decisions.design-review-you-lost",
+      "kind": "long_text",
+      "lensId": "trade-off",
+      "text": "Describe a decision the team made that you disagreed with at the time, and how it turned out: proven right, proven wrong, or still unresolved. What did you argue, who decided, and what actually happened?",
+      "context": "The design review you lost. Or won.",
+      "tags": ["decision", "disagreement", "design-review"],
+      "required": false
+    },
+    {
+      "id": "the-decisions.wrong-but-works",
+      "kind": "long_text",
+      "lensId": "unwritten-rule",
+      "text": "What does the team do that is technically wrong but works, and that everyone has agreed to stop worrying about? Why does it work despite being wrong, and what would break if a well-meaning newcomer fixed it?",
+      "context": "The hack that quietly became load-bearing.",
+      "tags": ["hack", "tribal-knowledge", "fragile"],
+      "required": false
+    },
+    {
+      "id": "the-decisions.fix-you-never-made",
+      "kind": "long_text",
+      "lensId": "rewrite",
+      "text": "If you had six months and a clear mandate to fix one thing in this system before you left, what would it be, and what is the real reason it has not been fixed already? Not the stated reason. The real one.",
+      "context": "The fix everyone agrees on and nobody does.",
+      "tags": ["debt", "priorities", "organization"],
+      "required": false
+    },
+    {
+      "id": "the-people.most-capable-person",
+      "kind": "long_text",
+      "lensId": "hire",
+      "text": "Who is the most technically capable person on this team, what specifically do they know that you do not, and what would the team quietly lose if they left next month?",
+      "context": "The person you ask when you are the one who is stuck.",
+      "tags": ["people", "expertise", "risk"],
+      "required": false
+    },
+    {
+      "id": "the-people.who-to-ask",
+      "kind": "long_text",
+      "lensId": "hire",
+      "text": "When you have a question the code and the docs cannot answer, who do you ask? Map the real knowledge: who holds the database history, who holds the deploy magic, who holds the customer context, who remembers why.",
+      "context": "The org chart of who actually knows what.",
+      "tags": ["people", "knowledge-map", "onboarding"],
+      "required": false
+    },
+    {
+      "id": "the-people.knowledge-that-left",
+      "kind": "long_text",
+      "lensId": "hire",
+      "text": "Describe someone who left this team and took critical knowledge with them. What did you lose, how did you discover it was gone, and what did you have to reconstruct from scratch because nobody had written it down?",
+      "context": "The knowledge that walked out the door before yours.",
+      "tags": ["attrition", "knowledge-loss", "history"],
+      "required": false
+    },
+    {
+      "id": "the-people.informal-authority",
+      "kind": "long_text",
+      "lensId": "unwritten-rule",
+      "text": "Who on this team has informal authority that does not match their title: the person whose no actually stops things, or whose yes unblocks them? How does a new owner earn standing with that person?",
+      "context": "The real org chart, not the one in the HR system.",
+      "tags": ["politics", "authority", "tribal-knowledge"],
+      "required": false
+    },
+    {
+      "id": "the-people.conways-law",
+      "kind": "long_text",
+      "lensId": "trade-off",
+      "text": "Describe how the shape of the team shaped the system: a hire, a reorg, or a team boundary that is now permanently visible in the architecture. Where can you still see the org chart in the code?",
+      "context": "The system is a map of the org that built it.",
+      "tags": ["conways-law", "architecture", "organization"],
+      "required": false
+    },
+    {
+      "id": "the-people.team-self-image",
+      "kind": "long_text",
+      "lensId": "unwritten-rule",
+      "text": "What does this team believe about itself that is not quite true: a story about how it works, how decisions get made, or how good the code is, that the next owner should take with a grain of salt?",
+      "context": "The team's self-image, and the gap underneath it.",
+      "tags": ["culture", "self-image", "tribal-knowledge"],
+      "required": false
+    },
+    {
+      "id": "the-handoff.only-in-your-head",
+      "kind": "long_text",
+      "lensId": "unwritten-rule",
+      "text": "What is the single most important thing about operating this system that exists only in your head right now: not in any doc, runbook, or comment? If you wrote nothing else down before you left, what must the next owner know?",
+      "context": "The one thing. Start with the most important.",
+      "tags": ["handoff", "tribal-knowledge", "critical"],
+      "required": false,
+      "suggestedFollowUp": "Once they give the first thing, ask for the second and third. The first is rarely the most dangerous gap."
+    },
+    {
+      "id": "the-handoff.innocent-change-that-breaks",
+      "kind": "long_text",
+      "lensId": "unwritten-rule",
+      "text": "What will the next owner do in their first month that will seem completely reasonable and will break something? Warn them now: the innocent-looking change that has bitten everyone who tried it.",
+      "context": "The trap with your name on the last commit before it.",
+      "tags": ["handoff", "trap", "tribal-knowledge"],
+      "required": false
+    },
+    {
+      "id": "the-handoff.introductions-week-one",
+      "kind": "long_text",
+      "lensId": "hire",
+      "text": "Who should the next owner introduce themselves to in week one, inside and outside the team, and what should they ask each of those people before those people lose context, change roles, or leave?",
+      "context": "The introductions that expire.",
+      "tags": ["handoff", "people", "onboarding"],
+      "required": false
+    },
+    {
+      "id": "the-handoff.impossible-expectation",
+      "kind": "long_text",
+      "lensId": "unwritten-rule",
+      "text": "What does the broader organization not understand about this system: the thing leadership, or the customer, or the next team assumes is true that is not? What expectation is quietly impossible to meet?",
+      "context": "The promise someone made that the system cannot keep.",
+      "tags": ["expectations", "organization", "tribal-knowledge"],
+      "required": false
+    },
+    {
+      "id": "the-handoff.do-not-change-first",
+      "kind": "long_text",
+      "lensId": "trade-off",
+      "text": "What should the next owner absolutely not change first: the thing that looks wrong, invites a rewrite, and is actually holding everything together? And what is genuinely safe to change on day one?",
+      "context": "What waits. What is safe. The difference matters most early.",
+      "tags": ["handoff", "risk", "guidance"],
+      "required": false
+    },
+    {
+      "id": "the-handoff.for-the-record",
+      "kind": "long_text",
+      "lensId": "unwritten-rule",
+      "text": "Thirty years from now this system will be long gone, but someone may read this record trying to understand how software actually got built and run here. What would you want them to know that no architecture diagram, no post-mortem, and no commit history will ever tell them?",
+      "context": "The thing nobody wrote down. Write it now.",
+      "tags": ["legacy", "tacit", "record"],
+      "required": false,
+      "suggestedFollowUp": "This is the capstone. Give them room and silence; do not move on quickly."
+    }
+  ],
+  "exportDefaults": {
+    "basename": "senior-engineer-handoff"
+  }
+}

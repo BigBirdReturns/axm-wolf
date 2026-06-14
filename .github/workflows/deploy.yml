@@ -51,8 +51,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Check (lint + typecheck + tests + build)
+      - name: Check (lint + typecheck + node:test + build)
         run: npm run check
+
+      - name: Component tests (Vitest + jsdom)
+        run: npm run test:components
 
       - name: Configure Pages
         uses: actions/configure-pages@v5

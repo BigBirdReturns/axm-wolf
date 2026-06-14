@@ -83,7 +83,7 @@ The app is installable as a PWA and works offline after the first load: the app 
 
 ## Pack authoring
 
-To write your own capture pack, see [docs/PACK_AUTHORING.md](docs/PACK_AUTHORING.md).
+To write your own capture pack, see [docs/PACK_AUTHORING.md](docs/PACK_AUTHORING.md) for the schema and [docs/METHODOLOGY.md](docs/METHODOLOGY.md) for the cognitive-interview foundation behind Wolf's lens system.
 
 ## Known limitations (v0.1)
 

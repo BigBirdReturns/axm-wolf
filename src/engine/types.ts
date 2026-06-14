@@ -1,5 +1,7 @@
 export type PromptKind = 'long_text';
 
+export type Cadence = 'once' | 'weekly' | 'biweekly' | 'monthly' | 'campaign';
+
 export type CaptureSource = 'typed' | 'speech_transcript' | 'mixed' | 'imported';
 
 export type PackTrust = 'bundled' | 'imported_unsigned' | 'quarantined';
@@ -18,6 +20,7 @@ export type CapturePack = {
   sections: Section[];
   prompts: Prompt[];
   exportDefaults?: { basename?: string | null };
+  recommendedCadence?: Cadence;
 };
 
 export type SubjectMetadata = {

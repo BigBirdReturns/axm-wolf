@@ -621,5 +621,6 @@
   ],
   "exportDefaults": {
     "basename": "wolfs-deposition-william-sandhu"
-  }
+  },
+  "recommendedCadence": "weekly"
 }

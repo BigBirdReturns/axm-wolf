@@ -373,5 +373,6 @@
   ],
   "exportDefaults": {
     "basename": "contracting-officers-deposition"
-  }
+  },
+  "recommendedCadence": "once"
 }

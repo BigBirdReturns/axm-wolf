@@ -91,3 +91,18 @@
   color: var(--accent-dp);
   background: var(--accent-lt);
 }
+
+.drop-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border: 1px dashed var(--rule-dk);
+  border-radius: 4px;
+  padding: 1rem;
+}
+
+.drop-zone--active {
+  border-style: solid;
+  border-color: var(--accent);
+  background: var(--accent-lt);
+}

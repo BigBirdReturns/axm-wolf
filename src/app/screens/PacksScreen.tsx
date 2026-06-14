@@ -3,6 +3,7 @@ import { WolfValidationError, sanitizeFilename, type CapturePack } from '../../e
 import type { StoredPack, WolfAppState } from '../hooks/useWolfApp.js';
 import { downloadText } from '../lib/download.js';
 import { parsePackFromText, bundledPackToStoredPack } from '../lib/packImport.js';
+import { EXAMPLE_PACKS } from '../lib/examplePacks.js';
 import '../styles/data.css';
 
 const TRUST_LABELS: Record<string, string> = {
@@ -36,18 +37,20 @@ export function PacksScreen({ db, packs, refreshPacks }: WolfAppState): JSX.Elem
   const [importError, setImportError] = useState<string | null>(null);
   const [lastImported, setLastImported] = useState<string | null>(null);
   const [conflict, setConflict] = useState<ConflictState | null>(null);
+  const [isDragOver, setIsDragOver] = useState(false);
 
-  async function handleImportFile(event: React.ChangeEvent<HTMLInputElement>): Promise<void> {
-    const file = event.target.files?.[0];
-    event.target.value = '';
-    if (!file) return;
-
+  /**
+   * Shared install-from-text path used by both the file input and the
+   * drag-and-drop zone (DESIGN.md 4.1, 4.8, 12.3): validates the text via
+   * parsePackFromText, then either installs the pack directly or surfaces
+   * the existing packId conflict flow for the user to resolve.
+   */
+  async function installFromText(text: string): Promise<void> {
     setImportError(null);
     setLastImported(null);
     setConflict(null);
 
     try {
-      const text = await file.text();
       const { pack, digest } = await parsePackFromText(text);
 
       const existing = packs.find((p) => p.packId === pack.packId);
@@ -61,6 +64,87 @@ export function PacksScreen({ db, packs, refreshPacks }: WolfAppState): JSX.Elem
       }
 
       const storedPack = bundledPackToStoredPack(pack, digest);
+      await db.put('packs', storedPack);
+      await refreshPacks();
+      setLastImported(pack.packId);
+    } catch (err) {
+      if (err instanceof WolfValidationError) {
+        setImportError(err.message);
+      } else {
+        setImportError(err instanceof Error ? err.message : String(err));
+      }
+    }
+  }
+
+  async function handleImportFile(event: React.ChangeEvent<HTMLInputElement>): Promise<void> {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    const text = await file.text();
+    await installFromText(text);
+  }
+
+  function handleDragEnter(event: React.DragEvent<HTMLDivElement>): void {
+    event.preventDefault();
+    setIsDragOver(true);
+  }
+
+  function handleDragOver(event: React.DragEvent<HTMLDivElement>): void {
+    event.preventDefault();
+    setIsDragOver(true);
+  }
+
+  function handleDragLeave(event: React.DragEvent<HTMLDivElement>): void {
+    event.preventDefault();
+    setIsDragOver(false);
+  }
+
+  async function handleDrop(event: React.DragEvent<HTMLDivElement>): Promise<void> {
+    event.preventDefault();
+    setIsDragOver(false);
+
+    const files = event.dataTransfer?.files;
+    if (!files || files.length !== 1) return;
+
+    const file = files[0];
+    if (!file) return;
+
+    const text = await file.text();
+    await installFromText(text);
+  }
+
+  /**
+   * Installs a curated example pack (EXAMPLE_PACKS). The bundled JSON is
+   * still validated through the same parsePackFromText path as a file
+   * import -- it is never trusted blindly. Already-installed examples
+   * disable the button rather than re-running the conflict flow, since
+   * "Installed" is a simpler, equally-correct UX for a curated list.
+   */
+  async function handleInstallExample(examplePack: unknown): Promise<void> {
+    setImportError(null);
+    setLastImported(null);
+    setConflict(null);
+
+    try {
+      const { pack, digest } = await parsePackFromText(JSON.stringify(examplePack));
+
+      if (packs.some((p) => p.packId === pack.packId)) {
+        return;
+      }
+
+      if (!db) {
+        throw new Error('The local database is not ready yet.');
+      }
+
+      const storedPack: StoredPack = {
+        packId: pack.packId,
+        packVersion: pack.packVersion,
+        digest,
+        trust: 'bundled',
+        installedAt: new Date().toISOString(),
+        pack,
+      };
       await db.put('packs', storedPack);
       await refreshPacks();
       setLastImported(pack.packId);
@@ -101,13 +185,26 @@ export function PacksScreen({ db, packs, refreshPacks }: WolfAppState): JSX.Elem
 
       <section aria-labelledby="import-pack-heading">
         <h2 id="import-pack-heading">Import pack</h2>
-        <label htmlFor="import-pack-file">Import a Wolf capture pack (.wolfpack.json)</label>
-        <input
-          id="import-pack-file"
-          type="file"
-          accept=".json,.wolfpack.json,application/json"
-          onChange={handleImportFile}
-        />
+        <div
+          className={isDragOver ? 'drop-zone drop-zone--active' : 'drop-zone'}
+          onDragEnter={handleDragEnter}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+        >
+          <label htmlFor="import-pack-file">Import a Wolf capture pack (.wolfpack.json)</label>
+          <input
+            id="import-pack-file"
+            type="file"
+            accept=".json,.wolfpack.json,application/json"
+            onChange={handleImportFile}
+          />
+          <p className="meta">
+            {isDragOver
+              ? 'Drop the pack file to import it.'
+              : 'Or drag and drop a .wolfpack.json file here.'}
+          </p>
+        </div>
 
         {importError ? (
           <p role="alert" className="notice">
@@ -144,6 +241,40 @@ export function PacksScreen({ db, packs, refreshPacks }: WolfAppState): JSX.Elem
             </div>
           </div>
         ) : null}
+      </section>
+
+      <hr className="section-rule" />
+
+      <section aria-labelledby="example-packs-heading">
+        <h2 id="example-packs-heading">Example packs</h2>
+        <p className="muted">
+          Curated capture packs that ship with the app. Installing one adds it to your packs below with
+          &ldquo;bundled&rdquo; trust.
+        </p>
+        <ul className="card-list">
+          {EXAMPLE_PACKS.map((example) => {
+            const exampleAsRecord = example.pack as { packId?: unknown };
+            const examplePackId =
+              typeof exampleAsRecord?.packId === 'string' ? exampleAsRecord.packId : undefined;
+            const alreadyInstalled = examplePackId != null && packs.some((p) => p.packId === examplePackId);
+            return (
+              <li key={example.label} className="card">
+                <h3>{example.label}</h3>
+                <p className="muted">{example.blurb}</p>
+                <div className="row">
+                  <button
+                    type="button"
+                    className="btn"
+                    disabled={alreadyInstalled}
+                    onClick={() => handleInstallExample(example.pack)}
+                  >
+                    {alreadyInstalled ? 'Installed' : 'Install example'}
+                  </button>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
       </section>
 
       <hr className="section-rule" />

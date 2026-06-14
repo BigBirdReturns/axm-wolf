@@ -14,7 +14,7 @@
     "test:e2e:real": "playwright test",
     "typecheck": "tsc --noEmit",
     "lint": "node scripts/lint-boundary.mjs",
-    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+    "check": "npm run lint && npm run typecheck && npm test && npm run test:components && npm run build"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",

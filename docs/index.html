@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AXM Wolf — Testimony you can hand someone</title>
+<meta name="description" content="AXM Wolf is a local-first engine for capturing tacit institutional knowledge through structured, self-directed testimony. The first bundled pack is The Wolf's Deposition.">
+<meta name="theme-color" content="#7a4a1e">
+<link rel="icon" href="./app/icons/icon-192.png">
+<!--
+  No remote font requests. Wolf's whole identity is "nothing leaves the
+  device" — the landing page practices what the app preaches. AXM Arc's
+  landing loads Google Fonts; Wolf's does not. The display/serif/mono
+  stacks below fall back to system + Georgia + ui-monospace, which match
+  the in-app theme in src/app/styles/theme.css.
+-->
+<style>
+:root {
+  /* Paper palette shared with src/app/styles/theme.css (DESIGN.md 10.5). */
+  --paper:        #f0ebe0;
+  --paper-alt:    #e8e2d5;
+  --ink:          #0e0d0c;
+  --ink-2:        #2c2a27;
+  --muted:        #5e5850;
+  --dim:          #948c80;
+  --rule:         #b8afa0;
+  --accent:       #7a4a1e;
+  --accent-lt:    #f0e3d4;
+  --accent-mid:   rgba(122,74,30,0.18);
+  --accent-dp:    #5a3412;
+  --positive:     #4a7a52;
+  --positive-lt:  #e3f0e5;
+  --display: 'Helvetica Neue Condensed', 'Arial Narrow', 'Liberation Sans Narrow', system-ui, sans-serif;
+  --serif:   Georgia, 'Times New Roman', serif;
+  --mono:    ui-monospace, 'SF Mono', Consolas, 'Liberation Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { background: var(--paper-alt); scroll-behavior: smooth; }
+body {
+  max-width: 860px; margin: 0 auto; background: var(--paper);
+  color: var(--ink-2); font-family: var(--serif); font-size: 17px;
+  line-height: 1.7; -webkit-font-smoothing: antialiased;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* ── MASTHEAD ──────────────────────────────────────────────── */
+.masthead { padding: 72px 64px 0; }
+.kicker {
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent);
+  display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+}
+.kicker::before { content: ''; display: block; width: 32px; height: 2px; background: var(--accent); flex-shrink: 0; }
+h1.title {
+  font-family: var(--display); font-weight: 800; font-size: 72px;
+  line-height: 0.95; letter-spacing: -0.02em; color: var(--ink);
+  text-transform: uppercase; margin-bottom: 28px;
+}
+h1.title .accent { color: var(--accent); }
+h1.title .sub {
+  display: block; font-family: var(--mono); font-size: 13px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+  margin-top: 16px; line-height: 1.45;
+}
+.meta-grid {
+  border-top: 3px solid var(--ink); padding: 20px 0 22px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px 40px;
+  font-family: var(--mono); font-size: 11px; line-height: 1.6;
+  color: var(--muted); border-bottom: 1px solid var(--rule); margin-top: 28px;
+}
+.meta-grid strong { color: var(--ink); font-weight: 600; }
+.abstract {
+  margin: 32px 0 0; padding: 0 0 0 24px; border-left: 2px solid var(--ink); max-width: 620px;
+}
+.abstract-label {
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent);
+  margin-bottom: 10px; display: block;
+}
+.abstract p { font-family: var(--serif); font-size: 18px; line-height: 1.6; color: var(--ink-2); margin: 0; }
+
+/* ── LAUNCH BLOCK ──────────────────────────────────────────── */
+.launch {
+  margin: 36px 0 8px; padding: 28px 32px;
+  background: var(--ink); color: var(--paper-alt);
+  border-left: 4px solid var(--accent);
+  display: grid; grid-template-columns: 1fr auto; gap: 24px; align-items: center;
+}
+.launch-text { display: block; }
+.launch-eyebrow {
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-lt);
+  margin-bottom: 6px;
+}
+.launch-line {
+  font-family: var(--display); font-size: 28px; font-weight: 700;
+  line-height: 1.1; letter-spacing: -0.01em; color: var(--paper);
+  text-transform: uppercase;
+}
+.launch-cta {
+  display: inline-block; padding: 14px 22px; min-height: 44px;
+  background: var(--accent); color: var(--paper); text-decoration: none;
+  font-family: var(--display); font-size: 18px; font-weight: 700;
+  letter-spacing: 0.02em; text-transform: uppercase;
+  border: 0; transition: background 0.15s;
+}
+.launch-cta:hover, .launch-cta:focus-visible { background: var(--accent-dp); outline: none; }
+.launch-cta:focus-visible { box-shadow: 0 0 0 3px var(--accent-lt); }
+.launch-note {
+  font-family: var(--mono); font-size: 10px; color: rgba(240,235,224,0.6);
+  letter-spacing: 0.06em; margin-top: 10px;
+}
+
+/* ── ARTICLE ───────────────────────────────────────────────── */
+.article { padding: 0 64px; }
+h2 {
+  font-family: var(--display); font-size: 32px; font-weight: 800;
+  line-height: 1.05; letter-spacing: -0.01em; color: var(--ink);
+  margin: 72px 0 24px; padding-top: 20px; border-top: 2px solid var(--ink);
+  display: flex; gap: 18px; align-items: baseline; text-transform: uppercase;
+}
+h2 .sec-num {
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.12em; color: var(--muted); flex-shrink: 0;
+}
+h3 {
+  font-family: var(--display); font-weight: 700; font-size: 22px;
+  letter-spacing: -0.005em; color: var(--ink); text-transform: uppercase;
+  margin: 36px 0 14px;
+}
+p { margin-bottom: 20px; color: var(--ink-2); }
+strong { font-weight: 600; color: var(--ink); }
+code, .mono {
+  font-family: var(--mono); font-size: 0.92em; color: var(--ink);
+  background: var(--paper-alt); padding: 1px 6px; border-radius: 2px;
+}
+.lede::first-letter {
+  font-family: var(--display); font-weight: 800; font-size: 5.4em;
+  line-height: 0.84; float: left; margin: 6px 14px -2px 0;
+  color: var(--accent); letter-spacing: -0.04em;
+}
+.pull {
+  border-left: 3px solid var(--ink); padding: 20px 28px; margin: 40px 0;
+  background: var(--paper-alt); font-family: var(--display);
+  font-size: 24px; font-weight: 700; line-height: 1.3;
+  letter-spacing: -0.01em; color: var(--ink);
+}
+.pull.accent { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
+
+/* ── STAT STRIP ────────────────────────────────────────────── */
+.stat-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); margin: 24px 0;
+}
+.stat-cell { padding: 22px 24px; border-right: 1px solid var(--rule); }
+.stat-cell:last-child { border-right: 0; }
+.stat-lbl {
+  font-family: var(--mono); font-size: 9px; font-weight: 600;
+  letter-spacing: 0.10em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+}
+.stat-val {
+  font-family: var(--display); font-size: 40px; font-weight: 800;
+  line-height: 1; letter-spacing: -0.02em; color: var(--ink);
+}
+.stat-val.accent { color: var(--accent); }
+.stat-sub { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+
+/* ── GUARANTEE CARDS ───────────────────────────────────────── */
+.guar-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 24px 0; }
+.guar {
+  border: 1px solid var(--rule); background: var(--paper-alt); padding: 22px;
+  position: relative; overflow: hidden;
+}
+.guar::after {
+  content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%;
+  background: var(--accent); transform: scaleY(0); transform-origin: top; transition: transform 0.25s;
+}
+.guar:hover::after { transform: scaleY(1); }
+@media (prefers-reduced-motion: reduce) {
+  .guar::after { transition: none; transform: scaleY(1); }
+}
+.guar-tag {
+  font-family: var(--mono); font-size: 9px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px;
+}
+.guar-name {
+  font-family: var(--display); font-size: 22px; font-weight: 700;
+  color: var(--ink); text-transform: uppercase; margin-bottom: 8px;
+}
+.guar-body { font-size: 14px; line-height: 1.6; color: var(--ink-2); margin-bottom: 10px; }
+.guar-evidence {
+  font-family: var(--mono); font-size: 10px; color: var(--muted);
+  letter-spacing: 0.04em; border-top: 1px solid var(--rule); padding-top: 8px; margin-top: 8px;
+}
+.guar-evidence strong { color: var(--accent-dp); font-weight: 600; }
+
+/* ── THREE LAYERS TABLE ────────────────────────────────────── */
+.layers {
+  display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 0;
+  border-top: 1px solid var(--ink); margin: 24px 0;
+}
+.layers .hdr {
+  font-family: var(--mono); font-size: 9px; font-weight: 600;
+  letter-spacing: 0.10em; text-transform: uppercase; color: var(--muted);
+  padding: 12px 16px; border-bottom: 1px solid var(--rule); background: var(--paper-alt);
+}
+.layers .cell {
+  padding: 18px 16px; border-bottom: 1px solid var(--rule); font-size: 14px; color: var(--ink-2);
+}
+.layers .cell strong { display: block; font-family: var(--display); font-size: 17px;
+  text-transform: uppercase; letter-spacing: -0.005em; color: var(--ink); margin-bottom: 4px; }
+.layers .cell.mono { font-family: var(--mono); font-size: 12px; color: var(--accent-dp); }
+
+/* ── ANNOTATED TREE ────────────────────────────────────────── */
+.tree {
+  background: var(--paper-alt); border-left: 3px solid var(--accent);
+  padding: 22px 28px; margin: 24px 0; font-family: var(--mono);
+  font-size: 12px; line-height: 1.9; color: var(--ink); white-space: pre;
+  overflow-x: auto;
+}
+.tree .note { color: var(--muted); }
+
+/* ── ROADMAP ───────────────────────────────────────────────── */
+.roadmap { margin-top: 24px; }
+.rm-row {
+  display: grid; grid-template-columns: 100px 1fr 100px; gap: 16px;
+  padding: 14px 0; border-top: 1px solid var(--rule); align-items: baseline;
+}
+.rm-row:last-child { border-bottom: 1px solid var(--rule); }
+.rm-when { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); }
+.rm-what { font-size: 14px; color: var(--ink-2); line-height: 1.5; }
+.rm-what strong { font-family: var(--display); font-size: 17px; font-weight: 700; color: var(--ink); display: block; margin-bottom: 2px; text-transform: uppercase; }
+.rm-status { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-align: right; }
+.rm-status.shipped { color: var(--positive); }
+.rm-status.next    { color: var(--accent); }
+.rm-status.later   { color: var(--dim); }
+
+/* ── ECOSYSTEM STRIP ───────────────────────────────────────── */
+.eco-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 24px 0; }
+@media (min-width: 720px) { .eco-strip { grid-template-columns: repeat(7, 1fr); } }
+.eco-tile {
+  background: var(--paper-alt); border: 1px solid var(--rule);
+  padding: 18px 14px; text-decoration: none; color: inherit; transition: border-color 0.2s;
+}
+.eco-tile:hover, .eco-tile:focus-visible { border-color: var(--accent); outline: none; }
+.eco-tile.self { background: var(--accent-lt); border-color: var(--accent); }
+.eco-type { font-family: var(--mono); font-size: 8px; letter-spacing: 0.12em; color: var(--dim); text-transform: uppercase; margin-bottom: 4px; }
+.eco-tile.self .eco-type { color: var(--accent-dp); }
+.eco-name { font-family: var(--display); font-size: 17px; font-weight: 700; color: var(--ink); text-transform: uppercase; margin-bottom: 3px; }
+.eco-desc { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+/* ── COLOPHON ──────────────────────────────────────────────── */
+.colophon { padding: 36px 64px 48px; border-top: 1px solid var(--rule); margin-top: 60px; }
+.colophon h3 {
+  font-family: var(--mono); font-size: 10px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px;
+}
+.colophon p { font-family: var(--mono); font-size: 11px; line-height: 1.65; color: var(--muted); margin-bottom: 8px; }
+.colophon a { color: var(--accent-dp); }
+
+@media (max-width: 720px) {
+  body { font-size: 16px; }
+  h1.title { font-size: 48px; }
+  .masthead, .article, .colophon { padding-left: 28px; padding-right: 28px; }
+  .launch { grid-template-columns: 1fr; gap: 16px; }
+  .stat-strip { grid-template-columns: repeat(2, 1fr); }
+  .stat-cell:nth-child(2) { border-right: 0; }
+  .guar-grid { grid-template-columns: 1fr; }
+  .layers { grid-template-columns: 1fr; }
+  .layers .hdr:nth-child(n+4) { display: none; }
+  .rm-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="kicker">AXM Wolf · v0.1.0 · 2026</div>
+  <h1 class="title">Testimony you can <span class="accent">hand someone</span>
+    <span class="sub">A local-first capture engine for tacit institutional knowledge — structured, self-directed, offline</span>
+  </h1>
+
+  <div class="meta-grid">
+    <div><strong>Engine:</strong> TypeScript, pure functions, 200 tests, no inference</div>
+    <div><strong>Format:</strong> Portable JSON capture packs, schema-validated at the trust boundary</div>
+    <div><strong>UI:</strong> React PWA, AXM paper style, install-to-home, works offline</div>
+    <div><strong>First pack:</strong> &ldquo;The Wolf&rsquo;s Deposition&rdquo; — 7 sections, 58 prompts</div>
+    <div><strong>Status:</strong> v0.1 shipped. Pack-import UI and signed packs on the roadmap.</div>
+    <div><strong>Family:</strong> A spoke in the AXM ecosystem. Same thesis, different artifact.</div>
+  </div>
+
+  <aside class="abstract">
+    <span class="abstract-label">Abstract</span>
+    <p>A capture pack is a portable JSON question library that defines a domain (sections, lenses, prompts, presentation). The engine runs it the same way every time, on any device, with no network. The subject answers in any order. The browser preserves the testimony locally. The record exports to durable, portable formats. No backend, no accounts, no LLM at runtime.</p>
+  </aside>
+
+  <div class="launch" role="region" aria-label="Launch the app">
+    <div class="launch-text">
+      <div class="launch-eyebrow">Try it in your browser</div>
+      <div class="launch-line">Launch The Wolf&rsquo;s Deposition</div>
+      <div class="launch-note">Loads in your browser. Stores responses in this browser only. No account, no upload.</div>
+    </div>
+    <a class="launch-cta" href="./app/">Launch app &rarr;</a>
+  </div>
+</header>
+
+<div class="article">
+
+<h2><span class="sec-num">I</span>What Wolf Is</h2>
+
+<p class="lede">Wolf captures tacit institutional knowledge from people who were present when consequential work, decisions, failures, and informal practices occurred. Traditional knowledge systems assume documentation happens during the work; it usually doesn&rsquo;t. Wolf does retrospective capture: a structured question library helps someone recover memory, they answer asynchronously, and the browser preserves the testimony. Retirees. Founders after exit. Departing operators. Incident witnesses. People whose experience exists primarily in memory.</p>
+
+<p>The interface is replaceable. The question library is not. A capture pack contains the domain work — what to ask, how to group prompts, what contextual cues recover memory, what metadata makes the resulting record intelligible later. The engine knows nothing about the domain. It validates the pack, stores responses, manages revisions, computes progress, runs search, builds bundles, renders exports. Load a different pack and you have a different deposition.</p>
+
+<div class="pull accent">The pack is the question contract. If it passes <span class="mono">validatePack()</span>, it will run.</div>
+
+<h2><span class="sec-num">II</span>Four Guarantees</h2>
+
+<div class="guar-grid">
+  <article class="guar">
+    <div class="guar-tag">01</div>
+    <div class="guar-name">Append-only testimony</div>
+    <div class="guar-body">Editing a saved response creates a new revision; the prior revision is preserved and exportable. There is no overwrite mode. The raw response record is the source of truth — every derived view (progress, search, summaries) computes from it.</div>
+    <div class="guar-evidence"><strong>commitResponse</strong> · supersedes chain · revision history view</div>
+  </article>
+  <article class="guar">
+    <div class="guar-tag">02</div>
+    <div class="guar-name">Inert packs</div>
+    <div class="guar-body">Imported packs are JSON, not code. The schema rejects HTML, JavaScript URLs, unknown fields, and prototype-pollution keys. All content renders through React text nodes — never <span class="mono">innerHTML</span>. Validation fails loudly; nothing partially installs.</div>
+    <div class="guar-evidence"><strong>validatePack</strong> · hand-rolled schema · bounded sizes</div>
+  </article>
+  <article class="guar">
+    <div class="guar-tag">03</div>
+    <div class="guar-name">Content-free engine</div>
+    <div class="guar-body">No prompt text, subject name, or section label is hardcoded in engine or storage code. A boundary linter scans every commit. The first pack is bundled as data; the engine doesn&rsquo;t know about William Sandhu any more than it knows about the next subject.</div>
+    <div class="guar-evidence"><span class="mono">src/engine/</span> has zero imports from <span class="mono">src/packs/</span> or <span class="mono">src/app/</span></div>
+  </article>
+  <article class="guar">
+    <div class="guar-tag">04</div>
+    <div class="guar-name">Offline-first</div>
+    <div class="guar-body">After first load, the app shell and bundled pack are precached. Capture, edit, search, import, and export work with the browser offline. Voice input is a progressive enhancement — labeled as browser- and network-dependent, never described as offline.</div>
+    <div class="guar-evidence">IndexedDB · service worker · user-controlled update activation</div>
+  </article>
+</div>
+
+<div class="stat-strip">
+  <div class="stat-cell">
+    <div class="stat-lbl">Engine tests</div>
+    <div class="stat-val accent">200</div>
+    <div class="stat-sub">node:test · zero npm deps for the gate</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-lbl">First pack</div>
+    <div class="stat-val">58</div>
+    <div class="stat-sub">prompts across 7 sections</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-lbl">Runtime requests</div>
+    <div class="stat-val">0</div>
+    <div class="stat-sub">no analytics, no fonts, no API</div>
+  </div>
+  <div class="stat-cell">
+    <div class="stat-lbl">Backends required</div>
+    <div class="stat-val">0</div>
+    <div class="stat-sub">static host, your browser, your data</div>
+  </div>
+</div>
+
+<h2><span class="sec-num">III</span>The First Record</h2>
+
+<p>The first bundled pack is <strong>The Wolf&rsquo;s Deposition</strong> — a 40-year career in institutional IT, organized as a Pulp Fiction-inflected oral history of William Sandhu, framed as a deposition rather than an interview. Seven sections trace early years through HP, Agilent, EDS, Autonomy, and the aftermath. Fifty-eight prompts, each grouped under a lens (The Room, The Decision, The Person, The Moment, The Thing Nobody Said).</p>
+
+<p>The legacy proof-of-concept claimed sixty-two questions. The source contained fifty-eight. We did not invent four to match the copy. The mismatch is documented in <span class="mono">reference/legacy-v0/AUDIT.md</span> and the test suite asserts the real counts so the lie cannot grow back. Every legacy <span class="mono">era__index</span> key has a checked-in migration to a semantic prompt ID; running Wolf on the same origin migrates the legacy answers into one record with imported revisions and a recovery report for anything unmapped.</p>
+
+<div class="pull">The first pack is Wolf&rsquo;s gold shard. It is preserved, not edited. A change to the engine that breaks its tests fails the gate.</div>
+
+<h2><span class="sec-num">IV</span>Three Layers, in Miniature</h2>
+
+<p>AXM&rsquo;s knowledge / journal / hot-buffer architecture (<a href="https://github.com/bigbirdreturns/axm-genesis/blob/main/docs/THREE_LAYERS.md">three-layer model</a>) shows up inside Wolf the same shape, smaller.</p>
+
+<div class="layers">
+  <div class="hdr">Layer</div>
+  <div class="hdr">In Wolf</div>
+  <div class="hdr">Mutability</div>
+
+  <div class="cell"><strong>Knowledge</strong>Immutable reference material.</div>
+  <div class="cell">The <strong>capture pack</strong>: validated, digested, snapshotted into each record so the record stays intelligible even if the pack changes later.</div>
+  <div class="cell mono">Immutable per version</div>
+
+  <div class="cell"><strong>Journal</strong>Immutable decision traces.</div>
+  <div class="cell"><strong>Committed revisions</strong>: append-only, timestamped, source-attributed (typed / speech_transcript / mixed / imported). The audit of what was said and when.</div>
+  <div class="cell mono">Append-only</div>
+
+  <div class="cell"><strong>Hot buffer</strong>Append-only working memory.</div>
+  <div class="cell"><strong>Drafts</strong>: autosaved every 600ms, flushed on visibilitychange, never confused with the committed record. <em>Save to Record</em> is the only action that creates a revision.</div>
+  <div class="cell mono">Working state</div>
+</div>
+
+<h2><span class="sec-num">V</span>Portable Formats</h2>
+
+<p>Both formats are plain JSON. They round-trip losslessly: an exported bundle re-imported into a clean install rebuilds every revision, every draft (optional), every timestamp.</p>
+
+<div class="tree">.wolfpack.json   <span class="note">// portable capture pack</span>
+  schemaVersion
+  packId, packVersion, engineVersion
+  title, subtitle, description
+  subjectDefaults
+  theme { accent }
+  lenses []                <span class="note">// e.g. The Room, The Decision</span>
+  sections []
+    promptIds []
+  prompts []
+    id, kind: "long_text"
+    lensId
+    text                   <span class="note">// plain text — no HTML</span>
+    context, tags, required
+  exportDefaults
+
+.wolfrecord.json  <span class="note">// portable record bundle</span>
+  schemaVersion
+  recordId, title, subject, status
+  pack { packId, packVersion, packDigest, snapshot }
+  responses []
+    promptId
+    revisions []           <span class="note">// append-only; full history</span>
+  drafts []                <span class="note">// optional, opt-in</span>
+  provenance { engineVersion, appVersion, exportedAt }
+</div>
+
+<p>Every installed pack carries a SHA-256 <strong>packDigest</strong> over canonical JSON. The digest detects accidental or untracked changes; it does not prove authorship. Signed packs through AXM verification tooling (Genesis suites) are on the roadmap, not the present — Wolf must never present a digest as a signature.</p>
+
+<h2><span class="sec-num">VI</span>Quick Start</h2>
+
+<div class="tree">git clone https://github.com/BigBirdReturns/axm-wolf.git
+cd axm-wolf
+npm ci
+npm run check              <span class="note">// lint + typecheck + 200 tests + build</span>
+npm run dev                <span class="note">// dev server at http://localhost:5173</span>
+
+<span class="note"># Deploy modes (DESIGN 9.4):</span>
+npm run build                                             <span class="note">// platform (AXM Wolf)</span>
+VITE_DEPLOY_MODE=single-pack \
+  VITE_DEFAULT_PACK_ID=wolfs-deposition npm run build   <span class="note">// single-pack</span>
+</div>
+
+<p>More: <a href="./METHODOLOGY.md">Capture methodology</a> · <a href="./PACK_AUTHORING.md">Pack authoring</a> · <a href="./PRIVACY.md">Privacy model</a> · <a href="./DEPLOY.md">Deployment</a> · <a href="./AXM_FAMILY.md">AXM family context</a> · <a href="../STATUS.md">Status &amp; known gaps</a> · <a href="https://github.com/BigBirdReturns/axm-wolf">Repository</a>.</p>
+
+<h2><span class="sec-num">VII</span>Roadmap</h2>
+
+<div class="roadmap">
+  <div class="rm-row">
+    <div class="rm-when">v0.1</div>
+    <div class="rm-what"><strong>Capture core</strong>Engine, storage, app, PWA, the first pack, family landing.</div>
+    <div class="rm-status shipped">SHIPPED</div>
+  </div>
+  <div class="rm-row">
+    <div class="rm-when">v0.2</div>
+    <div class="rm-what"><strong>Pack import UI</strong>Drop in a <span class="mono">.wolfpack.json</span> file; valid packs install as <em>imported_unsigned</em>, invalid ones are rejected with the validation error.</div>
+    <div class="rm-status shipped">SHIPPED</div>
+  </div>
+  <div class="rm-row">
+    <div class="rm-when">v0.2</div>
+    <div class="rm-what"><strong>Browser-driven e2e</strong>The full DESIGN&nbsp;14.6 Playwright flow: draft survival, offline reload, lossless round-trip.</div>
+    <div class="rm-status next">NEXT</div>
+  </div>
+  <div class="rm-row">
+    <div class="rm-when">v0.3</div>
+    <div class="rm-what"><strong>Component tests</strong>RTL coverage of launch / save status / speech states / import errors.</div>
+    <div class="rm-status later">LATER</div>
+  </div>
+  <div class="rm-row">
+    <div class="rm-when">v1.0</div>
+    <div class="rm-what"><strong>Signed packs</strong>Packs attestable through AXM Genesis suites — the existing <span class="mono">packDigest</span> becomes the signed-payload anchor.</div>
+    <div class="rm-status later">LATER</div>
+  </div>
+</div>
+
+<h2><span class="sec-num">VIII</span>The AXM Family</h2>
+
+<p>Wolf is a spoke. The container format and family conventions come from the protocol; Wolf adapts them to a browser-local domain. See <a href="./AXM_FAMILY.md">AXM_FAMILY.md</a> for the full transfer audit — what Wolf adopted from Arc and Genesis, what it deliberately did not, and the future seam where Wolf&rsquo;s digest meets Genesis&rsquo;s signatures.</p>
+
+<div class="eco-strip">
+  <a class="eco-tile" href="https://bigbirdreturns.github.io/axm-genesis/">
+    <div class="eco-type">Kernel</div>
+    <div class="eco-name">Genesis</div>
+    <div class="eco-desc">Signed shard format. ML-DSA-44.</div>
+  </a>
+  <a class="eco-tile" href="https://bigbirdreturns.github.io/axm-core/">
+    <div class="eco-type">Hub</div>
+    <div class="eco-name">Core</div>
+    <div class="eco-desc">Knowledge compilation platform.</div>
+  </a>
+  <a class="eco-tile" href="https://bigbirdreturns.github.io/axm-arc/">
+    <div class="eco-type">Spoke</div>
+    <div class="eco-name">Arc</div>
+    <div class="eco-desc">Deterministic organizational worlds.</div>
+  </a>
+  <a class="eco-tile self" href="./">
+    <div class="eco-type">Spoke · This</div>
+    <div class="eco-name">Wolf</div>
+    <div class="eco-desc">Tacit testimony capture.</div>
+  </a>
+  <a class="eco-tile" href="https://bigbirdreturns.github.io/axm-chat/">
+    <div class="eco-type">Spoke</div>
+    <div class="eco-name">Chat</div>
+    <div class="eco-desc">Conversation exports as shards.</div>
+  </a>
+  <a class="eco-tile" href="https://bigbirdreturns.github.io/axm-show/">
+    <div class="eco-type">Spoke</div>
+    <div class="eco-name">Show</div>
+    <div class="eco-desc">Drone show spec compiler.</div>
+  </a>
+  <a class="eco-tile" href="https://bigbirdreturns.github.io/axm-embodied/">
+    <div class="eco-type">Spoke</div>
+    <div class="eco-name">Embodied</div>
+    <div class="eco-desc">Flash freeze for regulated robotics.</div>
+  </a>
+</div>
+
+</div><!-- /.article -->
+
+<footer class="colophon">
+  <h3>Colophon</h3>
+  <p>AXM Wolf v0.1.0 · License: see <a href="https://github.com/BigBirdReturns/axm-wolf/blob/main/LICENSE">repository</a>. Local fonts only; no remote requests from this page. Source at <a href="https://github.com/BigBirdReturns/axm-wolf">github.com/BigBirdReturns/axm-wolf</a>.</p>
+  <p>The pack is the question contract. The record is the source of truth. The engine is the audit.</p>
+</footer>
+
+</body>
+</html>

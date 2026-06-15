@@ -2,8 +2,17 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
-// `base: './'` keeps the build relative-path safe so the same `dist/`
-// output can be served from a sub-path or the repo root (DESIGN.md 11.3).
+// AXM Arc-style Pages deploy: the build output lives in `docs/app/` so the
+// same `docs/` tree carries both the hand-authored landing page
+// (`docs/index.html`) and the freshly built PWA (`docs/app/`). The build
+// directory is gitignored and produced by `npm run build` -- in CI by
+// `.github/workflows/deploy.yml`, which uploads the whole `docs/` tree to
+// GitHub Pages so visitors get the essay at `/axm-wolf/` and the running
+// app at `/axm-wolf/app/`. The base path matches `bigbirdreturns.github.io`
+// hosting; the relative `start_url`/`scope` in the manifest keep the PWA
+// install + service worker valid at any subpath (DESIGN.md 11.3).
+
+const PAGES_BASE = '/axm-wolf/app/';
 
 // Minimal ambient declaration so this file type-checks without `@types/node`
 // (the project has no other Node-typed sources). `vite.config.ts` only runs
@@ -27,7 +36,7 @@ const manifestDescription = isSinglePack
   : 'A local-first engine for capturing tacit institutional knowledge through structured, self-directed testimony.';
 
 export default defineConfig({
-  base: './',
+  base: PAGES_BASE,
   plugins: [
     react(),
     VitePWA({
@@ -39,8 +48,7 @@ export default defineConfig({
         name: manifestName,
         short_name: manifestShortName,
         description: manifestDescription,
-        // Relative start_url/scope keep the manifest valid at both
-        // `https://example.com/` and `https://example.com/axm-wolf/`
+        // Relative start_url/scope keep the manifest valid at any subpath
         // (DESIGN.md 11.3).
         start_url: '.',
         scope: '.',
@@ -77,6 +85,7 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: 'dist',
+    outDir: 'docs/app',
+    emptyOutDir: true,
   },
 });

@@ -34,6 +34,41 @@
 }
 
 /* ------------------------------------------------------------------ */
+/* Cadence nudge (DESIGN 2.6, 2.7, 12.2: gentle, dismissible, informational) */
+/* ------------------------------------------------------------------ */
+
+.cadence-nudge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  background: var(--accent-lt);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  color: var(--accent-dp);
+  font-size: 0.9rem;
+}
+
+.cadence-nudge__dismiss {
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--accent-dp);
+  font-family: var(--mono);
+  cursor: pointer;
+}
+
+.cadence-nudge__dismiss:focus-visible {
+  outline: 2px solid var(--accent-dp);
+  outline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------ */
 /* Record home summary                                                  */
 /* ------------------------------------------------------------------ */
 

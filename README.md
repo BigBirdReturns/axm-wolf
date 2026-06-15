@@ -83,7 +83,7 @@ The app is installable as a PWA and works offline after the first load: the app 
 
 ## Pack authoring
 
-To write your own capture pack, see [docs/PACK_AUTHORING.md](docs/PACK_AUTHORING.md).
+To write your own capture pack, see [docs/PACK_AUTHORING.md](docs/PACK_AUTHORING.md) for the schema and [docs/METHODOLOGY.md](docs/METHODOLOGY.md) for the cognitive-interview foundation behind Wolf's lens system.
 
 ## Known limitations (v0.1)
 
@@ -108,4 +108,4 @@ Architectural reserves for future versions (DESIGN.md Part 18), not v0.1 commitm
 
 ## AXM family
 
-AXM Wolf is part of the AXM family of tools: `axm` (a semantic compiler), `axm-genesis` (a cryptographic kernel for signed knowledge shards), `axm-arc` (an organizational simulation engine), and `axm-wolf` (testimony capture, this repository). Wolf's `packDigest` field is the future seam for genesis-signed packs: a future pack format can carry an author signature over the same digested payload without changing the record model.
+AXM Wolf is part of the AXM family of tools: `axm` (a semantic compiler), `axm-genesis` (a cryptographic kernel for signed knowledge shards), `axm-arc` (an organizational simulation engine), and `axm-wolf` (testimony capture, this repository). Wolf's `packDigest` field is the future seam for genesis-signed packs: a future pack format can carry an author signature over the same digested payload without changing the record model. See [docs/AXM_FAMILY.md](docs/AXM_FAMILY.md) for the full family context and Arc/Genesis transfer audit.

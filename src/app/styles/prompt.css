@@ -33,6 +33,39 @@
   font-family: var(--serif);
 }
 
+.prompt-screen__followup {
+  font-size: 0.85rem;
+}
+
+.prompt-screen__followup-toggle {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.5rem;
+  margin-left: -0.5rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  width: fit-content;
+}
+
+.prompt-screen__followup-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.prompt-screen__followup-text {
+  font-style: italic;
+  color: var(--muted);
+  font-family: var(--serif);
+  margin-top: 0.25rem;
+}
+
 .prompt-screen__field textarea {
   min-height: 14rem;
   resize: vertical;

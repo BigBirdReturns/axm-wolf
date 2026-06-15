@@ -8,10 +8,13 @@
     "build": "tsc -p tsconfig.build.json && vite build",
     "test": "tsc -p tsconfig.test.json && node --test dist-tests/tests/**/*.js",
     "test:watch": "node --test --watch dist-tests/tests/**/*.js",
+    "test:components": "vitest run",
+    "test:components:watch": "vitest",
     "test:e2e": "node scripts/e2e-smoke.mjs",
+    "test:e2e:real": "playwright test",
     "typecheck": "tsc --noEmit",
     "lint": "node scripts/lint-boundary.mjs",
-    "check": "npm run lint && npm run typecheck && npm test && npm run build"
+    "check": "npm run lint && npm run typecheck && npm test && npm run test:components && npm run build"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",
@@ -22,10 +25,16 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@playwright/test": "1.49.1",
+    "@testing-library/dom": "10.4.1",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
+    "@testing-library/user-event": "14.6.1",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
     "eslint": "^9.17.0",
     "fake-indexeddb": "6.2.5",
+    "jsdom": "29.1.1",
     "playwright": "^1.49.1",
     "vite-plugin-pwa": "1.3.0",
     "vitest": "^2.1.8"

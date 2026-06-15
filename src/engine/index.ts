@@ -7,5 +7,6 @@ export { searchRecords } from './search.js';
 export { buildRecordBundle, importRecordBundle } from './bundle.js';
 export { renderMarkdown, renderPlainText } from './render.js';
 export { sanitizeFilename } from './filenames.js';
+export { cadenceIntervalDays } from './cadence.js';
 export { countWords } from './text.js';
 export type * from './types.js';

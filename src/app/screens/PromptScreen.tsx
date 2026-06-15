@@ -148,6 +148,7 @@ export function PromptScreen({ db, recordId, promptId, onNavigate }: PromptScree
       setRecord={setRecord}
       promptText={prompt.text}
       contextCue={prompt.context ?? null}
+      suggestedFollowUp={prompt.suggestedFollowUp ?? null}
       lensLabel={lens?.label ?? prompt.lensId}
       sectionLabel={section?.label ?? null}
       sectionRangeLabel={section?.rangeLabel ?? null}
@@ -172,6 +173,7 @@ type PromptScreenBodyProps = {
   setRecord: (record: WolfRecord) => void;
   promptText: string;
   contextCue: string | null;
+  suggestedFollowUp: string | null;
   lensLabel: string;
   sectionLabel: string | null;
   sectionRangeLabel: string | null;
@@ -194,6 +196,7 @@ function PromptScreenBody({
   setRecord,
   promptText,
   contextCue,
+  suggestedFollowUp,
   lensLabel,
   sectionLabel,
   sectionRangeLabel,
@@ -208,6 +211,8 @@ function PromptScreenBody({
   onNavigate,
 }: PromptScreenBodyProps): JSX.Element {
   const { text, setText, status, flush } = useDraftAutosave(db, recordId, promptId, initialText);
+
+  const [followUpExpanded, setFollowUpExpanded] = useState(false);
 
   // Source attribution for the next commit (DESIGN 10.3): two booleans
   // tracking whether the text currently in the textarea includes any
@@ -285,6 +290,25 @@ function PromptScreenBody({
       </h1>
 
       {contextCue ? <p className="prompt-screen__cue">{contextCue}</p> : null}
+
+      {suggestedFollowUp ? (
+        <div className="prompt-screen__followup">
+          <button
+            type="button"
+            className="prompt-screen__followup-toggle"
+            aria-expanded={followUpExpanded}
+            aria-controls="prompt-followup-text"
+            onClick={() => setFollowUpExpanded((expanded) => !expanded)}
+          >
+            Go deeper
+          </button>
+          {followUpExpanded ? (
+            <p id="prompt-followup-text" className="prompt-screen__followup-text">
+              {suggestedFollowUp}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
 
       <div className="prompt-screen__field">
         <label htmlFor="prompt-response">Your response</label>

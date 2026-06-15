@@ -5,7 +5,7 @@
 // order, and links to search/export/records.
 
 import { useEffect, useState } from 'react';
-import { computeProgress, type WolfRecord } from '../../engine/index.js';
+import { computeProgress, cadenceIntervalDays, type WolfRecord } from '../../engine/index.js';
 import { loadRecord, type WolfDb } from '../../storage/index.js';
 import { routeToHash } from '../routes.js';
 import { ProgressStrip } from '../components/ProgressStrip.js';
@@ -23,6 +23,7 @@ export function RecordHomeScreen({
 }): JSX.Element {
   const [record, setRecord] = useState<WolfRecord | null | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
+  const [cadenceNudgeDismissed, setCadenceNudgeDismissed] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -88,8 +89,35 @@ export function RecordHomeScreen({
   const exportHash = routeToHash({ name: 'record-export', recordId });
   const searchHash = routeToHash({ name: 'record-search', recordId });
 
+  // Gentle, opt-out cadence nudge (DESIGN.md 2.6, 2.7, 12.2). Informational
+  // only -- never blocking, never for 'once' packs, and never if the record
+  // was updated within the pack's recommended interval.
+  const cadenceIntervalDaysValue = pack.recommendedCadence ? cadenceIntervalDays(pack.recommendedCadence) : null;
+  const daysSinceUpdate = Math.floor((Date.now() - new Date(record.updatedAt).getTime()) / (24 * 60 * 60 * 1000));
+  const showCadenceNudge =
+    !cadenceNudgeDismissed &&
+    cadenceIntervalDaysValue !== null &&
+    daysSinceUpdate >= cadenceIntervalDaysValue;
+
   return (
     <div className="stack">
+      {showCadenceNudge ? (
+        <p className="cadence-nudge">
+          <span>
+            Your last entry was {daysSinceUpdate} day{daysSinceUpdate === 1 ? '' : 's'} ago. This pack suggests a{' '}
+            {cadenceLabel(pack.recommendedCadence)} rhythm — pick any prompt when you&rsquo;re ready.
+          </span>
+          <button
+            type="button"
+            className="cadence-nudge__dismiss"
+            aria-label="Dismiss cadence reminder"
+            onClick={() => setCadenceNudgeDismissed(true)}
+          >
+            Dismiss
+          </button>
+        </p>
+      ) : null}
+
       <section>
         <h1>{record.title}</h1>
         <p className="muted">
@@ -176,4 +204,19 @@ export function RecordHomeScreen({
       </section>
     </div>
   );
+}
+
+function cadenceLabel(cadence: WolfRecord['packSnapshot']['recommendedCadence']): string {
+  switch (cadence) {
+    case 'weekly':
+      return 'weekly';
+    case 'biweekly':
+      return 'biweekly';
+    case 'monthly':
+      return 'monthly';
+    case 'campaign':
+      return 'campaign';
+    default:
+      return 'regular';
+  }
 }

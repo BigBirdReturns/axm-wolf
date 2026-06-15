@@ -5,6 +5,7 @@ const slugPattern = /^[a-z0-9]+(?:[.-][a-z0-9]+)*$/;
 const semverPattern = /^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/;
 const hexColorPattern = /^#[0-9a-fA-F]{6}$/;
 const forbiddenKeys = new Set(['__proto__', 'prototype', 'constructor']);
+const cadenceValues = new Set(['once', 'weekly', 'biweekly', 'monthly', 'campaign']);
 
 function assertPlainObject(value: unknown, path: string): asserts value is Record<string, unknown> {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) {
@@ -47,7 +48,7 @@ function assertNoHtml(value: string, path: string): void {
 
 export function validatePack(input: unknown): CapturePack {
   assertPlainObject(input, 'pack');
-  assertAllowedKeys(input, ['schemaVersion', 'packId', 'packVersion', 'engineVersion', 'title', 'subtitle', 'description', 'subjectDefaults', 'theme', 'lenses', 'sections', 'prompts', 'exportDefaults'], 'pack');
+  assertAllowedKeys(input, ['schemaVersion', 'packId', 'packVersion', 'engineVersion', 'title', 'subtitle', 'description', 'subjectDefaults', 'theme', 'lenses', 'sections', 'prompts', 'exportDefaults', 'recommendedCadence'], 'pack');
   if (input.schemaVersion !== 1) throw new WolfValidationError('schemaVersion must be 1');
   const packId = requiredString(input.packId, 'packId', 120);
   assertSlug(packId, 'packId');
@@ -156,5 +157,12 @@ export function validatePack(input: unknown): CapturePack {
     return { basename: optionalString(input.exportDefaults.basename, 'exportDefaults.basename', 160) ?? null };
   })();
 
-  return { schemaVersion: 1, packId, packVersion, engineVersion, title, subtitle, description, subjectDefaults, theme: { accent }, lenses, sections, prompts, exportDefaults };
+  const recommendedCadence = input.recommendedCadence === undefined ? undefined : (() => {
+    if (typeof input.recommendedCadence !== 'string' || !cadenceValues.has(input.recommendedCadence)) {
+      throw new WolfValidationError('recommendedCadence must be one of once, weekly, biweekly, monthly, campaign');
+    }
+    return input.recommendedCadence as CapturePack['recommendedCadence'];
+  })();
+
+  return { schemaVersion: 1, packId, packVersion, engineVersion, title, subtitle, description, subjectDefaults, theme: { accent }, lenses, sections, prompts, exportDefaults, recommendedCadence };
 }

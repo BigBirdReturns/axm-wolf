@@ -1,0 +1,378 @@
+{
+  "schemaVersion": 1,
+  "packId": "contracting-officers-deposition",
+  "packVersion": "1.0.0",
+  "engineVersion": ">=0.1.0 <1.0.0",
+  "title": "The Contracting Officer's Deposition",
+  "subtitle": "What the record shows. What the record doesn't.",
+  "description": "A structured primary-source record for a departing federal contracting officer. Thirty prompts across five sections surface the institutional knowledge the contract file never captures: the discretion behind the determinations, the negotiations behind the price memos, and the judgment that retires with the warrant. Answer in any order. No order is required.",
+  "subjectDefaults": {
+    "displayName": "The Contracting Officer",
+    "subtitle": "Federal Acquisition — Primary Source",
+    "organization": null,
+    "role": "Contracting Officer"
+  },
+  "theme": {
+    "accent": "#33475b"
+  },
+  "lenses": [
+    { "id": "program", "label": "The Program" },
+    { "id": "award", "label": "The Award" },
+    { "id": "record", "label": "The Record" },
+    { "id": "room", "label": "The Room" },
+    { "id": "call", "label": "The Call" }
+  ],
+  "sections": [
+    {
+      "id": "authority",
+      "label": "The Authority",
+      "rangeLabel": null,
+      "description": "Where your discretion really began and ended. What the warrant let you do, and what the organization let you do.",
+      "promptIds": [
+        "authority.first-warrant-signature",
+        "authority.discretion-versus-power",
+        "authority.other-transaction-tradeoff",
+        "authority.determination-versus-reasoning",
+        "authority.closest-to-refusing",
+        "authority.unauthorized-commitments"
+      ]
+    },
+    {
+      "id": "vendor",
+      "label": "The Vendor",
+      "rangeLabel": null,
+      "description": "How you read the companies across the table. What the proposal said, and what the room told you.",
+      "promptIds": [
+        "vendor.shape-of-the-field",
+        "vendor.proposal-versus-company",
+        "vendor.knew-the-winner",
+        "vendor.pnm-versus-negotiation",
+        "vendor.complicated-relationship",
+        "vendor.award-you-defend"
+      ]
+    },
+    {
+      "id": "program-office",
+      "label": "The Program Office",
+      "rangeLabel": null,
+      "description": "Who you actually served, and where the requirements really came from.",
+      "promptIds": [
+        "program-office.who-ran-it",
+        "program-office.requirement-origin",
+        "program-office.year-end-obligation",
+        "program-office.igce-built-backward",
+        "program-office.gold-plated-requirement",
+        "program-office.hardest-no"
+      ]
+    },
+    {
+      "id": "the-record",
+      "label": "The Record",
+      "rangeLabel": null,
+      "description": "What went into the file, and what the file was never going to hold.",
+      "promptIds": [
+        "the-record.file-you-were-proud-of",
+        "the-record.two-different-stories",
+        "the-record.between-the-lines",
+        "the-record.corrective-action",
+        "the-record.in-scope-or-not",
+        "the-record.what-you-taught"
+      ]
+    },
+    {
+      "id": "the-call",
+      "label": "The Call",
+      "rangeLabel": null,
+      "description": "One decision, taken apart. The hardest judgment you made, and what it cost.",
+      "promptIds": [
+        "the-call.the-hardest-one",
+        "the-call.what-you-knew",
+        "the-call.who-was-in-the-room",
+        "the-call.the-alternative",
+        "the-call.what-it-cost",
+        "the-call.for-the-record"
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "id": "authority.first-warrant-signature",
+      "kind": "long_text",
+      "lensId": "program",
+      "text": "Describe the first acquisition where the decision was genuinely yours to make: not your supervisor's, not legal's, not the program manager's. What was being bought, what was the dollar value, and what did it feel like to sign knowing the obligation now belonged to the government?",
+      "context": "Your Certificate of Appointment. The SF 1402 in the drawer. The first signature that bound the government.",
+      "tags": ["warrant", "discretion", "first"],
+      "required": false
+    },
+    {
+      "id": "authority.discretion-versus-power",
+      "kind": "long_text",
+      "lensId": "room",
+      "text": "Every contracting officer learns where their real discretion ends, and it is rarely where the regulation says it does. Describe a time you held the legal authority to make a call but knew the organization would never let you make it. Who held the actual leverage, and how did you know?",
+      "context": "FAR 1.602-2 gives you the authority. The org chart gives someone else the power.",
+      "tags": ["discretion", "authority", "power"],
+      "required": false
+    },
+    {
+      "id": "authority.other-transaction-tradeoff",
+      "kind": "long_text",
+      "lensId": "award",
+      "text": "Walk through an Other Transaction you executed or watched closely. What could you do under OT authority that you could never have done under the FAR, and what did you give up, in oversight, in competition, in protest protection, to get that speed?",
+      "context": "10 USC 4022. The prototype OT. The consortium model and its follow-on production.",
+      "tags": ["ota", "prototype", "speed"],
+      "required": false
+    },
+    {
+      "id": "authority.determination-versus-reasoning",
+      "kind": "long_text",
+      "lensId": "record",
+      "text": "When you wrote a determination, a Justification and Approval, a price-reasonableness finding, a responsibility determination, describe one where the written rationale and your actual reasoning were not the same thing. What did the document have to say that the moment did not?",
+      "context": "The determination has to stand on its own. Your real reasoning does not get to.",
+      "tags": ["determination", "documentation", "reasoning"],
+      "required": false
+    },
+    {
+      "id": "authority.closest-to-refusing",
+      "kind": "long_text",
+      "lensId": "call",
+      "text": "Describe the moment you came closest to refusing to sign something your chain of command wanted signed. What was the action, what was the pressure, and what did you decide? If you signed, what did you tell yourself; if you refused, what did it cost you?",
+      "context": "The warrant is personal. So is the liability that comes with it.",
+      "tags": ["pressure", "refusal", "judgment"],
+      "required": false,
+      "suggestedFollowUp": "If they signed, ask what specifically made it defensible to them. If they refused, ask who backed them and who did not."
+    },
+    {
+      "id": "authority.unauthorized-commitments",
+      "kind": "long_text",
+      "lensId": "room",
+      "text": "Talk about unauthorized commitments: the times someone told a contractor to start work before there was a contract. How often did it really happen, how did you handle the ratification, and what did everyone quietly agree never to put in writing?",
+      "context": "Someone always says 'just get started.' Then it lands on your desk as a ratification.",
+      "tags": ["ratification", "unauthorized-commitment", "off-record"],
+      "required": false
+    },
+    {
+      "id": "vendor.shape-of-the-field",
+      "kind": "long_text",
+      "lensId": "program",
+      "text": "Pick one competitive source selection where the field of offerors told a story. Who showed up, who you expected but did not see, and what the shape of the competition told you about how the market really viewed this requirement?",
+      "context": "Industry day. The responses to the sources-sought notice. Who is actually in this market, and who only pretends to be.",
+      "tags": ["competition", "market", "source-selection"],
+      "required": false
+    },
+    {
+      "id": "vendor.proposal-versus-company",
+      "kind": "long_text",
+      "lensId": "room",
+      "text": "You learn to read a proposal against the company behind it. Describe a time the written proposal was excellent and you did not believe a word of it, or it was mediocre and you knew the company would deliver. What were you reading that the evaluation criteria could not score?",
+      "context": "Section M scores the proposal. You were scoring the company.",
+      "tags": ["proposal", "past-performance", "judgment"],
+      "required": false
+    },
+    {
+      "id": "vendor.knew-the-winner",
+      "kind": "long_text",
+      "lensId": "award",
+      "text": "Describe a source selection where you knew who was going to win before the evaluation was finished, and the work after that was building a record that could survive a protest. Who won, when did you actually know, and how did the documented evaluation catch up to the answer?",
+      "context": "Best-value tradeoff. The source selection decision document. The protest you could already feel coming.",
+      "tags": ["source-selection", "ssdd", "protest"],
+      "required": false,
+      "suggestedFollowUp": "Push on the exact moment of certainty and what evidence tipped it: past performance, a key-person resume, a price point."
+    },
+    {
+      "id": "vendor.pnm-versus-negotiation",
+      "kind": "long_text",
+      "lensId": "record",
+      "text": "Take a deal you remember and compare its price negotiation memorandum to the actual negotiation. What did the memo say about how you reached fair and reasonable, and what really happened in the room: the leverage, the bluff, the number you would have accepted but never named?",
+      "context": "The PNM is the story of the negotiation. It is not the negotiation.",
+      "tags": ["pnm", "negotiation", "price"],
+      "required": false
+    },
+    {
+      "id": "vendor.complicated-relationship",
+      "kind": "long_text",
+      "lensId": "room",
+      "text": "Describe a vendor relationship that got complicated: a contractor who knew your program office too well, a former colleague across the table, an incumbent who controlled information you needed. How did you manage the conflict, and what did you make sure never went into an email?",
+      "context": "Organizational conflict of interest has a clean definition and a messy reality.",
+      "tags": ["oci", "incumbent", "relationships"],
+      "required": false
+    },
+    {
+      "id": "vendor.award-you-defend",
+      "kind": "long_text",
+      "lensId": "call",
+      "text": "Name the award you most defend or most regret. Who won, who lost, what did the losing offeror never understand about why, and if the same proposals landed on your desk tomorrow, would you make the same call?",
+      "context": "Someone is still angry about this one. Tell them why they lost.",
+      "tags": ["award", "regret", "judgment"],
+      "required": false
+    },
+    {
+      "id": "program-office.who-ran-it",
+      "kind": "long_text",
+      "lensId": "program",
+      "text": "Describe the program office you served longest. Who actually ran it, the program manager on the org chart or someone else, and what was this program really trying to buy underneath the words of the requirement?",
+      "context": "The performance work statement says one thing. The program wants another.",
+      "tags": ["program-office", "requirements", "power"],
+      "required": false
+    },
+    {
+      "id": "program-office.requirement-origin",
+      "kind": "long_text",
+      "lensId": "room",
+      "text": "Requirements come from somewhere, and it is rarely a clean process. Describe where a requirement you executed actually originated: a vendor who helped write it, a capability someone had already decided to buy, a number that worked backward from the budget. How much of the competition that followed was real?",
+      "context": "The wired requirement. The vendor who wrote the spec. The brand name wearing a disguise.",
+      "tags": ["requirements", "wired", "competition"],
+      "required": false,
+      "suggestedFollowUp": "Ask who wrote the first draft of the requirement document, by role if not by name."
+    },
+    {
+      "id": "program-office.year-end-obligation",
+      "kind": "long_text",
+      "lensId": "award",
+      "text": "Talk about year-end. The expiring money, the rush to obligate, the deals that happened in September that would never have survived March. Walk through one. What got bought because the money was about to die?",
+      "context": "Use it or lose it. The fourth-quarter spend. The operations-and-maintenance funds that expire at midnight on the thirtieth.",
+      "tags": ["year-end", "color-of-money", "obligation"],
+      "required": false
+    },
+    {
+      "id": "program-office.igce-built-backward",
+      "kind": "long_text",
+      "lensId": "record",
+      "text": "The independent government cost estimate is supposed to be independent. Describe a time the estimate was built to justify a number rather than to find one. Who produced it, what figure did it have to land near, and what did you know that it did not say?",
+      "context": "The IGCE. Independent in name.",
+      "tags": ["igce", "cost-estimate", "documentation"],
+      "required": false
+    },
+    {
+      "id": "program-office.gold-plated-requirement",
+      "kind": "long_text",
+      "lensId": "room",
+      "text": "Describe a requirement you knew was gold-plated: capability the program office demanded that it did not need and would not use. Did you push back, did you buy it anyway, and who was that requirement actually serving?",
+      "context": "Nobody gets fired for over-specifying. You knew who it was really for.",
+      "tags": ["gold-plating", "requirements", "off-record"],
+      "required": false
+    },
+    {
+      "id": "program-office.hardest-no",
+      "kind": "long_text",
+      "lensId": "call",
+      "text": "Describe the hardest time you had to tell a program office it could not have something: an impossible schedule, a sole source it could not justify, a requirement that would not survive a protest. What did you tell them, and did they listen?",
+      "context": "You were the one who had to say no to the customer you served.",
+      "tags": ["program-office", "refusal", "judgment"],
+      "required": false
+    },
+    {
+      "id": "the-record.file-you-were-proud-of",
+      "kind": "long_text",
+      "lensId": "program",
+      "text": "Think about a single contract file you built that you were proud of, one that would survive any audit, any protest, any records request. What was the acquisition, and what did it take to make the record that clean?",
+      "context": "FAR Subpart 4.8. The file that tells the whole story. The file that survives scrutiny.",
+      "tags": ["contract-file", "documentation", "audit"],
+      "required": false
+    },
+    {
+      "id": "the-record.two-different-stories",
+      "kind": "long_text",
+      "lensId": "record",
+      "text": "Now the opposite. Describe a contract action where what is in the official file and what actually happened are two different stories. Not fraud, judgment. What would a records request show, and what would it never reach?",
+      "context": "What the record shows. What the record does not.",
+      "tags": ["record", "foia", "reality"],
+      "required": false,
+      "suggestedFollowUp": "If they generalize, narrow it to one contract and one specific thing the file omits."
+    },
+    {
+      "id": "the-record.between-the-lines",
+      "kind": "long_text",
+      "lensId": "room",
+      "text": "During discussions, things get said that never make it into the record: what you signaled to an offeror about their weaknesses, what you could not say outright but made sure they understood. Describe a discussions cycle where the real communication happened between the lines.",
+      "context": "Meaningful discussions. The deficiency you could only point at sideways.",
+      "tags": ["discussions", "competitive-range", "off-record"],
+      "required": false
+    },
+    {
+      "id": "the-record.corrective-action",
+      "kind": "long_text",
+      "lensId": "record",
+      "text": "Describe a protest that ended in corrective action. What did the record say the problem was, what was the problem actually, and what did taking corrective action let everyone avoid admitting?",
+      "context": "GAO. The corrective action that fixed the paperwork rather than the decision.",
+      "tags": ["protest", "corrective-action", "gao"],
+      "required": false
+    },
+    {
+      "id": "the-record.in-scope-or-not",
+      "kind": "long_text",
+      "lensId": "award",
+      "text": "Modifications live on a single judgment: in scope, or a new procurement. Describe the modification where you made that call closest to the line. What did you decide, how did you document it, and would it have survived a challenge?",
+      "context": "Cardinal change. The mod that arguably should have been a new competition.",
+      "tags": ["modification", "scope", "judgment"],
+      "required": false
+    },
+    {
+      "id": "the-record.what-you-taught",
+      "kind": "long_text",
+      "lensId": "room",
+      "text": "Every senior contracting officer trains the ones coming up. What did you teach your interns and your junior contracting officers about the gap between the regulation and the job, the part you could only say out loud and never write into a class?",
+      "context": "The FAR is the syllabus. You taught the rest in the hallway.",
+      "tags": ["mentorship", "tacit", "off-record"],
+      "required": false
+    },
+    {
+      "id": "the-call.the-hardest-one",
+      "kind": "long_text",
+      "lensId": "call",
+      "text": "Describe the single hardest decision of your career as a contracting officer. Set the scene first: the acquisition, the stakes, the moment it landed on you. What made this the one you still carry?",
+      "context": "The one you still think about. Start with the room it happened in.",
+      "tags": ["decision", "stakes", "peak"],
+      "required": false
+    },
+    {
+      "id": "the-call.what-you-knew",
+      "kind": "long_text",
+      "lensId": "record",
+      "text": "On that decision: what did you actually know at the moment you had to decide, and what did you not? What information would have changed the call, and did you have the time to go get it?",
+      "context": "You decide with the record you have, not the one you wish you had.",
+      "tags": ["decision", "uncertainty", "information"],
+      "required": false
+    },
+    {
+      "id": "the-call.who-was-in-the-room",
+      "kind": "long_text",
+      "lensId": "room",
+      "text": "Who else was in the room for that decision, and who was not but should have been? Whose advice did you take, whose did you override, and who let you carry it alone?",
+      "context": "You signed it. Say who stood with you and who stepped back.",
+      "tags": ["decision", "advice", "off-record"],
+      "required": false
+    },
+    {
+      "id": "the-call.the-alternative",
+      "kind": "long_text",
+      "lensId": "award",
+      "text": "What was the alternative you did not choose? Walk through the path you rejected as carefully as the one you took: where it would have led, and why it was wrong, or whether you are still not certain it was.",
+      "context": "The branch you did not take is preserved only here.",
+      "tags": ["decision", "alternative", "fork"],
+      "required": false
+    },
+    {
+      "id": "the-call.what-it-cost",
+      "kind": "long_text",
+      "lensId": "program",
+      "text": "What did that decision cost, to the program, to the contractor, to you? What happened downstream that you saw coming, and what surprised you?",
+      "context": "Every call leaves a wake. Describe yours.",
+      "tags": ["decision", "consequences", "program"],
+      "required": false
+    },
+    {
+      "id": "the-call.for-the-record",
+      "kind": "long_text",
+      "lensId": "call",
+      "text": "A contracting officer thirty years from now could read the file on that decision and see the documentation. What would you want them to know that the file will never tell them? This is the part of the record that retires with you.",
+      "context": "The thing nobody said. Say it now, for the record.",
+      "tags": ["decision", "legacy", "tacit"],
+      "required": false,
+      "suggestedFollowUp": "This is the capstone. Give them silence and room; do not move on quickly."
+    }
+  ],
+  "exportDefaults": {
+    "basename": "contracting-officers-deposition"
+  },
+  "recommendedCadence": "once"
+}

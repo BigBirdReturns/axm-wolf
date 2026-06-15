@@ -1,11 +1,12 @@
 // Offline/PWA static smoke check (DESIGN.md Part 11, Part 14.6).
 //
-// Builds the app, then statically verifies the `dist/` output:
+// Builds the app, then statically verifies the `docs/app/` output:
 // - a service worker and web manifest are present
-// - `index.html` references all build assets via relative paths (no
-//   leading '/'), which is required for base-path safety (DESIGN.md 11.3)
-//   so the same build works at both `https://example.com/` and
-//   `https://example.com/axm-wolf/`.
+// - `index.html` references all build assets via the Pages base path,
+//   never via leading-'/' root paths that would break a subpath deploy
+//   (DESIGN.md 11.3). The configured base is `/axm-wolf/app/`; we accept
+//   that prefix or any non-leading-'/' relative reference, and reject
+//   anything else.
 //
 // This does not require a browser and runs in any CI environment. A full
 // Playwright offline e2e test (build + preview + offline reload) is added
@@ -17,7 +18,8 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 const root = process.cwd();
-const distDir = join(root, 'dist');
+const distDir = join(root, 'docs', 'app');
+const BASE = '/axm-wolf/app/';
 
 console.log('Building app (vite build)...');
 execFileSync('npx', ['vite', 'build'], { cwd: root, stdio: 'inherit' });
@@ -25,7 +27,7 @@ execFileSync('npx', ['vite', 'build'], { cwd: root, stdio: 'inherit' });
 function requireFile(relPath) {
   const full = join(distDir, relPath);
   if (!existsSync(full)) {
-    throw new Error(`Expected dist/${relPath} to exist after build, but it does not.`);
+    throw new Error(`Expected docs/app/${relPath} to exist after build, but it does not.`);
   }
   return full;
 }
@@ -34,8 +36,8 @@ const swPath = requireFile('sw.js');
 const manifestPath = requireFile('manifest.webmanifest');
 const indexPath = requireFile('index.html');
 
-console.log('dist/sw.js present:', swPath);
-console.log('dist/manifest.webmanifest present:', manifestPath);
+console.log('docs/app/sw.js present:', swPath);
+console.log('docs/app/manifest.webmanifest present:', manifestPath);
 
 const indexHtml = readFileSync(indexPath, 'utf8');
 
@@ -46,11 +48,16 @@ if (refs.length === 0) {
   throw new Error('index.html has no src/href references to check.');
 }
 
-const absoluteRefs = refs.filter((ref) => ref.startsWith('/') && !ref.startsWith('//'));
-if (absoluteRefs.length > 0) {
+// References must either start with the Pages base path or be a non-root
+// relative path. A leading "/" that isn't the configured base would break
+// the deploy.
+const badRefs = refs.filter(
+  (ref) => ref.startsWith('/') && !ref.startsWith('//') && !ref.startsWith(BASE),
+);
+if (badRefs.length > 0) {
   throw new Error(
-    `index.html contains absolute (leading "/") asset references, which break base-path ` +
-      `safety (DESIGN.md 11.3): ${absoluteRefs.join(', ')}`,
+    `index.html contains absolute references that do not match the Pages base ` +
+      `path "${BASE}" (DESIGN.md 11.3): ${badRefs.join(', ')}`,
   );
 }
 
@@ -61,13 +68,5 @@ for (const name of mustReference) {
   }
 }
 
-console.log('index.html asset references (all relative):', refs);
-
-// The service worker itself must also be discoverable via a relative path
-// from the site root -- vite-plugin-pwa serves it at dist/sw.js, which
-// resolves relative to the deployed base path automatically.
-if (!existsSync(swPath)) {
-  throw new Error('dist/sw.js missing.');
-}
-
+console.log('index.html asset references:', refs);
 console.log('Offline/PWA static smoke check passed.');

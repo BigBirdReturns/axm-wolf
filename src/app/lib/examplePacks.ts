@@ -8,6 +8,7 @@
 // pack (see useWolfApp.ts), so it is intentionally not duplicated here.
 
 import contractingOfficersDepositionPackJson from '../../packs/contracting-officers-deposition/contracting-officers-deposition.wolfpack.json' with { type: 'json' };
+import nightSuperintendentsDepositionPackJson from '../../packs/night-superintendents-deposition/night-superintendents-deposition.wolfpack.json' with { type: 'json' };
 
 export type ExamplePack = {
   pack: unknown;
@@ -21,5 +22,11 @@ export const EXAMPLE_PACKS: ExamplePack[] = [
     label: "The Contracting Officer's Deposition",
     blurb:
       'Thirty prompts across five sections for a departing federal contracting officer: the discretion behind the determinations, the negotiations behind the price memos, and the judgment that retires with the warrant.',
+  },
+  {
+    pack: nightSuperintendentsDepositionPackJson,
+    label: "The Night Superintendent's Deposition",
+    blurb:
+      'A demonstration pack with a fictional subject: twelve prompts across three eras of a night superintendent at an invented water district. A companion demo record with fully invented testimony lives in examples/night-superintendent/ and can be imported to see a filled record.',
   },
 ];

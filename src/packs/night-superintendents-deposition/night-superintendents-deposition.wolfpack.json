@@ -1,0 +1,176 @@
+{
+  "schemaVersion": 1,
+  "packId": "night-superintendents-deposition",
+  "packVersion": "1.0.0",
+  "engineVersion": ">=0.1.0 <1.0.0",
+  "title": "The Night Superintendent's Deposition",
+  "subtitle": "Thirty-one years of nights. The plant never knew the difference.",
+  "description": "A demonstration pack with a fictional subject. Marisol Vega ran the night shift at the Ash Creek Municipal Water District from 1993 to 2024 -- from paper logbooks and pump-bearing whine through the SCADA years to the Labor Day flood and after. She is invented, the district is invented, and every word of testimony in the companion demo record is invented. The pack exists to show what a Wolf capture pack and a filled record look like. Twelve prompts across three eras. Answer in any order. No order is required.",
+  "subjectDefaults": {
+    "displayName": "Marisol Vega",
+    "subtitle": "Night Superintendent (ret.) -- Fictional Demo Subject",
+    "organization": "Ash Creek Municipal Water District (fictional)",
+    "role": "Night Superintendent"
+  },
+  "theme": {
+    "accent": "#26566b"
+  },
+  "lenses": [
+    { "id": "plant", "label": "The Plant" },
+    { "id": "call", "label": "The 3 A.M. Call" },
+    { "id": "practice", "label": "The Workaround" },
+    { "id": "ledger", "label": "The Unwritten Ledger" }
+  ],
+  "sections": [
+    {
+      "id": "pumphouse",
+      "label": "The Pumphouse Years",
+      "rangeLabel": "1993-2004",
+      "description": "Paper logs, four pumps, and a predecessor who kept the real map in his head.",
+      "promptIds": [
+        "pumphouse.first-night-alone",
+        "pumphouse.what-gus-kept-in-his-head",
+        "pumphouse.paper-log-ritual",
+        "pumphouse.first-main-break"
+      ]
+    },
+    {
+      "id": "scada",
+      "label": "The Glass Room",
+      "rangeLabel": "2004-2015",
+      "description": "The screens arrive. What changed in the control room, and what only pretended to.",
+      "promptIds": [
+        "scada.day-the-screens-arrived",
+        "scada.trusting-the-sensor",
+        "scada.vendor-knowledge",
+        "scada.alarm-flood-night"
+      ]
+    },
+    {
+      "id": "flood",
+      "label": "The Flood and After",
+      "rangeLabel": "2015-2024",
+      "description": "Labor Day 2015, the report that got filed, and the decade of consequences.",
+      "promptIds": [
+        "flood.labor-day-timeline",
+        "flood.what-the-report-left-out",
+        "flood.rebuilding-the-crew",
+        "flood.last-walkthrough"
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "id": "pumphouse.first-night-alone",
+      "kind": "long_text",
+      "lensId": "plant",
+      "text": "Describe the first night you ran the plant alone. Walk through the building as it was: what you could hear, what you were told to watch, and what you were told to leave alone.",
+      "context": "Ash Creek high-service pumphouse, 1993.",
+      "tags": ["place", "first-night", "pumphouse"],
+      "suggestedFollowUp": "What did the building sound like when something was wrong?"
+    },
+    {
+      "id": "pumphouse.what-gus-kept-in-his-head",
+      "kind": "long_text",
+      "lensId": "ledger",
+      "text": "Your predecessor kept knowledge that never made it into the operations manual. What did he know that you had to learn the hard way, and how did you finally learn it?",
+      "context": "Gus Ferreira worked the plant for twenty-six years before you.",
+      "tags": ["predecessor", "tacit-knowledge", "valves"],
+      "suggestedFollowUp": "What happened to that knowledge when he was gone?"
+    },
+    {
+      "id": "pumphouse.paper-log-ritual",
+      "kind": "long_text",
+      "lensId": "practice",
+      "text": "Describe the paper logbook ritual: what got written down, what deliberately didn't, and who the log was really written for.",
+      "context": null,
+      "tags": ["logbook", "records", "practice"],
+      "suggestedFollowUp": "Did the things that were left out ever come back to matter?"
+    },
+    {
+      "id": "pumphouse.first-main-break",
+      "kind": "long_text",
+      "lensId": "call",
+      "text": "Tell the story of your first major main break on night shift. Who did you call, in what order, and which call wasn't on any list?",
+      "context": "Winter, mid-1990s.",
+      "tags": ["main-break", "incident", "call-list"],
+      "suggestedFollowUp": "How long did that unofficial call stay on your personal list?"
+    },
+    {
+      "id": "scada.day-the-screens-arrived",
+      "kind": "long_text",
+      "lensId": "plant",
+      "text": "Describe the control room the day the SCADA screens went live. What changed in the room, and what only pretended to change?",
+      "context": "The district's first SCADA system, 2004.",
+      "tags": ["scada", "control-room", "transition"],
+      "suggestedFollowUp": "Where did people look before the screens, and where did they look after?"
+    },
+    {
+      "id": "scada.trusting-the-sensor",
+      "kind": "long_text",
+      "lensId": "practice",
+      "text": "When did you learn the difference between what the sensor said and what the plant was doing? Describe the workaround you built and who you taught it to.",
+      "context": null,
+      "tags": ["sensors", "workaround", "training"],
+      "suggestedFollowUp": "Is that workaround still in use, as far as you know?"
+    },
+    {
+      "id": "scada.vendor-knowledge",
+      "kind": "long_text",
+      "lensId": "ledger",
+      "text": "What did the district come to depend on that only the vendor understood? When did you first realize it, and what did you do about it?",
+      "context": null,
+      "tags": ["vendor", "dependency", "institutional-risk"],
+      "suggestedFollowUp": "Who at the district understands it today?"
+    },
+    {
+      "id": "scada.alarm-flood-night",
+      "kind": "long_text",
+      "lensId": "call",
+      "text": "Describe the worst alarm-flood night: the moment the screens became noise, and what you fell back on instead.",
+      "context": null,
+      "tags": ["alarms", "incident", "fallback"],
+      "suggestedFollowUp": "What changed about the alarm configuration afterward, if anything?"
+    },
+    {
+      "id": "flood.labor-day-timeline",
+      "kind": "long_text",
+      "lensId": "call",
+      "text": "Walk the timeline of Labor Day 2015 from your first phone call to the moment you knew the plant would hold. Which decisions were yours alone?",
+      "context": "The Ash Creek flood, September 2015.",
+      "tags": ["flood", "timeline", "decisions"],
+      "suggestedFollowUp": "What would have happened if you had waited for permission?"
+    },
+    {
+      "id": "flood.what-the-report-left-out",
+      "kind": "long_text",
+      "lensId": "ledger",
+      "text": "The after-action report was written and filed. What is true about that night that the report doesn't say, and why doesn't it?",
+      "context": null,
+      "tags": ["flood", "after-action", "record-gap"],
+      "suggestedFollowUp": "Who else knows the unwritten version?"
+    },
+    {
+      "id": "flood.rebuilding-the-crew",
+      "kind": "long_text",
+      "lensId": "practice",
+      "text": "After the flood, you rebuilt the night crew. What did you screen for that no job posting could say out loud?",
+      "context": null,
+      "tags": ["hiring", "crew", "succession"],
+      "suggestedFollowUp": "Who was the best hire you made, and what tipped you off?"
+    },
+    {
+      "id": "flood.last-walkthrough",
+      "kind": "long_text",
+      "lensId": "plant",
+      "text": "Describe your final walkthrough before retirement. Where did you stop, what did you touch, and what did you say to the person walking with you?",
+      "context": "June 2024.",
+      "tags": ["retirement", "walkthrough", "handoff"],
+      "suggestedFollowUp": "What did you deliberately not say?"
+    }
+  ],
+  "exportDefaults": {
+    "basename": "night-superintendents-deposition"
+  },
+  "recommendedCadence": "weekly"
+}

@@ -3,6 +3,7 @@ import {
   openWolfDb,
   listRecords,
   saveRecord,
+  requestPersistentStorage,
   type WolfDb,
 } from '../../storage/index.js';
 import {
@@ -104,6 +105,13 @@ export function useWolfApp(): WolfAppState {
 
         const recordSummaries = await listRecords(wolfDb);
 
+        // Testimony exists in this profile: ask the browser not to evict it
+        // (docs/DURABILITY.md G1). Fire-and-forget; a denial just means the
+        // Export and data screen keeps saying exports are the only backup.
+        if (recordSummaries.length > 0) {
+          void requestPersistentStorage();
+        }
+
         if (cancelled) return;
         setDb(wolfDb);
         setPacks(installedPacks);
@@ -161,6 +169,7 @@ export async function createAndSaveRecord(
   });
 
   await saveRecord(db, record);
+  void requestPersistentStorage();
   await refreshRecords();
   return recordId;
 }

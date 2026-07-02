@@ -72,8 +72,10 @@ export function SettingsScreen(): JSX.Element {
         <h2 id="data-heading">Your data</h2>
         <p className="notice">
           Responses are stored only in this browser profile, on this device. Clearing browser data
-          (or this site&rsquo;s storage) may remove a local record permanently. Exporting a record is
-          the backup and transfer mechanism &mdash; no server receives your testimony in v0.1.
+          (or this site&rsquo;s storage) removes a local record permanently &mdash; and the browser
+          itself may evict stored data under storage pressure, without asking first. Exporting a
+          record is the backup and transfer mechanism &mdash; no server receives your testimony in
+          v0.1.
         </p>
       </section>
 

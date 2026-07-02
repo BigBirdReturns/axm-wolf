@@ -4,6 +4,8 @@ import {
   saveRecord,
   deleteRecord,
   listRecords,
+  requestPersistentStorage,
+  type PersistenceState,
   type WolfDb,
 } from '../../storage/index.js';
 import {
@@ -50,6 +52,20 @@ export function ExportScreen({ db, recordId, onNavigate, onRecordDeleted }: Expo
   const [deleteTitleInput, setDeleteTitleInput] = useState('');
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [archiveError, setArchiveError] = useState<string | null>(null);
+
+  const [persistence, setPersistence] = useState<PersistenceState | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    // A record is open, so testimony exists: request persistence (idempotent)
+    // and show the honest answer (docs/DURABILITY.md G1, G4).
+    void requestPersistentStorage().then((state) => {
+      if (!cancelled) setPersistence(state);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function refreshRecord(): Promise<void> {
     const loaded = await loadRecord(db, recordId);
@@ -365,10 +381,29 @@ export function ExportScreen({ db, recordId, onNavigate, onRecordDeleted }: Expo
       <section aria-labelledby="local-data-heading">
         <h2 id="local-data-heading">Your data</h2>
         <p className="notice">
-          Responses are stored only in this browser, on this device. Clearing browser data may remove this
-          record. Exporting a record is the backup and transfer mechanism &mdash; no server receives your
+          Responses are stored only in this browser, on this device. Clearing browser data removes this
+          record &mdash; and the browser itself may evict stored data under storage pressure, without
+          asking. Exporting a record is the backup and transfer mechanism &mdash; no server receives your
           testimony.
         </p>
+        {persistence === 'persistent' ? (
+          <p className="notice">
+            Storage: <strong>persistent</strong> &mdash; this browser has agreed not to evict this app&rsquo;s
+            data automatically. Exports are still the only copy that survives this device.
+          </p>
+        ) : null}
+        {persistence === 'best-effort' ? (
+          <p className="notice">
+            Storage: <strong>best-effort</strong> &mdash; this browser has not granted persistent storage, so
+            it may reclaim this data if the device runs low on space. Export regularly.
+          </p>
+        ) : null}
+        {persistence === 'unsupported' ? (
+          <p className="notice">
+            Storage: this browser does not report whether stored data is protected from eviction. Treat
+            exported files as the only durable copy.
+          </p>
+        ) : null}
       </section>
     </div>
   );

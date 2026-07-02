@@ -11,3 +11,5 @@ export type { StoredRecordMeta, StoredResponseRow, StoredDraftRow } from './reco
 export { saveDraft, getDraft, deleteDraft, listDrafts } from './draftRepository.js';
 export { migrateLegacyAnswers } from './legacyMigration.js';
 export type { LegacyMigrationConfig, LegacyMigrationSummary } from './legacyMigration.js';
+export { getPersistenceState, requestPersistentStorage } from './persistence.js';
+export type { PersistenceState } from './persistence.js';

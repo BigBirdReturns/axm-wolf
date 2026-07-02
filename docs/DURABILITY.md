@@ -192,12 +192,12 @@ Distilled from the endstate analysis, in the spirit of DESIGN.md Part 2 — cons
 
 Near-term work items surfaced by this plan, in priority order:
 
-| # | Action | Gap | Size |
+| # | Action | Gap | Status |
 | --- | --- | --- | --- |
-| 1 | Request `navigator.storage.persist()` on first record; surface persistence state in the data screen | G1 | Small |
-| 2 | Write and freeze `docs/BUNDLE_FORMAT.md` (v1 spec, standalone, written for a future stranger) | G2 | Medium |
-| 3 | Document the manual archive-kit procedure in `docs/PRIVACY.md` or a new `docs/ARCHIVING.md`; later, a one-tap "Export archive kit" | G3 | Small, then medium |
-| 4 | Add eviction-risk language to the local-data notice and export reminders | G4 | Small |
+| 1 | Request `navigator.storage.persist()` once a record exists; surface persistence state in the data screen | G1 | **Done** — `src/storage/persistence.ts`, requested from `useWolfApp` and on record creation, shown on the Export and data screen |
+| 2 | Write and freeze `docs/BUNDLE_FORMAT.md` (v1 spec, standalone, written for a future stranger) | G2 | **Done** — `docs/BUNDLE_FORMAT.md`, frozen |
+| 3 | Document the manual archive-kit procedure; later, a one-tap "Export archive kit" | G3 | **Done** (manual procedure) — `docs/ARCHIVING.md`; one-tap kit still future |
+| 4 | Add eviction-risk language to the local-data notices | G4 | **Done** — Export and data screen, Settings, `docs/PRIVACY.md` |
 | 5 | Maintain ≥2 repo clones outside the hosting org; archive final `dist/` builds with the kit | G5 | Ongoing |
 | 6 | Schedule the signing decision against genesis availability (Part 18.1) | G6 | Future |
 

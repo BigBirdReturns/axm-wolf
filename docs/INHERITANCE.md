@@ -40,10 +40,22 @@ WOLF must satisfy each of these.
 6. **Loader UI displays computed identity as product identity.** The entry/boot
    surface presents the computed digest as the cartridge's identity — not a debug
    line, not a manifest claim.
-7. **Saves are isolated by program or digest.** Each authored program gets its own
-   save slot keyed by its authored digest; a save restores **only** into the same
-   authored program (digest + schema + arc guard). One program's save never
-   clobbers, shadows, or resurrects into another.
+7. **Saves are scoped by the runtime continuity object and guarded by authored
+   identity.** A save restores **only** into the identity it belongs to. In
+   AXM-WORLD the continuity object is effectively the program/digest slot: each
+   authored program gets its own save slot keyed by its authored digest (digest +
+   schema + arc guard), and one program's save never clobbers, shadows, or
+   resurrects into another.
+
+   **WOLF divergence (documented per the acceptance rule below):** because WOLF
+   supports multiple records against the same authored pack, WOLF keys save slots
+   by **stable record identity (`recordId`)** — the pack digest is **not** the
+   sole save key. The pack digest is carried as a **guard and provenance** field,
+   so restore refuses a record whose saved pack digest does not match the pack
+   being loaded. The inherited invariant is preserved in spirit (a save restores
+   only into the identity it belongs to); only the grain changes — record /
+   pack-digest rather than program / digest — because WOLF has multiple records
+   per pack.
 8. **Ledger entries carry the same authored digest.** Every recorded result is
    stamped with the program's authored digest, so a ledger proves which authored
    cartridge produced it and can be checked against identity.

@@ -3,7 +3,7 @@
 // This module is intentionally generic: it stores unknown-shaped values keyed
 // by IndexedDB key paths. Typed repositories built on top of `WolfDb` are
 // responsible for the shape of records, responses, drafts, packs, settings,
-// migrations, operational cases, and evidence artifacts.
+// migrations, operational cases, assets, observations, and evidence artifacts.
 //
 // Only standard IndexedDB APIs are used (indexedDB, IDBDatabase,
 // IDBTransaction, IDBObjectStore, IDBRequest, ...) so this code runs unchanged
@@ -21,6 +21,8 @@ export type StoreName =
   | 'settings'
   | 'migrations'
   | 'opsCases'
+  | 'opsAssets'
+  | 'opsObservations'
   | 'opsEvidence';
 
 export const STORE_NAMES: StoreName[] = [
@@ -31,6 +33,8 @@ export const STORE_NAMES: StoreName[] = [
   'settings',
   'migrations',
   'opsCases',
+  'opsAssets',
+  'opsObservations',
   'opsEvidence',
 ];
 
@@ -231,8 +235,24 @@ export function openWolfDb(factory?: IDBFactory): Promise<WolfDb> {
       if (!db.objectStoreNames.contains('opsCases')) {
         const opsCases = db.createObjectStore('opsCases', { keyPath: 'caseId' });
         opsCases.createIndex('byPlaybookId', 'playbookId');
+        opsCases.createIndex('byAssetId', 'assetId');
         opsCases.createIndex('byStatus', 'status');
         opsCases.createIndex('byUpdatedAt', 'updatedAt');
+      }
+
+      if (!db.objectStoreNames.contains('opsAssets')) {
+        const opsAssets = db.createObjectStore('opsAssets', { keyPath: 'assetId' });
+        opsAssets.createIndex('byCategory', 'category');
+        opsAssets.createIndex('bySiteLabel', 'siteLabel');
+        opsAssets.createIndex('byUpdatedAt', 'updatedAt');
+      }
+
+      if (!db.objectStoreNames.contains('opsObservations')) {
+        const opsObservations = db.createObjectStore('opsObservations', { keyPath: 'observationId' });
+        opsObservations.createIndex('byCaseId', 'caseId');
+        opsObservations.createIndex('byAssetId', 'assetId');
+        opsObservations.createIndex('bySourceClass', 'sourceClass');
+        opsObservations.createIndex('byObservedAt', 'observedAt');
       }
 
       if (!db.objectStoreNames.contains('opsEvidence')) {

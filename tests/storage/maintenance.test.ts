@@ -67,8 +67,22 @@ async function seedDb(db: Awaited<ReturnType<typeof openWolfDb>>): Promise<void>
   await db.put('opsCases', {
     caseId: 'ops-case-1',
     playbookId: 'recessed-lighting',
+    assetId: 'ops-asset-1',
     status: 'capturing',
     updatedAt: FIXED_NOW,
+  });
+  await db.put('opsAssets', {
+    assetId: 'ops-asset-1',
+    displayName: 'Unit B lights',
+    category: 'electrical.lighting.recessed',
+    updatedAt: FIXED_NOW,
+  });
+  await db.put('opsObservations', {
+    observationId: 'ops-observation-1',
+    caseId: 'ops-case-1',
+    assetId: 'ops-asset-1',
+    sourceClass: 'operator_observed',
+    observedAt: FIXED_NOW,
   });
   await db.put('opsEvidence', {
     artifactId: 'ops-evidence-1',

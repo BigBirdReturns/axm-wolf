@@ -10,11 +10,20 @@ export type EvidenceSourceClass =
   | 'official_source'
   | 'system_inferred';
 
+export type EvidenceConfidence = 'confirmed' | 'probable' | 'possible' | 'unknown';
+
 export type EvidencePriority = 'critical' | 'high' | 'normal' | 'low';
 
 export type CaptureSafety = 'routine' | 'power_off' | 'licensed_trade' | 'stop_and_escalate';
 
 export type InspectionStatus = 'draft' | 'capturing' | 'ready_for_review' | 'closed';
+
+export type FactProvenance = {
+  sourceClass: EvidenceSourceClass;
+  recordedAt: string;
+  evidenceArtifactIds: string[];
+  note: string | null;
+};
 
 export type FactCondition =
   | { factKey: string; operator: 'missing' | 'present' }
@@ -75,12 +84,57 @@ export type OpsInspectionCase = {
   siteLabel: string | null;
   assetId: string | null;
   facts: Record<string, ScalarFact>;
+  factProvenance: Record<string, FactProvenance>;
   completedRequestIds: string[];
   skippedRequests: SkippedCaptureRequest[];
   evidenceArtifactIds: string[];
   status: InspectionStatus;
   createdAt: string;
   updatedAt: string;
+};
+
+export type AssetStatus = 'active' | 'out_of_service' | 'retired' | 'unknown';
+
+export type OpsAssetPassport = {
+  assetId: string;
+  displayName: string;
+  category: string;
+  siteLabel: string | null;
+  locationLabel: string | null;
+  manufacturer: string | null;
+  model: string | null;
+  serialNumber: string | null;
+  installedAt: string | null;
+  status: AssetStatus;
+  attributes: Record<string, ScalarFact>;
+  evidenceArtifactIds: string[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ObservationKind =
+  | 'direct_observation'
+  | 'reported_symptom'
+  | 'documented_fact'
+  | 'measurement'
+  | 'inference';
+
+export type ObservationStatus = 'active' | 'superseded';
+
+export type OpsObservation = {
+  observationId: string;
+  caseId: string;
+  assetId: string | null;
+  kind: ObservationKind;
+  text: string;
+  sourceClass: EvidenceSourceClass;
+  sourceLabel: string | null;
+  confidence: EvidenceConfidence;
+  observedAt: string;
+  recordedAt: string;
+  evidenceArtifactIds: string[];
+  supersedesObservationId: string | null;
+  status: ObservationStatus;
 };
 
 export type EvidenceArtifact = {

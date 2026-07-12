@@ -4,10 +4,9 @@
 // spanning STORE_NAMES. WolfTx (db.ts) does not expose a `clear` primitive,
 // so each store is emptied by reading all rows with getAll and deleting them
 // one at a time by key, within the same transaction. For single-keyPath
-// stores ('packs', 'records', 'settings', 'migrations') the key is the
-// row's keyPath field; for composite-key stores ('responses', 'drafts',
-// keyPath ['recordId', 'promptId']) the key is the [recordId, promptId]
-// tuple read off each row.
+// stores the key is read from the corresponding row field; for composite-key
+// stores ('responses', 'drafts', keyPath ['recordId', 'promptId']) the key is
+// the [recordId, promptId] tuple read off each row.
 //
 // The whole operation runs inside one IDBTransaction (db.transaction), so it
 // is atomic: if any delete throws, the transaction aborts and none of the
@@ -21,17 +20,18 @@
 
 import { STORE_NAMES, type StoreName, type WolfDb } from './db.js';
 
-const SINGLE_KEY_FIELD: Record<string, string> = {
+const SINGLE_KEY_FIELD: Partial<Record<StoreName, string>> = {
   packs: 'packId',
   records: 'recordId',
   settings: 'key',
   migrations: 'id',
+  opsCases: 'caseId',
+  opsEvidence: 'artifactId',
 };
 
 /**
- * Empties every object store (packs, records, responses, drafts, settings,
- * migrations) in a single atomic read-write transaction. Safe to call on an
- * already-empty database (no-op).
+ * Empties every object store in one atomic read-write transaction. Safe to
+ * call on an already-empty database (no-op).
  */
 export async function clearAllData(db: WolfDb): Promise<void> {
   await db.transaction(STORE_NAMES, 'readwrite', async (tx) => {
@@ -50,5 +50,6 @@ function rowKey(storeName: StoreName, row: Record<string, unknown>): IDBValidKey
     return [row.recordId as string, row.promptId as string];
   }
   const field = SINGLE_KEY_FIELD[storeName];
+  if (!field) throw new Error(`No wipe-all key mapping for store ${storeName}`);
   return row[field] as IDBValidKey;
 }

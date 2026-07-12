@@ -12,6 +12,7 @@ export type Route =
   | { name: 'record-search'; recordId: string }
   | { name: 'record-export'; recordId: string }
   | { name: 'packs' }
+  | { name: 'ops' }
   | { name: 'settings' }
   | { name: 'not-found'; path: string };
 
@@ -40,6 +41,10 @@ export function parseRoute(hash: string): Route {
 
   if (segments.length === 1 && segments[0] === 'packs') {
     return { name: 'packs' };
+  }
+
+  if (segments.length === 1 && segments[0] === 'ops') {
+    return { name: 'ops' };
   }
 
   if (segments.length === 1 && segments[0] === 'settings') {
@@ -100,6 +105,8 @@ export function routeToHash(route: Route): string {
       return `#/record/${encodeURIComponent(route.recordId)}/export`;
     case 'packs':
       return '#/packs';
+    case 'ops':
+      return '#/ops';
     case 'settings':
       return '#/settings';
     case 'not-found':

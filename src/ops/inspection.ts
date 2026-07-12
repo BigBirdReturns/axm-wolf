@@ -164,11 +164,9 @@ export function buildInspectionGuidance(
   const blockers = playbook.hazardRules.filter((rule) => factConditionsMatch(inspectionCase.facts, rule.when));
   const completedIds = new Set(inspectionCase.completedRequestIds);
   const skippedIds = new Set(inspectionCase.skippedRequests.map((entry) => entry.requestId));
-
   const eligible = playbook.captureRequests.filter((request) =>
     factConditionsMatch(inspectionCase.facts, request.when),
   );
-
   const pendingRequests = eligible
     .filter((request) => !completedIds.has(request.requestId) && !skippedIds.has(request.requestId))
     .map((request, sourceIndex) => ({ request, sourceIndex }))
@@ -183,7 +181,7 @@ export function buildInspectionGuidance(
   const missingRequiredFact = playbook.factPrompts.some(
     (prompt) => prompt.required && isMissing(inspectionCase.facts[prompt.factKey]),
   );
-  const captureBlocked = blockers.some((rule) => rule.blocksCapture);
+  const captureBlocked = missingRequiredFact || blockers.some((rule) => rule.blocksCapture);
 
   return {
     blockers,
@@ -191,7 +189,7 @@ export function buildInspectionGuidance(
     pendingRequests,
     completedRequests,
     skippedRequests,
-    readyForReview: !captureBlocked && !missingRequiredFact && pendingRequests.length === 0,
+    readyForReview: !captureBlocked && pendingRequests.length === 0,
   };
 }
 

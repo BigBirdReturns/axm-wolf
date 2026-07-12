@@ -26,6 +26,8 @@ const SINGLE_KEY_FIELD: Partial<Record<StoreName, string>> = {
   settings: 'key',
   migrations: 'id',
   opsCases: 'caseId',
+  opsAssets: 'assetId',
+  opsObservations: 'observationId',
   opsEvidence: 'artifactId',
 };
 

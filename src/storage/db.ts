@@ -3,7 +3,7 @@
 // This module is intentionally generic: it stores unknown-shaped values keyed
 // by IndexedDB key paths. Typed repositories built on top of `WolfDb` are
 // responsible for the shape of records, responses, drafts, packs, settings,
-// and migrations.
+// migrations, operational cases, and evidence artifacts.
 //
 // Only standard IndexedDB APIs are used (indexedDB, IDBDatabase,
 // IDBTransaction, IDBObjectStore, IDBRequest, ...) so this code runs unchanged
@@ -11,11 +11,28 @@
 // the API under Node.
 
 export const DB_NAME = 'AXMWolf';
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 
-export type StoreName = 'packs' | 'records' | 'responses' | 'drafts' | 'settings' | 'migrations';
+export type StoreName =
+  | 'packs'
+  | 'records'
+  | 'responses'
+  | 'drafts'
+  | 'settings'
+  | 'migrations'
+  | 'opsCases'
+  | 'opsEvidence';
 
-export const STORE_NAMES: StoreName[] = ['packs', 'records', 'responses', 'drafts', 'settings', 'migrations'];
+export const STORE_NAMES: StoreName[] = [
+  'packs',
+  'records',
+  'responses',
+  'drafts',
+  'settings',
+  'migrations',
+  'opsCases',
+  'opsEvidence',
+];
 
 export type IDBTransactionMode = 'readonly' | 'readwrite';
 
@@ -209,6 +226,20 @@ export function openWolfDb(factory?: IDBFactory): Promise<WolfDb> {
       if (!db.objectStoreNames.contains('migrations')) {
         const migrations = db.createObjectStore('migrations', { keyPath: 'id' });
         migrations.createIndex('byCompletedAt', 'completedAt');
+      }
+
+      if (!db.objectStoreNames.contains('opsCases')) {
+        const opsCases = db.createObjectStore('opsCases', { keyPath: 'caseId' });
+        opsCases.createIndex('byPlaybookId', 'playbookId');
+        opsCases.createIndex('byStatus', 'status');
+        opsCases.createIndex('byUpdatedAt', 'updatedAt');
+      }
+
+      if (!db.objectStoreNames.contains('opsEvidence')) {
+        const opsEvidence = db.createObjectStore('opsEvidence', { keyPath: 'artifactId' });
+        opsEvidence.createIndex('byCaseId', 'caseId');
+        opsEvidence.createIndex('byRequestId', 'requestId');
+        opsEvidence.createIndex('byCapturedAt', 'capturedAt');
       }
     };
 

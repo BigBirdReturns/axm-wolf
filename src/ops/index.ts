@@ -2,9 +2,11 @@ export type {
   ScalarFact,
   EvidenceKind,
   EvidenceSourceClass,
+  EvidenceConfidence,
   EvidencePriority,
   CaptureSafety,
   InspectionStatus,
+  FactProvenance,
   FactCondition,
   FactPrompt,
   CaptureRequest,
@@ -12,6 +14,11 @@ export type {
   InspectionPlaybook,
   SkippedCaptureRequest,
   OpsInspectionCase,
+  AssetStatus,
+  OpsAssetPassport,
+  ObservationKind,
+  ObservationStatus,
+  OpsObservation,
   EvidenceArtifact,
   InspectionGuidance,
   MetricDirection,
@@ -38,6 +45,15 @@ export {
   buildInspectionGuidance,
   markInspectionReadyForReview,
 } from './inspection.js';
+
+export {
+  createAssetPassport,
+  updateAssetPassport,
+  setAssetAttribute,
+  attachEvidenceToAsset,
+} from './asset.js';
+
+export { createObservation, supersedeObservation } from './observation.js';
 
 export {
   optionDominates,

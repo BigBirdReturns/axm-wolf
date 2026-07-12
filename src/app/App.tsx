@@ -12,6 +12,7 @@ import { ExportScreen } from './screens/ExportScreen.js';
 import { NotFoundScreen } from './screens/PlaceholderScreens.js';
 import { RecordsScreen } from './screens/RecordsScreen.js';
 import { PacksScreen } from './screens/PacksScreen.js';
+import { OpsScreen } from './screens/OpsScreen.js';
 import { SettingsScreen } from './screens/SettingsScreen.js';
 
 export function App(): JSX.Element {
@@ -28,6 +29,9 @@ export function App(): JSX.Element {
         </a>
         <a className="btn btn--secondary" href="#/packs">
           Packs
+        </a>
+        <a className="btn btn--secondary" href="#/ops">
+          Ops
         </a>
         <a className="btn btn--secondary" href="#/settings">
           Settings
@@ -89,6 +93,8 @@ function renderRoute(route: ReturnType<typeof useHashRoute>, wolfApp: ReturnType
       );
     case 'packs':
       return <PacksScreen {...wolfApp} />;
+    case 'ops':
+      return <OpsScreen db={db} />;
     case 'settings':
       return <SettingsScreen />;
     case 'not-found':

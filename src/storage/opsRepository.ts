@@ -21,6 +21,20 @@ export async function saveOpsEvidenceArtifact(db: WolfDb, artifact: EvidenceArti
   await db.put('opsEvidence', artifact);
 }
 
+export async function commitOpsEvidenceCapture(
+  db: WolfDb,
+  artifact: EvidenceArtifact,
+  inspectionCase: OpsInspectionCase,
+): Promise<void> {
+  if (artifact.caseId !== inspectionCase.caseId) {
+    throw new Error('Evidence and inspection case must share a caseId');
+  }
+  await db.transaction(['opsCases', 'opsEvidence'], 'readwrite', async (tx) => {
+    await tx.put('opsEvidence', artifact);
+    await tx.put('opsCases', inspectionCase);
+  });
+}
+
 export async function listOpsEvidenceArtifacts(
   db: WolfDb,
   caseId: string,

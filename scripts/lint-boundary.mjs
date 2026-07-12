@@ -1,10 +1,34 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
-const forbiddenImports = [/from ['"](?:\.\.\/)*packs\//, /from ['"](?:\.\.\/)*app\//, /from ['"](?:\.\.\/)*storage\//, /src\/packs/, /src\/app/, /src\/storage/];
-const forbiddenContent = ['William Sandhu', 'HP', 'Agilent', 'EDS', 'Autonomy', "Wolf's Deposition", 'oral history', 'career era', 'The Room', 'The Decision', 'The Person', 'The Moment', 'The Thing Nobody Said'];
+const forbiddenImports = [
+  /from ['"](?:\.\.\/)*packs\//,
+  /from ['"](?:\.\.\/)*app\//,
+  /from ['"](?:\.\.\/)*storage\//,
+  /from ['"](?:\.\.\/)*ops\//,
+  /src\/packs/,
+  /src\/app/,
+  /src\/storage/,
+  /src\/ops/,
+];
+const forbiddenContent = [
+  'William Sandhu',
+  'HP',
+  'Agilent',
+  'EDS',
+  'Autonomy',
+  "Wolf's Deposition",
+  'oral history',
+  'career era',
+  'The Room',
+  'The Decision',
+  'The Person',
+  'The Moment',
+  'The Thing Nobody Said',
+];
 const engineDir = 'src/engine';
 const files = [];
+
 function walk(dir) {
   for (const entry of readdirSync(dir)) {
     const path = join(dir, entry);
@@ -13,6 +37,7 @@ function walk(dir) {
     else if (/\.(ts|tsx|js|mjs)$/.test(path)) files.push(path);
   }
 }
+
 walk(engineDir);
 let failed = false;
 for (const file of files) {

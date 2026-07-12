@@ -1,0 +1,188 @@
+.ops-screen {
+  gap: 1.25rem;
+}
+
+.ops-heading,
+.ops-toolbar,
+.ops-progress-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ops-heading > div {
+  max-width: 680px;
+}
+
+.ops-toolbar {
+  align-items: end;
+  border-top: 2px solid var(--rule);
+  border-bottom: 2px solid var(--rule);
+  padding: 0.75rem 0;
+}
+
+.ops-field {
+  min-width: min(100%, 240px);
+  flex: 1 1 240px;
+}
+
+.ops-field select {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--rule-dk);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink-2);
+  font-family: var(--serif);
+  font-size: 1rem;
+  padding: 0.6rem;
+}
+
+.ops-field select:focus-visible,
+summary:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.ops-fact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.ops-blocker {
+  border-width: 3px;
+}
+
+.ops-next-request {
+  border-left: 5px solid var(--accent);
+  padding: 0.25rem 0 0.25rem 1rem;
+}
+
+.ops-next-request h3 {
+  font-size: 1.4rem;
+  margin-top: 0.5rem;
+}
+
+.ops-file-button {
+  margin: 0;
+  color: var(--paper);
+}
+
+.ops-evidence-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  list-style: none;
+}
+
+.ops-preview {
+  width: 100%;
+  max-height: 260px;
+  object-fit: contain;
+  background: var(--ink);
+  border: 1px solid var(--rule-dk);
+  border-radius: 3px;
+}
+
+.ops-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--paper);
+}
+
+.ops-option-table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.ops-option-table th,
+.ops-option-table td {
+  padding: 0.7rem;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--rule);
+}
+
+.ops-option-table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--paper-dk);
+  font-family: var(--display);
+  color: var(--ink);
+}
+
+.ops-option-table tbody th {
+  min-width: 220px;
+}
+
+.ops-option-table .status-pill {
+  display: flex;
+  width: fit-content;
+  margin-top: 0.35rem;
+}
+
+.ops-frontier {
+  background: var(--positive-lt);
+}
+
+.ops-option-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ops-option-cards details {
+  margin-bottom: 0;
+}
+
+.ops-option-cards summary {
+  min-height: 44px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-family: var(--display);
+  color: var(--ink);
+}
+
+.ops-option-cards details[open] summary {
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.ops-tradeoff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.ops-tradeoff-grid ul {
+  padding-left: 1.2rem;
+}
+
+.ops-tradeoff-grid li + li {
+  margin-top: 0.35rem;
+}
+
+@media (max-width: 620px) {
+  .ops-heading .status-pill {
+    order: -1;
+  }
+
+  .ops-toolbar,
+  .ops-progress-row {
+    align-items: stretch;
+  }
+
+  .ops-toolbar > *,
+  .ops-progress-row > * {
+    width: 100%;
+  }
+}

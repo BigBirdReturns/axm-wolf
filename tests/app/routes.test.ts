@@ -13,8 +13,9 @@ test('parses #/records', () => {
   assert.equal(parseRoute('#/records').name, 'records');
 });
 
-test('parses #/packs and #/settings', () => {
+test('parses #/packs, #/ops, and #/settings', () => {
   assert.equal(parseRoute('#/packs').name, 'packs');
+  assert.equal(parseRoute('#/ops').name, 'ops');
   assert.equal(parseRoute('#/settings').name, 'settings');
 });
 
@@ -66,6 +67,7 @@ test('routeToHash inverts parseRoute for known routes', () => {
   const cases: string[] = [
     '#/records',
     '#/packs',
+    '#/ops',
     '#/settings',
     '#/record/abc-123',
     '#/record/abc-123/section/early',

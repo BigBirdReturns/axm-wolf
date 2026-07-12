@@ -61,9 +61,21 @@ async function seedDb(db: Awaited<ReturnType<typeof openWolfDb>>): Promise<void>
   // Save a draft for a different prompt.
   await saveDraft(db, 'rec-a', 'operations.normal-day', 'draft text', FIXED_NOW);
 
-  // Settings + migrations rows so all six stores are populated.
+  // Settings + migrations + operational rows so every store is populated.
   await db.put('settings', { key: 'theme', value: 'dark' });
   await db.put('migrations', { id: 'legacy-v1', completedAt: FIXED_NOW });
+  await db.put('opsCases', {
+    caseId: 'ops-case-1',
+    playbookId: 'recessed-lighting',
+    status: 'capturing',
+    updatedAt: FIXED_NOW,
+  });
+  await db.put('opsEvidence', {
+    artifactId: 'ops-evidence-1',
+    caseId: 'ops-case-1',
+    requestId: 'room-wide-context',
+    capturedAt: FIXED_NOW,
+  });
 }
 
 test('clearAllData empties every store after seeding', async () => {

@@ -101,7 +101,17 @@ observed
 
 Verification requires both a named closure test and at least one evidence artifact. Closure then requires completed follow-up. A verified item may return to `assigned` when the verification fails or the problem recurs.
 
+The Ops interface exposes this state machine directly. Operators can open an issue-coded work order, classify and triage it, assign an owner, distinguish temporary stabilization from verification, attach verification evidence, complete durable follow-up, reopen failed verification, and inspect the append-only transition history.
+
 Recurrence matching links the same issue code on the same asset within a configurable time window. A repeat failure therefore retrieves the prior repair path instead of creating an isolated complaint with no memory.
+
+## Spoken intake and portable custody
+
+The source-separated observation ledger can use the existing optional browser speech adapter. Final transcripts are appended to the editable observation field and are never saved automatically. Browser availability and network use are disclosed because transcription may use a browser-vendor service; WOLF stores no audio recording.
+
+The `.wolfops.json` archive contains asset passports, inspections, source-separated observations, work orders, evidence metadata, and base64-encoded original media bytes. Import validates stable IDs and references before atomically replacing the operational stores. Testimony stores are outside that transaction and are not changed.
+
+The asynchronous analysis exchange uses a different, nondestructive pair of artifacts. `.wolfhandoff.json` freezes one case revision, embeds submitted evidence with content hashes, records the question to resolve, and includes the exact `.wolfreturn.json` contract. The user continues working against the live IndexedDB case. A return must match the local submission ID and base digest, is idempotent by response ID, and can reference only submitted evidence. Imported claims remain pending until accepted or rejected. If the live case advanced, the return is retained but visibly marked as analysis of an earlier snapshot.
 
 ## First configurations
 

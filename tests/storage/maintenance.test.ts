@@ -90,6 +90,37 @@ async function seedDb(db: Awaited<ReturnType<typeof openWolfDb>>): Promise<void>
     requestId: 'room-wide-context',
     capturedAt: FIXED_NOW,
   });
+  await db.put('opsWorkOrders', {
+    workOrderId: 'ops-work-1',
+    caseId: 'ops-case-1',
+    assetId: 'ops-asset-1',
+    issueCode: 'lighting.intermittent',
+    status: 'observed',
+    updatedAt: FIXED_NOW,
+  });
+  await db.put('opsSubmissions', {
+    submissionId: 'submission-1',
+    caseId: 'ops-case-1',
+    createdAt: FIXED_NOW,
+    baseCaseDigest: 'digest',
+    evidenceArtifactIds: ['ops-evidence-1'],
+  });
+  await db.put('opsAnalysisReturns', {
+    responseId: 'response-1',
+    submissionId: 'submission-1',
+    caseId: 'ops-case-1',
+    importedAt: FIXED_NOW,
+  });
+  await db.put('surveyAssignments', {
+    assignmentId: 'survey-1',
+    packId: pack.packId,
+    recipientLabel: 'Lotus',
+    surveyLabel: 'Field report',
+    status: 'invited',
+    createdAt: FIXED_NOW,
+    updatedAt: FIXED_NOW,
+    receivedAt: null,
+  });
 }
 
 test('clearAllData empties every store after seeding', async () => {

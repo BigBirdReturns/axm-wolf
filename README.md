@@ -26,6 +26,14 @@ The testimony engine performs no inference. v0.1 is not an AI interviewer: it as
 `src/ops/` is a separate experimental operational layer for situations where testimony must become a durable local operating state. It adds:
 
 - guided photograph, video, document, and measurement requests
+- spoken observation intake through optional browser speech recognition
+- persisted work-order assignment, stabilization, verification, recurrence, and closure
+- portable `.wolfops.json` backup and restore, including original local media
+- asynchronous `.wolfhandoff.json` / `.wolfreturn.json` analysis exchange that preserves work performed while analysis is pending
+- recipient-safe `#/start/<pack-id>` invitations with one-tap start/resume, in-context voice/save coaching, and device-native answer sharing
+- a local survey dashboard for labeled invitations, multi-file return intake, recipient/survey filters, and invited/received/analyzing/completed workflow states
+- optional Glass Onion hosted mode at `/wolf/SUR##`, using a prebuilt Cloudflare Pages `_worker.js` and D1 for automatic synchronization without any AI API
+- a bundled **Tell Us What Happened** field-report pack for voice or text that requires no photographs, screenshots, or technical knowledge
 - branch-changing fact prompts and safety blockers
 - local evidence artifacts tied to the question they resolve
 - conditional shot lists rather than one comprehensive inspection checklist
@@ -107,10 +115,11 @@ To write a capture pack, see [docs/PACK_AUTHORING.md](docs/PACK_AUTHORING.md) fo
 
 ## Known limitations
 
-- No hosted backend, accounts, or multi-device sync. Each browser profile holds its own data.
+- The standalone v0.1 build has no hosted backend. The owner-authorized v0.2 Glass Onion build adds an optional same-origin D1 synchronization adapter while retaining IndexedDB and file transfer as fallbacks.
 - No automatic testimony summarization, semantic search, or generated follow-up questions.
 - WOLF Ops captures and organizes photographs and videos but does not yet interpret their pixel content.
-- WOLF Ops cases and media do not yet have a portable export/import bundle.
+- WOLF Ops backups are unencrypted JSON and may be large because media bytes are embedded.
+- Analysis handoffs are currently unencrypted; returned claims require local review before they become accepted residue.
 - No audio-file recording or storage. Voice input is transcribed live by the browser and only the resulting text is kept.
 - Voice transcription is a progressive enhancement: availability and network use depend on the browser, and it is not part of the offline guarantee.
 - No at-rest application encryption and no cryptographic identity signatures. Pack and record digests detect accidental changes, not authorship.
@@ -122,7 +131,7 @@ Architectural reserves and next operational steps include:
 
 - source-cited observation and claim objects derived from local evidence
 - a pluggable evidence interpreter that never overwrites the original media or testimony
-- portable encrypted WOLF Ops case bundles
+- optional encryption for portable WOLF Ops bundles
 - exact local cost, quotation, service-history, and preference inputs replacing illustrative priors
 - signed packs, building on the existing `packDigest` field
 - encrypted testimony-record exports

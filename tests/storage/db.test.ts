@@ -105,7 +105,7 @@ test('delete removes a stored value', async () => {
   }
 });
 
-test('opening a v1 database upgrades it in place with WOLF Ops stores', async () => {
+test('opening a v1 database upgrades it in place with all current stores', async () => {
   const factory = freshFactory();
   await new Promise<void>((resolve, reject) => {
     const request = factory.open(DB_NAME, 1);
@@ -125,13 +125,17 @@ test('opening a v1 database upgrades it in place with WOLF Ops stores', async ()
     request.onerror = () => reject(request.error);
   });
 
-  assert.equal(DB_VERSION, 2);
+  assert.equal(DB_VERSION, 5);
   const db = await openWolfDb(factory);
   try {
     assert.equal(await db.get('opsCases', 'missing'), undefined);
     assert.equal(await db.get('opsAssets', 'missing'), undefined);
     assert.equal(await db.get('opsObservations', 'missing'), undefined);
     assert.equal(await db.get('opsEvidence', 'missing'), undefined);
+    assert.equal(await db.get('opsWorkOrders', 'missing'), undefined);
+    assert.equal(await db.get('opsSubmissions', 'missing'), undefined);
+    assert.equal(await db.get('opsAnalysisReturns', 'missing'), undefined);
+    assert.equal(await db.get('surveyAssignments', 'missing'), undefined);
   } finally {
     db.close();
   }

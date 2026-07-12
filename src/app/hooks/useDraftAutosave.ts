@@ -81,6 +81,7 @@ export function useDraftAutosave(
   recordId: string,
   promptId: string,
   initialText: string,
+  afterLocalSave?: () => Promise<void>,
 ): UseDraftAutosaveResult {
   const [text, setTextState] = useState(initialText);
   const [status, setStatus] = useState<DraftAutosaveStatus>('idle');
@@ -96,10 +97,11 @@ export function useDraftAutosave(
     try {
       await saveDraft(db, recordId, promptId, value);
       setStatus('saved');
+      if (afterLocalSave) await afterLocalSave().catch(() => undefined);
     } catch {
       setStatus('save-failed');
     }
-  }, [db, recordId, promptId]);
+  }, [afterLocalSave, db, recordId, promptId]);
 
   const flush = useCallback(async () => {
     schedulerRef.current.cancel();

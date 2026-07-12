@@ -64,6 +64,26 @@ Outline of a workflow:
 
 Because the build uses a relative base path, this works for both the root `https://<user>.github.io/` and a project page at `https://<user>.github.io/axm-wolf/` without extra configuration.
 
+### Recipient start links
+
+After deployment, the platform launch screen can copy a guided invitation for each installed pack. Its stable form is:
+
+```text
+https://<user>.github.io/axm-wolf/app/#/start/<pack-id>
+```
+
+The recipient view explains voice transcription, draft autosave, explicit Save to Record, local storage, stopping and resuming, and final sharing. It creates or resumes only the selected pack and hides administrative navigation for that browser tab.
+
+For multi-recipient work, use **Dashboard → Create a recipient invitation**. Each labeled invitation carries a unique assignment ID in the URL. The recipient's returned record uses that ID, allowing the local dashboard to match returns without relying on a name. The dashboard can import several `.wolfrecord.json` files in one selection and tracks `invited`, `received`, `analyzing`, and `completed` states.
+
+The static deployment cannot observe whether somebody opened or started an invitation. An assignment remains `invited` until its return file is imported, unless the operator changes the workflow state manually.
+
+### Glass Onion hosted mode
+
+Run `npm run build:glass-onion`, then `npm run assemble:glass-onion -- <Glass_Onion source> <destination>`. The assembly preserves the source site, writes the WOLF app under `/wolf/`, adds a prebuilt root `_worker.js`, changes the registry entry from the GitHub Pages URL to `path: 'wolf/'`, and includes `wolf/backend/schema.sql` plus first-deployment instructions.
+
+The existing Cloudflare Pages dashboard drag-and-drop workflow remains valid because advanced-mode `_worker.js` is already compiled. Before the first upload, create and migrate a D1 database, bind it to the existing Pages project as `WOLF_DB`, and configure the encrypted `WOLF_ADMIN_KEY` environment variable. Hosted interview URLs use `/wolf/SUR## #k=<capability>` (without the displayed space). The worker passes all non-WOLF requests to the original static assets.
+
 ## After deploying
 
 The app is installable as a PWA from any of the hosts above (served over HTTPS, which both Cloudflare Pages and GitHub Pages provide by default). After the first successful load, the app shell, the bundled pack, and core capture/search/export functions work offline. When a new build is deployed, returning users see an update notice and can choose when to activate it; IndexedDB data persists across updates.

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   getCurrentResponse,
   type ResponseRevision,
@@ -11,6 +11,8 @@ import { RevisionHistory } from '../components/RevisionHistory.js';
 import { useSpeechInput } from '../speech/useSpeechInput.js';
 import type { SpeechErrorKind } from '../speech/speechAdapter.js';
 import '../styles/prompt.css';
+import { guidedPackId } from '../lib/guided.js';
+import { hostedSessionForRecord, syncHostedRecord } from '../lib/hosted.js';
 
 export type PromptScreenProps = {
   db: WolfDb;
@@ -210,9 +212,31 @@ function PromptScreenBody({
   setCommitError,
   onNavigate,
 }: PromptScreenBodyProps): JSX.Element {
-  const { text, setText, status, flush } = useDraftAutosave(db, recordId, promptId, initialText);
+  const [hostedSyncStatus, setHostedSyncStatus] = useState<'idle' | 'syncing' | 'synced' | 'pending'>('idle');
+
+  const syncCurrentRecord = useCallback(async (): Promise<void> => {
+    if (!hostedSessionForRecord(recordId)) return;
+    setHostedSyncStatus('syncing');
+    try {
+      const latest = await loadRecord(db, recordId);
+      if (latest) await syncHostedRecord(latest);
+      setHostedSyncStatus('synced');
+    } catch {
+      setHostedSyncStatus('pending');
+    }
+  }, [db, recordId]);
+
+  useEffect(() => {
+    if (!hostedSessionForRecord(recordId)) return;
+    const retry = () => void syncCurrentRecord();
+    window.addEventListener('online', retry);
+    return () => window.removeEventListener('online', retry);
+  }, [recordId, syncCurrentRecord]);
+
+  const { text, setText, status, flush } = useDraftAutosave(db, recordId, promptId, initialText, syncCurrentRecord);
 
   const [followUpExpanded, setFollowUpExpanded] = useState(false);
+  const isGuided = guidedPackId() === record.packId;
 
   // Source attribution for the next commit (DESIGN 10.3): two booleans
   // tracking whether the text currently in the textarea includes any
@@ -261,6 +285,15 @@ function PromptScreenBody({
       const reloaded = await loadRecord(db, recordId);
       if (reloaded) {
         setRecord(reloaded);
+        if (hostedSessionForRecord(recordId)) {
+          try {
+            setHostedSyncStatus('syncing');
+            await syncHostedRecord(reloaded);
+            setHostedSyncStatus('synced');
+          } catch {
+            setHostedSyncStatus('pending');
+          }
+        }
       }
       setHasTypedSinceCommit(false);
       setHasTranscriptSinceCommit(false);
@@ -276,6 +309,13 @@ function PromptScreenBody({
 
   return (
     <div className="stack prompt-screen">
+      {isGuided ? (
+        <section className="notice stack" aria-labelledby="answer-help-heading">
+          <h2 id="answer-help-heading">How to answer this question</h2>
+          <p><strong>1.</strong> Speak or type. <strong>2.</strong> Review the words. <strong>3.</strong> Tap <strong>Save to Record</strong>.</p>
+          <p className="meta">Your draft saves while you work, but it is not part of the finished record until you tap Save to Record. You may stop and return at any time.</p>
+        </section>
+      ) : null}
       {sectionLabel ? (
         <p className="meta prompt-screen__section">
           {sectionLabel}
@@ -342,7 +382,7 @@ function PromptScreenBody({
                 <span className="speech-dot" aria-hidden="true" /> Stop listening
               </>
             ) : (
-              'Start voice input'
+              isGuided ? 'Start voice input — speak your answer' : 'Start voice input'
             )}
           </button>
         ) : null}
@@ -369,6 +409,15 @@ function PromptScreenBody({
         {autosaveStatusText}
         {commitStatusText ? <> &middot; {commitStatusText}</> : null}
       </p>
+      {hostedSessionForRecord(recordId) ? (
+        <p className="meta" role="status">
+          {hostedSyncStatus === 'syncing' ? 'Synchronizing with the interviewer…' : hostedSyncStatus === 'synced' ? 'Synchronized with the interviewer.' : hostedSyncStatus === 'pending' ? 'Saved on this device. WOLF will retry synchronization when you are online.' : 'This interview synchronizes automatically when online.'}
+        </p>
+      ) : null}
+
+      {isGuided && commitStatus === 'committed' ? (
+        <p className="notice" role="status"><strong>Answer saved.</strong> Continue to the next question, choose another question, or stop and return later.</p>
+      ) : null}
 
       <RevisionHistory revisions={revisions} />
 
@@ -384,11 +433,11 @@ function PromptScreenBody({
               onNavigate(`#/record/${encodeURIComponent(recordId)}/prompt/${encodeURIComponent(prevPromptId)}`);
             }}
           >
-            Previous
+            {isGuided ? 'Previous question' : 'Previous'}
           </button>
         ) : (
           <button type="button" className="btn btn--secondary" disabled aria-disabled="true">
-            Previous
+            {isGuided ? 'Previous question' : 'Previous'}
           </button>
         )}
         {nextPromptId ? (
@@ -400,15 +449,15 @@ function PromptScreenBody({
               onNavigate(`#/record/${encodeURIComponent(recordId)}/prompt/${encodeURIComponent(nextPromptId)}`);
             }}
           >
-            Next
+            {isGuided ? 'Next question' : 'Next'}
           </button>
         ) : (
           <button type="button" className="btn btn--secondary" disabled aria-disabled="true">
-            Next
+            {isGuided ? 'Next question' : 'Next'}
           </button>
         )}
         <a className="btn btn--secondary" href={`#/record/${encodeURIComponent(recordId)}`}>
-          Back to record
+          {isGuided ? 'Choose another question or finish' : 'Back to record'}
         </a>
       </nav>
     </div>

@@ -13,6 +13,20 @@ test('parses #/records', () => {
   assert.equal(parseRoute('#/records').name, 'records');
 });
 
+test('parses recipient guided-start links', () => {
+  const route = parseRoute('#/start/senior-engineer-handoff');
+  assert.equal(route.name, 'guided-start');
+  assert.ok(route.name === 'guided-start' && route.packId === 'senior-engineer-handoff');
+  assert.equal(routeToHash(route), '#/start/senior-engineer-handoff');
+});
+
+test('round-trips labeled invitation metadata', () => {
+  const hash = routeToHash({ name: 'guided-start', packId: 'field-report', assignmentId: 'assignment-1', recipientLabel: 'Lotus & Co', surveyLabel: 'July walkthrough' });
+  const route = parseRoute(hash);
+  assert.deepEqual(route, { name: 'guided-start', packId: 'field-report', assignmentId: 'assignment-1', recipientLabel: 'Lotus & Co', surveyLabel: 'July walkthrough' });
+  assert.equal(routeToHash(route), hash);
+});
+
 test('parses #/packs, #/ops, and #/settings', () => {
   assert.equal(parseRoute('#/packs').name, 'packs');
   assert.equal(parseRoute('#/ops').name, 'ops');
@@ -66,6 +80,7 @@ test('unknown paths resolve to not-found', () => {
 test('routeToHash inverts parseRoute for known routes', () => {
   const cases: string[] = [
     '#/records',
+    '#/start/senior-engineer-handoff',
     '#/packs',
     '#/ops',
     '#/settings',

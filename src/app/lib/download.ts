@@ -18,3 +18,24 @@ export function downloadText(filename: string, mimeType: string, text: string): 
     URL.revokeObjectURL(url);
   }
 }
+
+export async function shareOrDownloadText(
+  filename: string,
+  mimeType: string,
+  text: string,
+  title: string,
+  message: string,
+): Promise<'shared' | 'downloaded' | 'cancelled'> {
+  const file = new File([text], filename, { type: mimeType });
+  const shareNavigator = navigator as Navigator & { canShare?: (data: ShareData) => boolean };
+  if (typeof navigator.share === 'function' && shareNavigator.canShare?.({ files: [file] })) {
+    try {
+      await navigator.share({ title, text: message, files: [file] });
+      return 'shared';
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') return 'cancelled';
+    }
+  }
+  downloadText(filename, mimeType, text);
+  return 'downloaded';
+}

@@ -14,6 +14,7 @@ import { createAndSaveRecord, type WolfAppState } from '../hooks/useWolfApp.js';
 export function LaunchScreen({ db, packs, records, refreshRecords }: WolfAppState): JSX.Element {
   const [creating, setCreating] = useState(false);
   const [createError, setCreateError] = useState<string | null>(null);
+  const [copiedPackId, setCopiedPackId] = useState<string | null>(null);
   const install = useInstallPrompt();
 
   const isSinglePack = appConfig.deployMode === 'single-pack';
@@ -42,6 +43,18 @@ export function LaunchScreen({ db, packs, records, refreshRecords }: WolfAppStat
       setCreateError(err instanceof Error ? err.message : String(err));
     } finally {
       setCreating(false);
+    }
+  }
+
+  async function copyGuidedLink(packId: string): Promise<void> {
+    const hash = `#/start/${encodeURIComponent(packId)}`;
+    const url = new URL(hash, window.location.href).toString();
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedPackId(packId);
+      setCreateError(null);
+    } catch {
+      setCreateError(`Copy this guided link: ${url}`);
     }
   }
 
@@ -122,6 +135,15 @@ export function LaunchScreen({ db, packs, records, refreshRecords }: WolfAppStat
                   {promptCount === 1 ? '' : 's'} &middot; version {storedPack.pack.packVersion} &middot; trust:{' '}
                   {storedPack.trust}
                 </p>
+                <div className="row">
+                  <button type="button" className="btn btn--secondary" onClick={() => void copyGuidedLink(storedPack.packId)}>
+                    Copy recipient start link
+                  </button>
+                  <a className="btn btn--secondary" href={`#/start/${encodeURIComponent(storedPack.packId)}`}>
+                    Preview recipient view
+                  </a>
+                </div>
+                {copiedPackId === storedPack.packId ? <p role="status" className="meta">Guided start link copied.</p> : null}
               </li>
             );
           })}

@@ -9,12 +9,16 @@ import {
   createAssetPassport,
   createInspectionCase,
   createObservation,
+  createWorkOrder,
   evaluateDecisionCase,
+  findRecurrenceMatches,
+  linkRecurrence,
   markInspectionReadyForReview,
   recessedLightingDecisionCase,
   recessedLightingPlaybook,
   setInspectionFact,
   skipCaptureRequest,
+  transitionWorkOrder,
   updateAssetPassport,
   type CaptureRequest,
   type DecisionCase,
@@ -27,21 +31,37 @@ import {
   type OpsAssetPassport,
   type OpsInspectionCase,
   type OpsObservation,
+  type OpsWorkOrder,
+  type OpsAnalysisReceipt,
   type ScalarFact,
+  type WorkOrderStatus,
+  type WorkOrderTransitionInput,
 } from '../../ops/index.js';
 import {
   commitOpsEvidenceCapture,
   deleteOpsInspectionCase,
+  exportOpsArchive,
+  createOpsAnalysisSubmission,
+  importOpsAnalysisReturn,
+  importOpsArchive,
+  listOpsAnalysisReceipts,
+  listAllOpsWorkOrders,
   listOpsEvidenceArtifacts,
   listOpsInspectionCases,
   listOpsObservations,
+  listOpsWorkOrders,
   loadOpsAssetPassport,
   loadOpsInspectionCase,
   saveOpsCaseAndAsset,
   saveOpsInspectionCase,
   saveOpsObservation,
+  saveOpsWorkOrder,
+  reviewAnalysisObservation,
   type WolfDb,
+  type OpsAnalysisSubmission,
 } from '../../storage/index.js';
+import { downloadText } from '../lib/download.js';
+import { useSpeechInput } from '../speech/useSpeechInput.js';
 import '../styles/ops.css';
 
 type OpsConfiguration = {
@@ -160,7 +180,7 @@ function writeFactControlValue(prompt: FactPrompt, value: ScalarFact | undefined
   return String(value);
 }
 
-function statusLabel(status: OpsInspectionCase['status']): string {
+function statusLabel(status: string): string {
   return status.replaceAll('_', ' ');
 }
 
@@ -168,6 +188,97 @@ function sourceLabel(sourceClass: EvidenceSourceClass): string {
   return (
     HUMAN_SOURCE_OPTIONS.find((option) => option.value === sourceClass)?.label ??
     sourceClass.replaceAll('_', ' ')
+  );
+}
+
+function WorkOrderCard({
+  workOrder,
+  artifacts,
+  onTransition,
+}: {
+  workOrder: OpsWorkOrder;
+  artifacts: EvidenceArtifact[];
+  onTransition: (input: WorkOrderTransitionInput) => Promise<void>;
+}): JSX.Element {
+  const [actor, setActor] = useState('Operator');
+  const [assignedTo, setAssignedTo] = useState(workOrder.assignedTo ?? '');
+  const [note, setNote] = useState('');
+  const [verificationTest, setVerificationTest] = useState('');
+  const [evidenceId, setEvidenceId] = useState('');
+  const [followUpCompleted, setFollowUpCompleted] = useState(false);
+
+  const transition = (to: WorkOrderStatus, extra: Partial<WorkOrderTransitionInput> = {}) =>
+    onTransition({ to, at: new Date().toISOString(), actor, note, ...extra });
+
+  return (
+    <article className="card stack">
+      <div className="row ops-progress-row">
+        <div>
+          <p className="meta">{workOrder.issueCode}</p>
+          <h3>{workOrder.title}</h3>
+        </div>
+        <span className="status-pill">{statusLabel(workOrder.status)}</span>
+      </div>
+      <p className="meta">
+        {workOrder.assignedTo ? `Assigned to ${workOrder.assignedTo}` : 'Not assigned'}
+        {workOrder.recurrenceOfWorkOrderIds.length > 0
+          ? ` · recurrence of ${workOrder.recurrenceOfWorkOrderIds.length} prior order`
+          : ''}
+      </p>
+      {workOrder.verificationTest ? <p>Verification test: {workOrder.verificationTest}</p> : null}
+      {!['closed', 'cancelled'].includes(workOrder.status) ? (
+        <div className="ops-fact-grid">
+          <div className="ops-field">
+            <label htmlFor={`work-actor-${workOrder.workOrderId}`}>Actor</label>
+            <input id={`work-actor-${workOrder.workOrderId}`} value={actor} onChange={(event) => setActor(event.target.value)} />
+          </div>
+          <div className="ops-field">
+            <label htmlFor={`work-note-${workOrder.workOrderId}`}>Transition note</label>
+            <input id={`work-note-${workOrder.workOrderId}`} value={note} onChange={(event) => setNote(event.target.value)} />
+          </div>
+        </div>
+      ) : null}
+      {workOrder.status === 'triaged' ? (
+        <div className="ops-field">
+          <label htmlFor={`work-assignee-${workOrder.workOrderId}`}>Assign to</label>
+          <input id={`work-assignee-${workOrder.workOrderId}`} value={assignedTo} onChange={(event) => setAssignedTo(event.target.value)} />
+        </div>
+      ) : null}
+      {workOrder.status === 'assigned' || workOrder.status === 'stabilized' ? (
+        <div className="ops-fact-grid">
+          <div className="ops-field">
+            <label htmlFor={`work-test-${workOrder.workOrderId}`}>Named verification test</label>
+            <input id={`work-test-${workOrder.workOrderId}`} value={verificationTest} onChange={(event) => setVerificationTest(event.target.value)} />
+          </div>
+          <div className="ops-field">
+            <label htmlFor={`work-evidence-${workOrder.workOrderId}`}>Verification evidence</label>
+            <select id={`work-evidence-${workOrder.workOrderId}`} value={evidenceId} onChange={(event) => setEvidenceId(event.target.value)}>
+              <option value="">Choose captured evidence</option>
+              {artifacts.map((artifact) => (
+                <option key={artifact.artifactId} value={artifact.artifactId}>{artifact.fileName ?? artifact.requestId}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      ) : null}
+      {workOrder.status === 'verified' ? (
+        <label className="row">
+          <input type="checkbox" checked={followUpCompleted} onChange={(event) => setFollowUpCompleted(event.target.checked)} />
+          Durable follow-up is complete
+        </label>
+      ) : null}
+      <div className="row">
+        {workOrder.status === 'observed' ? <button type="button" className="btn" onClick={() => void transition('classified')}>Classify</button> : null}
+        {workOrder.status === 'classified' ? <button type="button" className="btn" onClick={() => void transition('triaged')}>Triage</button> : null}
+        {workOrder.status === 'triaged' ? <button type="button" className="btn" onClick={() => void transition('assigned', { assignedTo })}>Assign</button> : null}
+        {workOrder.status === 'assigned' ? <button type="button" className="btn btn--secondary" onClick={() => void transition('stabilized')}>Record temporary stabilization</button> : null}
+        {workOrder.status === 'stabilized' ? <button type="button" className="btn btn--secondary" onClick={() => void transition('assigned', { assignedTo: workOrder.assignedTo })}>Return to assigned</button> : null}
+        {workOrder.status === 'assigned' || workOrder.status === 'stabilized' ? <button type="button" className="btn" onClick={() => void transition('verified', { verificationTest, evidenceIds: evidenceId ? [evidenceId] : [] })}>Verify</button> : null}
+        {workOrder.status === 'verified' ? <><button type="button" className="btn" onClick={() => void transition('closed', { followUpCompleted })}>Close durably</button><button type="button" className="btn btn--secondary" onClick={() => void transition('assigned', { assignedTo: workOrder.assignedTo })}>Reopen</button></> : null}
+        {!['closed', 'cancelled'].includes(workOrder.status) ? <button type="button" className="btn btn--secondary" onClick={() => void transition('cancelled')}>Cancel with reason</button> : null}
+      </div>
+      {workOrder.transitions.length > 0 ? <details><summary>{workOrder.transitions.length} state transitions</summary><ol>{workOrder.transitions.map((entry, index) => <li key={`${entry.at}-${index}`}>{entry.from} → {entry.to} · {entry.actor} · {entry.at}</li>)}</ol></details> : null}
+    </article>
   );
 }
 
@@ -186,9 +297,23 @@ export function OpsScreen({ db }: { db: WolfDb }): JSX.Element {
     useState<EvidenceSourceClass>('operator_observed');
   const [observationSourceLabel, setObservationSourceLabel] = useState('');
   const [observationEvidenceId, setObservationEvidenceId] = useState('');
+  const [workOrders, setWorkOrders] = useState<OpsWorkOrder[]>([]);
+  const [workOrderIssueCode, setWorkOrderIssueCode] = useState('');
+  const [workOrderTitle, setWorkOrderTitle] = useState('');
+  const [archiveRevision, setArchiveRevision] = useState(0);
+  const [analysisRequest, setAnalysisRequest] = useState(
+    'Inspect the submitted evidence for consequential visible facts, preserve uncertainty, and request another view when the evidence is insufficient.',
+  );
+  const [analysisReceipts, setAnalysisReceipts] = useState<OpsAnalysisReceipt[]>([]);
+  const [analysisNotice, setAnalysisNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle');
   const [error, setError] = useState<string | null>(null);
+  const observationSpeech = useSpeechInput(
+    'en-US',
+    () => observationText,
+    setObservationText,
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -235,9 +360,11 @@ export function OpsScreen({ db }: { db: WolfDb }): JSX.Element {
           );
         }
 
-        const [nextArtifacts, nextObservations] = await Promise.all([
+        const [nextArtifacts, nextObservations, nextWorkOrders, nextAnalysisReceipts] = await Promise.all([
           listOpsEvidenceArtifacts(db, selectedCase.caseId),
           listOpsObservations(db, selectedCase.caseId),
+          listOpsWorkOrders(db, selectedCase.caseId),
+          listOpsAnalysisReceipts(db, selectedCase.caseId),
         ]);
 
         if (!cancelled) {
@@ -247,6 +374,8 @@ export function OpsScreen({ db }: { db: WolfDb }): JSX.Element {
           setAssetDraft(assetDraftFrom(selectedAsset));
           setArtifacts(nextArtifacts);
           setObservations(nextObservations);
+          setWorkOrders(nextWorkOrders);
+          setAnalysisReceipts(nextAnalysisReceipts);
           setLoading(false);
         }
       } catch (err) {
@@ -260,10 +389,14 @@ export function OpsScreen({ db }: { db: WolfDb }): JSX.Element {
     return () => {
       cancelled = true;
     };
-  }, [db, configuration.playbook.playbookId, configuration.playbook.version]);
+  }, [db, configuration.playbook.playbookId, configuration.playbook.version, archiveRevision]);
 
   const guidance = useMemo(
-    () => (inspectionCase ? buildInspectionGuidance(configuration.playbook, inspectionCase) : null),
+    () =>
+      inspectionCase?.playbookId === configuration.playbook.playbookId &&
+      inspectionCase.playbookVersion === configuration.playbook.version
+        ? buildInspectionGuidance(configuration.playbook, inspectionCase)
+        : null,
     [configuration.playbook, inspectionCase],
   );
   const decisionEvaluation = useMemo(
@@ -295,9 +428,11 @@ export function OpsScreen({ db }: { db: WolfDb }): JSX.Element {
       const nextCase = normalizeInspectionCase(stored);
       const nextAsset = nextCase.assetId ? await loadOpsAssetPassport(db, nextCase.assetId) : undefined;
       if (!nextAsset) throw new Error('The inspection case has no asset passport');
-      const [nextArtifacts, nextObservations] = await Promise.all([
+      const [nextArtifacts, nextObservations, nextWorkOrders, nextAnalysisReceipts] = await Promise.all([
         listOpsEvidenceArtifacts(db, caseId),
         listOpsObservations(db, caseId),
+        listOpsWorkOrders(db, caseId),
+        listOpsAnalysisReceipts(db, caseId),
       ]);
 
       setInspectionCase(nextCase);
@@ -305,6 +440,8 @@ export function OpsScreen({ db }: { db: WolfDb }): JSX.Element {
       setAssetDraft(assetDraftFrom(nextAsset));
       setArtifacts(nextArtifacts);
       setObservations(nextObservations);
+      setWorkOrders(nextWorkOrders);
+      setAnalysisReceipts(nextAnalysisReceipts);
       setLoading(false);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -488,6 +625,170 @@ export function OpsScreen({ db }: { db: WolfDb }): JSX.Element {
     }
   }
 
+  async function handleCreateWorkOrder(event: FormEvent<HTMLFormElement>): Promise<void> {
+    event.preventDefault();
+    if (!inspectionCase) return;
+    setSaveState('saving');
+    setError(null);
+    try {
+      let nextWorkOrder = createWorkOrder({
+        workOrderId: makeId('work'),
+        caseId: inspectionCase.caseId,
+        assetId: inspectionCase.assetId,
+        issueCode: workOrderIssueCode,
+        title: workOrderTitle,
+      });
+      const allWorkOrders = await listAllOpsWorkOrders(db);
+      nextWorkOrder = linkRecurrence(
+        nextWorkOrder,
+        findRecurrenceMatches(nextWorkOrder, allWorkOrders),
+      );
+      await saveOpsWorkOrder(db, nextWorkOrder);
+      setWorkOrders((current) => [nextWorkOrder, ...current]);
+      setWorkOrderIssueCode('');
+      setWorkOrderTitle('');
+      setSaveState('saved');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+      setSaveState('idle');
+    }
+  }
+
+  async function handleWorkOrderTransition(
+    workOrder: OpsWorkOrder,
+    input: WorkOrderTransitionInput,
+  ): Promise<void> {
+    setSaveState('saving');
+    setError(null);
+    try {
+      const nextWorkOrder = transitionWorkOrder(workOrder, input);
+      await saveOpsWorkOrder(db, nextWorkOrder);
+      setWorkOrders((current) =>
+        current.map((candidate) =>
+          candidate.workOrderId === nextWorkOrder.workOrderId ? nextWorkOrder : candidate,
+        ),
+      );
+      setSaveState('saved');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+      setSaveState('idle');
+    }
+  }
+
+  async function handleOpsExport(): Promise<void> {
+    setError(null);
+    try {
+      const archive = await exportOpsArchive(db);
+      downloadText(
+        `wolf-ops-${new Date().toISOString().slice(0, 10)}.wolfops.json`,
+        'application/json',
+        JSON.stringify(archive, null, 2),
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  }
+
+  async function handleOpsImport(file: File, input: HTMLInputElement): Promise<void> {
+    setError(null);
+    try {
+      const parsed = JSON.parse(await file.text()) as unknown;
+      if (!window.confirm('Replace all local WOLF Ops data with this backup? Testimony records are not affected.')) {
+        return;
+      }
+      setLoading(true);
+      await importOpsArchive(db, parsed);
+      setArchiveRevision((current) => current + 1);
+      setSaveState('saved');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+      setLoading(false);
+    } finally {
+      input.value = '';
+    }
+  }
+
+  async function deliverAnalysisSubmission(submission: OpsAnalysisSubmission): Promise<void> {
+    const text = JSON.stringify(submission, null, 2);
+    const filename = `${submission.caseId}-${submission.submissionId}.wolfhandoff.json`;
+    const file = new File([text], filename, { type: 'application/json' });
+    const shareNavigator = navigator as Navigator & {
+      canShare?: (data: ShareData) => boolean;
+    };
+    if (typeof navigator.share === 'function' && shareNavigator.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({ title: 'WOLF analysis handoff', text: analysisRequest, files: [file] });
+        return;
+      } catch (err) {
+        if (err instanceof DOMException && err.name === 'AbortError') return;
+      }
+    }
+    downloadText(filename, 'application/json', text);
+  }
+
+  async function handleCreateAnalysisSubmission(): Promise<void> {
+    if (!inspectionCase) return;
+    setError(null);
+    setAnalysisNotice(null);
+    setSaveState('saving');
+    try {
+      const submission = await createOpsAnalysisSubmission(
+        db,
+        inspectionCase.caseId,
+        analysisRequest,
+      );
+      await deliverAnalysisSubmission(submission);
+      setAnalysisNotice(
+        `Frozen submission ${submission.submissionId} was prepared. This live case remains writable.`,
+      );
+      setSaveState('saved');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+      setSaveState('idle');
+    }
+  }
+
+  async function handleAnalysisReturn(file: File, input: HTMLInputElement): Promise<void> {
+    if (!inspectionCase) return;
+    setError(null);
+    setAnalysisNotice(null);
+    try {
+      const result = await importOpsAnalysisReturn(db, JSON.parse(await file.text()) as unknown);
+      const [nextObservations, nextReceipts] = await Promise.all([
+        listOpsObservations(db, inspectionCase.caseId),
+        listOpsAnalysisReceipts(db, inspectionCase.caseId),
+      ]);
+      setObservations(nextObservations);
+      setAnalysisReceipts(nextReceipts);
+      setAnalysisNotice(
+        result.alreadyImported
+          ? 'That analysis return was already imported; no duplicate claims were created.'
+          : result.receipt.caseAdvancedSinceSubmission
+            ? 'Analysis imported against its frozen snapshot. Newer local work was preserved and the result is marked as based on an earlier revision.'
+            : 'Analysis imported for review without replacing local work.',
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      input.value = '';
+    }
+  }
+
+  async function handleAnalysisReview(
+    observation: OpsObservation,
+    review: 'accepted' | 'rejected',
+  ): Promise<void> {
+    setError(null);
+    try {
+      const next = await reviewAnalysisObservation(db, observation.observationId, review);
+      setObservations((current) =>
+        current.map((candidate) => candidate.observationId === next.observationId ? next : candidate),
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  }
+
   async function handleNewAssetInspection(): Promise<void> {
     const created = createAssetAndCase(configuration.playbook);
     setSaveState('saving');
@@ -500,6 +801,8 @@ export function OpsScreen({ db }: { db: WolfDb }): JSX.Element {
       setAssetDraft(assetDraftFrom(created.asset));
       setArtifacts([]);
       setObservations([]);
+      setWorkOrders([]);
+      setAnalysisReceipts([]);
       setSaveState('saved');
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -526,6 +829,8 @@ export function OpsScreen({ db }: { db: WolfDb }): JSX.Element {
       setInspectionCase(nextCase);
       setArtifacts([]);
       setObservations([]);
+      setWorkOrders([]);
+      setAnalysisReceipts([]);
       setSaveState('saved');
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -570,6 +875,8 @@ export function OpsScreen({ db }: { db: WolfDb }): JSX.Element {
       setAssetDraft(assetDraftFrom(cleanedAsset));
       setArtifacts([]);
       setObservations([]);
+      setWorkOrders([]);
+      setAnalysisReceipts([]);
       setSaveState('saved');
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -612,13 +919,91 @@ export function OpsScreen({ db }: { db: WolfDb }): JSX.Element {
         facts from image pixels.
       </p>
 
+      <section className="card stack" aria-labelledby="ops-backup-heading">
+        <div>
+          <p className="meta">PORTABLE LOCAL CUSTODY</p>
+          <h2 id="ops-backup-heading">Back up or restore WOLF Ops</h2>
+          <p className="muted">
+            The backup includes asset passports, inspections, sourced observations, work orders,
+            and original local media. Restoring replaces WOLF Ops data only; testimony is untouched.
+          </p>
+        </div>
+        <div className="row">
+          <button type="button" className="btn" onClick={() => void handleOpsExport()}>
+            Export Ops backup
+          </button>
+          <label className="btn btn--secondary" htmlFor="ops-backup-file">Restore Ops backup</label>
+          <input
+            className="visually-hidden"
+            id="ops-backup-file"
+            type="file"
+            accept="application/json,.json"
+            onChange={(event) => {
+              const input = event.currentTarget;
+              const file = input.files?.[0];
+              if (file) void handleOpsImport(file, input);
+            }}
+          />
+        </div>
+      </section>
+
+      <section className="card stack" aria-labelledby="analysis-exchange-heading">
+        <div>
+          <p className="meta">ASYNCHRONOUS ANALYSIS EXCHANGE</p>
+          <h2 id="analysis-exchange-heading">Send a frozen copy; keep working</h2>
+          <p className="muted">
+            A handoff copies this case and its evidence for outside analysis. Your live inspection
+            remains editable. Returned claims append in review status and never overwrite newer work.
+          </p>
+        </div>
+        <div className="ops-field">
+          <label htmlFor="analysis-request">What should the analyst resolve?</label>
+          <textarea id="analysis-request" rows={3} value={analysisRequest} onChange={(event) => setAnalysisRequest(event.target.value)} />
+        </div>
+        <div className="row">
+          <button type="button" className="btn" onClick={() => void handleCreateAnalysisSubmission()}>
+            Send for analysis
+          </button>
+          <label className="btn btn--secondary" htmlFor="analysis-return-file">Import analysis return</label>
+          <input
+            className="visually-hidden"
+            id="analysis-return-file"
+            type="file"
+            accept="application/json,.json"
+            onChange={(event) => {
+              const input = event.currentTarget;
+              const file = input.files?.[0];
+              if (file) void handleAnalysisReturn(file, input);
+            }}
+          />
+        </div>
+        <p className="notice">
+          Handoff files contain unencrypted operational evidence. Send them only through a channel
+          appropriate for the material.
+        </p>
+        {analysisNotice ? <p role="status" className="notice">{analysisNotice}</p> : null}
+        {analysisReceipts.map((receipt) => (
+          <details key={receipt.responseId}>
+            <summary>
+              Analysis from {receipt.analysisReturn.analyst} · {receipt.analysisReturn.claims.length} claims
+              {receipt.caseAdvancedSinceSubmission ? ' · earlier snapshot' : ''}
+            </summary>
+            {receipt.analysisReturn.warnings.length > 0 ? <><h3>Warnings</h3><ul>{receipt.analysisReturn.warnings.map((warning) => <li key={warning}>{warning}</li>)}</ul></> : null}
+            {receipt.analysisReturn.nextEvidenceRequests.length > 0 ? <><h3>Requested follow-up evidence</h3><ul>{receipt.analysisReturn.nextEvidenceRequests.map((request) => <li key={request.requestId}><strong>{request.label}</strong>: {request.instruction} <span className="meta">{request.purpose}</span></li>)}</ul></> : null}
+          </details>
+        ))}
+      </section>
+
       <div className="ops-toolbar">
         <div className="ops-field">
           <label htmlFor="ops-playbook">Inspection configuration</label>
           <select
             id="ops-playbook"
             value={playbookId}
-            onChange={(event) => setPlaybookId(event.target.value)}
+            onChange={(event) => {
+              setLoading(true);
+              setPlaybookId(event.target.value);
+            }}
           >
             {CONFIGURATIONS.map(({ playbook }) => (
               <option key={playbook.playbookId} value={playbook.playbookId}>
@@ -1015,6 +1400,23 @@ export function OpsScreen({ db }: { db: WolfDb }): JSX.Element {
               placeholder="Record the claim precisely without converting interpretation into fact."
               required
             />
+            {observationSpeech.supported ? (
+              <div className="stack">
+                <div className="row">
+                  <button
+                    type="button"
+                    className="btn btn--secondary"
+                    onClick={observationSpeech.listening ? observationSpeech.stop : observationSpeech.start}
+                  >
+                    {observationSpeech.listening ? 'Stop listening' : 'Speak observation'}
+                  </button>
+                  <span className="meta" role="status" aria-live="polite">
+                    {observationSpeech.listening ? 'Listening; transcript remains editable and is not saved automatically.' : 'Browser speech may use a network service.'}
+                  </span>
+                </div>
+                {observationSpeech.error ? <p role="alert" className="notice">Speech input failed: {observationSpeech.error.replaceAll('-', ' ')}</p> : null}
+              </div>
+            ) : null}
           </div>
           <button type="submit" className="btn">
             Add to observation ledger
@@ -1031,6 +1433,7 @@ export function OpsScreen({ db }: { db: WolfDb }): JSX.Element {
                   <span className="field-chip">{observation.kind.replaceAll('_', ' ')}</span>
                   <span className="field-chip">{sourceLabel(observation.sourceClass)}</span>
                   <span className="field-chip">{observation.confidence}</span>
+                  {observation.analysisReviewStatus ? <span className="field-chip">analysis {observation.analysisReviewStatus}</span> : null}
                 </div>
                 <p>{observation.text}</p>
                 <p className="meta">
@@ -1039,10 +1442,48 @@ export function OpsScreen({ db }: { db: WolfDb }): JSX.Element {
                     ? ` · ${observation.evidenceArtifactIds.length} linked artifact`
                     : ''}
                 </p>
+                {observation.analysisReviewStatus === 'pending' ? (
+                  <div className="row">
+                    <button type="button" className="btn" onClick={() => void handleAnalysisReview(observation, 'accepted')}>Accept as reviewed residue</button>
+                    <button type="button" className="btn btn--secondary" onClick={() => void handleAnalysisReview(observation, 'rejected')}>Reject claim</button>
+                  </div>
+                ) : null}
               </li>
             ))}
           </ol>
         )}
+      </section>
+
+      <section className="stack" aria-labelledby="work-orders-heading">
+        <div>
+          <p className="meta">EXECUTION LEDGER · NO FALSE CLOSURE</p>
+          <h2 id="work-orders-heading">Work orders and durable verification</h2>
+          <p className="muted">
+            Temporary stabilization stays open. Verification requires a named test and captured
+            evidence; closure requires completed follow-up.
+          </p>
+        </div>
+        <form className="card stack" onSubmit={(event) => void handleCreateWorkOrder(event)}>
+          <div className="ops-fact-grid">
+            <div className="ops-field">
+              <label htmlFor="work-order-issue">Stable issue code</label>
+              <input id="work-order-issue" value={workOrderIssueCode} onChange={(event) => setWorkOrderIssueCode(event.target.value)} placeholder="lighting.intermittent" required />
+            </div>
+            <div className="ops-field">
+              <label htmlFor="work-order-title">Work-order title</label>
+              <input id="work-order-title" value={workOrderTitle} onChange={(event) => setWorkOrderTitle(event.target.value)} placeholder="Diagnose intermittent room lighting" required />
+            </div>
+          </div>
+          <button type="submit" className="btn">Open work order</button>
+        </form>
+        {workOrders.length === 0 ? <p className="notice">No work orders are linked to this inspection.</p> : workOrders.map((workOrder) => (
+          <WorkOrderCard
+            key={workOrder.workOrderId}
+            workOrder={workOrder}
+            artifacts={artifacts}
+            onTransition={(input) => handleWorkOrderTransition(workOrder, input)}
+          />
+        ))}
       </section>
 
       <section className="stack" aria-labelledby="options-heading">

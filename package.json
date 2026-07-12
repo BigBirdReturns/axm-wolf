@@ -1,12 +1,15 @@
 {
   "name": "axm-wolf",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -p tsconfig.build.json && vite build",
+    "build:glass-onion": "tsc -p tsconfig.build.json && vite build --mode glass-onion",
+    "assemble:glass-onion": "node scripts/assemble-glass-onion.mjs",
     "test": "tsc -p tsconfig.test.json && node --test dist-tests/tests/**/*.js",
+    "test:worker": "node --test tests/cloudflare/worker.test.mjs",
     "test:watch": "node --test --watch dist-tests/tests/**/*.js",
     "test:components": "vitest run",
     "test:components:watch": "vitest",
@@ -14,7 +17,7 @@
     "test:e2e:real": "playwright test",
     "typecheck": "tsc --noEmit",
     "lint": "node scripts/lint-boundary.mjs",
-    "check": "npm run lint && npm run typecheck && npm test && npm run test:components && npm run build"
+    "check": "npm run lint && npm run typecheck && npm test && npm run test:worker && npm run test:components && npm run build && npm run build:glass-onion"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",

@@ -5,9 +5,16 @@ declare module 'node:test' {
 declare module 'node:assert/strict' {
   type ThrowsExpectation = RegExp | (new (...args: never[]) => Error);
   const assert: {
+    deepEqual(actual: unknown, expected: unknown, message?: string): void;
     equal(actual: unknown, expected: unknown, message?: string): void;
+    notEqual(actual: unknown, expected: unknown, message?: string): void;
     ok(value: unknown, message?: string): asserts value;
     match(value: string, regexp: RegExp, message?: string): void;
+    rejects(
+      block: Promise<unknown> | (() => Promise<unknown>),
+      expected?: ThrowsExpectation,
+      message?: string,
+    ): Promise<void>;
     throws(fn: () => unknown, expected?: ThrowsExpectation, message?: string): void;
   };
   export default assert;

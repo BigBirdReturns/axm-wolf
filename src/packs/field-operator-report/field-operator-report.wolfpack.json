@@ -1,0 +1,128 @@
+{
+  "schemaVersion": 1,
+  "packId": "field-operator-report",
+  "packVersion": "1.0.0",
+  "engineVersion": ">=0.1.0 <1.0.0",
+  "title": "Tell Us What Happened",
+  "subtitle": "A simple guided field report in your own words.",
+  "description": "A short voice-or-text response path for someone reporting what they saw, when it happened, what changed, what they tried, and what help is needed. No photographs or screenshots are required.",
+  "subjectDefaults": {
+    "displayName": "Field Reporter",
+    "subtitle": "Firsthand Account",
+    "organization": null,
+    "role": null
+  },
+  "theme": {
+    "accent": "#526b3f"
+  },
+  "lenses": [
+    { "id": "place", "label": "Where" },
+    { "id": "observation", "label": "What You Noticed" },
+    { "id": "timing", "label": "When" },
+    { "id": "action", "label": "What You Tried" },
+    { "id": "need", "label": "What Happens Next" }
+  ],
+  "sections": [
+    {
+      "id": "what-happened",
+      "label": "What Happened",
+      "rangeLabel": null,
+      "description": "Describe the situation as you experienced it. Ordinary words are best.",
+      "promptIds": [
+        "what-happened.where-you-were",
+        "what-happened.what-you-noticed",
+        "what-happened.when-it-started",
+        "what-happened.pattern"
+      ]
+    },
+    {
+      "id": "what-next",
+      "label": "What You Did and Need",
+      "rangeLabel": null,
+      "description": "Record what changed, what you tried, and what would help now.",
+      "promptIds": [
+        "what-next.what-changed",
+        "what-next.what-you-tried",
+        "what-next.current-condition",
+        "what-next.help-needed"
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "id": "what-happened.where-you-were",
+      "kind": "long_text",
+      "lensId": "place",
+      "text": "Where were you, and what were you looking at or working with? Describe the place or item so someone who is not there can identify it.",
+      "context": "Names, labels, room descriptions, or nearby landmarks are useful. Do not include private information that is unrelated to the report.",
+      "tags": ["location", "identity"],
+      "required": false
+    },
+    {
+      "id": "what-happened.what-you-noticed",
+      "kind": "long_text",
+      "lensId": "observation",
+      "text": "What did you notice? Tell the story in your own words, including anything you saw, heard, smelled, or felt was unusual.",
+      "context": "There is no preferred wording. Describe only what you remember or observed.",
+      "tags": ["observation", "symptom"],
+      "required": false
+    },
+    {
+      "id": "what-happened.when-it-started",
+      "kind": "long_text",
+      "lensId": "timing",
+      "text": "When did this begin, and what was happening immediately before you first noticed it?",
+      "context": "An approximate day, time, shift, or sequence is enough if you do not know the exact time.",
+      "tags": ["timing", "sequence"],
+      "required": false
+    },
+    {
+      "id": "what-happened.pattern",
+      "kind": "long_text",
+      "lensId": "timing",
+      "text": "Has it happened once or more than once? Describe any pattern, trigger, delay, or condition that seems connected.",
+      "context": "It is fine to say that you do not know or that there is no obvious pattern.",
+      "tags": ["pattern", "recurrence"],
+      "required": false
+    },
+    {
+      "id": "what-next.what-changed",
+      "kind": "long_text",
+      "lensId": "observation",
+      "text": "What, if anything, changed before this started? Consider people, settings, equipment, supplies, weather, cleaning, maintenance, or normal routines.",
+      "context": "Do not guess. Saying that nothing changed, or that you do not know, is useful.",
+      "tags": ["change", "context"],
+      "required": false
+    },
+    {
+      "id": "what-next.what-you-tried",
+      "kind": "long_text",
+      "lensId": "action",
+      "text": "What have you or someone else already tried, and what happened afterward?",
+      "context": "Include temporary improvements, things that made no difference, and anything you stopped for safety.",
+      "tags": ["action", "result"],
+      "required": false
+    },
+    {
+      "id": "what-next.current-condition",
+      "kind": "long_text",
+      "lensId": "observation",
+      "text": "What is the situation right now? Is anything unsafe, unavailable, intermittent, or preventing normal work?",
+      "context": "If anyone may be in immediate danger, stop and contact the appropriate emergency or qualified service rather than continuing this report.",
+      "tags": ["current", "safety", "impact"],
+      "required": false
+    },
+    {
+      "id": "what-next.help-needed",
+      "kind": "long_text",
+      "lensId": "need",
+      "text": "What do you need the person receiving this report to understand or do next? Add anything important that the earlier questions did not cover.",
+      "context": "You can name a practical need, a question, a concern, or simply say that you want someone to review the report.",
+      "tags": ["need", "next-step"],
+      "required": false
+    }
+  ],
+  "exportDefaults": {
+    "basename": "field-operator-report"
+  }
+}

@@ -11,6 +11,8 @@ import { routeToHash } from '../routes.js';
 import { ProgressStrip } from '../components/ProgressStrip.js';
 import { SectionCard } from '../components/SectionCard.js';
 import '../styles/record.css';
+import { guidedPackId, nextGuidedPromptId } from '../lib/guided.js';
+import { getHostedUpdates, hostedSessionForRecord } from '../lib/hosted.js';
 
 export function RecordHomeScreen({
   db,
@@ -24,6 +26,7 @@ export function RecordHomeScreen({
   const [record, setRecord] = useState<WolfRecord | null | undefined>(undefined);
   const [error, setError] = useState<string | null>(null);
   const [cadenceNudgeDismissed, setCadenceNudgeDismissed] = useState(false);
+  const [analysisReturn, setAnalysisReturn] = useState<{ payload: unknown; createdAt: string } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -42,6 +45,22 @@ export function RecordHomeScreen({
       cancelled = true;
     };
   }, [db, recordId]);
+
+  useEffect(() => {
+    if (!hostedSessionForRecord(recordId)) return;
+    let cancelled = false;
+    async function refresh(): Promise<void> {
+      try {
+        const update = await getHostedUpdates(recordId);
+        if (!cancelled && update?.analysis) setAnalysisReturn(update.analysis);
+      } catch {
+        // Local capture remains available while offline.
+      }
+    }
+    void refresh();
+    const interval = window.setInterval(() => void refresh(), 30_000);
+    return () => { cancelled = true; window.clearInterval(interval); };
+  }, [recordId]);
 
   if (error) {
     return (
@@ -88,6 +107,11 @@ export function RecordHomeScreen({
 
   const exportHash = routeToHash({ name: 'record-export', recordId });
   const searchHash = routeToHash({ name: 'record-search', recordId });
+  const isGuided = guidedPackId() === record.packId;
+  const nextPromptId = nextGuidedPromptId(record);
+  const nextPromptHash = nextPromptId
+    ? routeToHash({ name: 'record-prompt', recordId, promptId: nextPromptId })
+    : null;
 
   // Gentle, opt-out cadence nudge (DESIGN.md 2.6, 2.7, 12.2). Informational
   // only -- never blocking, never for 'once' packs, and never if the record
@@ -132,6 +156,33 @@ export function RecordHomeScreen({
 
       <hr className="section-rule" />
 
+      {analysisReturn ? (
+        <section className="card stack" aria-labelledby="interviewer-update-heading">
+          <h2 id="interviewer-update-heading">Update from your interviewer</h2>
+          <p className="meta">Published {analysisReturn.createdAt}</p>
+          <pre style={{ whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{typeof analysisReturn.payload === 'string' ? analysisReturn.payload : JSON.stringify(analysisReturn.payload, null, 2)}</pre>
+        </section>
+      ) : null}
+
+      {analysisReturn ? <hr className="section-rule" /> : null}
+
+      <section className="card stack" aria-labelledby="continue-answering-heading">
+        <h2 id="continue-answering-heading">{nextPromptHash ? 'Continue answering' : 'All questions have an answer'}</h2>
+        {nextPromptHash ? (
+          <>
+            <p>WOLF will open your saved draft first, or the next unanswered question. You can skip it and choose another at any time.</p>
+            <button type="button" className="btn" onClick={() => onNavigate(nextPromptHash)}>Answer the next question</button>
+          </>
+        ) : (
+          <>
+            <p>Your answers are saved on this device. Review or send a copy when you are ready.</p>
+            <button type="button" className="btn" onClick={() => onNavigate(exportHash)}>Send or back up my answers</button>
+          </>
+        )}
+      </section>
+
+      <hr className="section-rule" />
+
       <section aria-labelledby="progress-heading">
         <h2 id="progress-heading">Progress</h2>
         <div className="summary-grid">
@@ -162,7 +213,8 @@ export function RecordHomeScreen({
       <hr className="section-rule" />
 
       <section aria-labelledby="sections-heading">
-        <h2 id="sections-heading">Sections</h2>
+        <h2 id="sections-heading">{isGuided ? 'Choose a different question' : 'Sections'}</h2>
+        {isGuided ? <p className="muted">This is optional. You may answer the questions in any order.</p> : null}
         <ul className="card-list">
           {pack.sections.map((section) => {
             const sectionProgress = progressById.get(section.id);
@@ -191,15 +243,15 @@ export function RecordHomeScreen({
       <section aria-labelledby="actions-heading">
         <h2 id="actions-heading">Tools</h2>
         <div className="row">
-          <button type="button" className="btn" onClick={() => onNavigate(searchHash)}>
+          {!isGuided ? <button type="button" className="btn" onClick={() => onNavigate(searchHash)}>
             Search
-          </button>
+          </button> : null}
           <button type="button" className="btn" onClick={() => onNavigate(exportHash)}>
-            Export &amp; data
+            {isGuided ? 'Send or back up my answers' : 'Export & data'}
           </button>
-          <a className="btn btn--secondary" href="#/records">
+          {!isGuided ? <a className="btn btn--secondary" href="#/records">
             Back to records
-          </a>
+          </a> : null}
         </div>
       </section>
     </div>

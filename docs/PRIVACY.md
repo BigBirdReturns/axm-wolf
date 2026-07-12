@@ -2,12 +2,18 @@
 
 This describes what AXM Wolf stores, where it stores it, and what leaves your device. It follows DESIGN.md Part 12 and covers both testimony records and the experimental WOLF Ops layer.
 
+A guided recipient link does not grant the sender remote access. It selects one installed question pack and simplifies the interface. Answers still remain in the recipient's browser until the recipient taps **Send my answers** and chooses a destination through the device share sheet. If file sharing is unavailable, WOLF downloads the `.wolfrecord.json` file and explains that it must be attached manually.
+
+Labeled dashboard invitations include an assignment ID, recipient label, and survey label in the URL. Those labels are visible to anyone who receives the link and are included in the returned record, so operators should use recognizable labels rather than secrets or unnecessary sensitive information.
+
+The survey dashboard is local to the operator's browser profile. It does not poll recipients, detect link opens, or synchronize between operator devices. Importing a returned record is the event that marks a matching invitation received.
+
 ## Local-first
 
 - Responses, drafts, records, installed packs, operational cases, and operational evidence are stored in this browser profile on this device, in an IndexedDB database named `AXMWolf`.
 - Clearing the browser's site data, using an incognito session that discards storage, or using the in-app wipe-all action removes the corresponding local data.
 - Exporting a testimony record is its backup and transfer mechanism. Nothing is automatically backed up elsewhere.
-- WOLF Ops cases and media do not yet have a portable backup format. Until that exists, clearing browser data can permanently remove them.
+- Exporting a WOLF Ops backup is the supported way to preserve and transfer operational cases and their original media.
 - No server receives testimony or operational media in this implementation. There is no account, analytics service, or application backend.
 
 ## What is stored
@@ -24,6 +30,7 @@ The `AXMWolf` IndexedDB database has these object stores:
 | `migrations` | Record of completed data migrations |
 | `opsCases` | Guided-inspection facts, completed or deferred evidence requests, status, and local operating context |
 | `opsEvidence` | Photographs, videos, documents, measurements, metadata, source class, and capture timestamp for WOLF Ops cases |
+| `opsWorkOrders` | Assignment, stabilization, verification, recurrence, follow-up, and closure history |
 
 Pack snapshots travel with each testimony record, so a record remains readable even if the originating pack is later removed or updated.
 
@@ -51,7 +58,11 @@ Use the Export and data screen to download:
 
 The full bundle is the only complete testimony backup and the supported way to move a testimony record to another browser, device, or installation. Import conflicts require an explicit replace, copy, or cancel choice. Nothing is overwritten silently.
 
-Operational cases and evidence are not included in testimony-record exports. Do not assume that exporting a testimony record has backed up WOLF Ops photographs, videos, or inspection state.
+Operational cases and evidence are not included in testimony-record exports. Use **Export Ops backup** to create a `.wolfops.json` custody package containing asset passports, inspections, observations, work orders, and embedded media bytes. Restoring one replaces WOLF Ops data only after explicit confirmation and leaves testimony records untouched. The package is not encrypted; protect it as you would the original media.
+
+**Send for analysis** creates a frozen `.wolfhandoff.json` copy of one inspection, including its relevant media, hashes, explicit question, and a strict return template. The live inspection remains writable. The browser share sheet is used when available; otherwise WOLF downloads the file. Nothing is uploaded by WOLF itself. Handoffs are currently unencrypted and must be sent through an appropriate channel.
+
+An imported `.wolfreturn.json` must match a submission created on the same device and may cite only evidence included in that frozen submission. It appends pending `subscription_assisted_analysis` observations without replacing current facts or later user work. The operator explicitly accepts or rejects each returned claim. Duplicate response IDs do not create duplicate residue.
 
 ## Deletion
 
@@ -66,3 +77,9 @@ AXM Wolf does not currently provide application-level encryption at rest. Anyone
 ## No accounts, analytics, or backend
 
 AXM Wolf v0.1 and this WOLF Ops prototype have no user accounts, collaborative editing, multi-device synchronization, hosted backend, or application inference API. The local browser profile remains the data boundary.
+
+## Optional hosted interview mode
+
+The Glass Onion v0.2 deployment is an explicit exception to the standalone boundary. Invitations at `/wolf/SUR##` synchronize only their assigned WOLF record to the same-origin `/wolf/api/` service and D1 database. Recipient authorization uses a random capability token placed after `#k=` in the invitation URL; the server stores only its SHA-256 hash. The dashboard uses a separately configured `WOLF_ADMIN_KEY` that is entered by the operator and retained in session storage, not bundled into the site.
+
+Hosted capture still writes to IndexedDB first. Network failure does not erase or block local work. File export remains available as a backup. Hosted mode makes no AI calls. Analysis returns uploaded by the operator are displayed as read-only data and never overwrite the participant's answers.

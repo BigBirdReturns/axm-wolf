@@ -8,6 +8,7 @@ export type EvidenceSourceClass =
   | 'contractor_documented'
   | 'manufacturer_documented'
   | 'official_source'
+  | 'subscription_assisted_analysis'
   | 'system_inferred';
 
 export type EvidenceConfidence = 'confirmed' | 'probable' | 'possible' | 'unknown';
@@ -120,6 +121,7 @@ export type ObservationKind =
   | 'inference';
 
 export type ObservationStatus = 'active' | 'superseded';
+export type AnalysisReviewStatus = 'pending' | 'accepted' | 'rejected';
 
 export type OpsObservation = {
   observationId: string;
@@ -135,6 +137,48 @@ export type OpsObservation = {
   evidenceArtifactIds: string[];
   supersedesObservationId: string | null;
   status: ObservationStatus;
+  analysisResponseId?: string | null;
+  analysisClaimId?: string | null;
+  analysisReviewStatus?: AnalysisReviewStatus | null;
+};
+
+export type AnalysisClaim = {
+  claimId: string;
+  text: string;
+  confidence: EvidenceConfidence;
+  evidenceArtifactIds: string[];
+  rationale: string | null;
+};
+
+export type AnalysisFollowUpRequest = {
+  requestId: string;
+  label: string;
+  instruction: string;
+  purpose: string;
+};
+
+export type OpsAnalysisReturn = {
+  schemaVersion: 1;
+  kind: 'wolf-analysis-return';
+  responseId: string;
+  submissionId: string;
+  caseId: string;
+  baseCaseDigest: string;
+  analyzedAt: string;
+  analyst: string;
+  method: string;
+  claims: AnalysisClaim[];
+  nextEvidenceRequests: AnalysisFollowUpRequest[];
+  warnings: string[];
+};
+
+export type OpsAnalysisReceipt = {
+  responseId: string;
+  submissionId: string;
+  caseId: string;
+  importedAt: string;
+  caseAdvancedSinceSubmission: boolean;
+  analysisReturn: OpsAnalysisReturn;
 };
 
 export type EvidenceArtifact = {

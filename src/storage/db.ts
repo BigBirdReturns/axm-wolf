@@ -11,7 +11,7 @@
 // the API under Node.
 
 export const DB_NAME = 'AXMWolf';
-export const DB_VERSION = 2;
+export const DB_VERSION = 5;
 
 export type StoreName =
   | 'packs'
@@ -23,7 +23,11 @@ export type StoreName =
   | 'opsCases'
   | 'opsAssets'
   | 'opsObservations'
-  | 'opsEvidence';
+  | 'opsEvidence'
+  | 'opsWorkOrders'
+  | 'opsSubmissions'
+  | 'opsAnalysisReturns'
+  | 'surveyAssignments';
 
 export const STORE_NAMES: StoreName[] = [
   'packs',
@@ -36,6 +40,10 @@ export const STORE_NAMES: StoreName[] = [
   'opsAssets',
   'opsObservations',
   'opsEvidence',
+  'opsWorkOrders',
+  'opsSubmissions',
+  'opsAnalysisReturns',
+  'surveyAssignments',
 ];
 
 export type IDBTransactionMode = 'readonly' | 'readwrite';
@@ -260,6 +268,35 @@ export function openWolfDb(factory?: IDBFactory): Promise<WolfDb> {
         opsEvidence.createIndex('byCaseId', 'caseId');
         opsEvidence.createIndex('byRequestId', 'requestId');
         opsEvidence.createIndex('byCapturedAt', 'capturedAt');
+      }
+
+      if (!db.objectStoreNames.contains('opsWorkOrders')) {
+        const workOrders = db.createObjectStore('opsWorkOrders', { keyPath: 'workOrderId' });
+        workOrders.createIndex('byCaseId', 'caseId');
+        workOrders.createIndex('byAssetId', 'assetId');
+        workOrders.createIndex('byIssueCode', 'issueCode');
+        workOrders.createIndex('byStatus', 'status');
+        workOrders.createIndex('byUpdatedAt', 'updatedAt');
+      }
+
+      if (!db.objectStoreNames.contains('opsSubmissions')) {
+        const submissions = db.createObjectStore('opsSubmissions', { keyPath: 'submissionId' });
+        submissions.createIndex('byCaseId', 'caseId');
+        submissions.createIndex('byCreatedAt', 'createdAt');
+      }
+
+      if (!db.objectStoreNames.contains('opsAnalysisReturns')) {
+        const returns = db.createObjectStore('opsAnalysisReturns', { keyPath: 'responseId' });
+        returns.createIndex('bySubmissionId', 'submissionId');
+        returns.createIndex('byCaseId', 'caseId');
+        returns.createIndex('byImportedAt', 'importedAt');
+      }
+
+      if (!db.objectStoreNames.contains('surveyAssignments')) {
+        const assignments = db.createObjectStore('surveyAssignments', { keyPath: 'assignmentId' });
+        assignments.createIndex('byPackId', 'packId');
+        assignments.createIndex('byStatus', 'status');
+        assignments.createIndex('byUpdatedAt', 'updatedAt');
       }
     };
 

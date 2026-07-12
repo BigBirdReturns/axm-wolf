@@ -3,7 +3,10 @@ import type {
   OpsAssetPassport,
   OpsInspectionCase,
   OpsObservation,
+  OpsWorkOrder,
+  OpsAnalysisReceipt,
 } from '../ops/types.js';
+import type { StoredOpsSubmission } from './opsExchange.js';
 import type { StoreName, WolfDb } from './db.js';
 
 export async function saveOpsInspectionCase(db: WolfDb, inspectionCase: OpsInspectionCase): Promise<void> {
@@ -66,6 +69,10 @@ export async function listOpsObservations(
     .sort((left, right) => left.observedAt.localeCompare(right.observedAt));
 }
 
+export async function listAllOpsObservations(db: WolfDb): Promise<OpsObservation[]> {
+  return db.getAll<OpsObservation>('opsObservations');
+}
+
 export async function saveOpsEvidenceArtifact(db: WolfDb, artifact: EvidenceArtifact): Promise<void> {
   await db.put('opsEvidence', artifact);
 }
@@ -103,8 +110,35 @@ export async function listOpsEvidenceArtifacts(
     .sort((left, right) => left.capturedAt.localeCompare(right.capturedAt));
 }
 
+export async function listAllOpsEvidenceArtifacts(db: WolfDb): Promise<EvidenceArtifact[]> {
+  return db.getAll<EvidenceArtifact>('opsEvidence');
+}
+
+export async function saveOpsWorkOrder(db: WolfDb, workOrder: OpsWorkOrder): Promise<void> {
+  await db.put('opsWorkOrders', workOrder);
+}
+
+export async function loadOpsWorkOrder(
+  db: WolfDb,
+  workOrderId: string,
+): Promise<OpsWorkOrder | undefined> {
+  return db.get<OpsWorkOrder>('opsWorkOrders', workOrderId);
+}
+
+export async function listAllOpsWorkOrders(db: WolfDb): Promise<OpsWorkOrder[]> {
+  const workOrders = await db.getAll<OpsWorkOrder>('opsWorkOrders');
+  return workOrders.sort((left, right) => right.updatedAt.localeCompare(left.updatedAt));
+}
+
+export async function listOpsWorkOrders(db: WolfDb, caseId: string): Promise<OpsWorkOrder[]> {
+  return (await listAllOpsWorkOrders(db)).filter((workOrder) => workOrder.caseId === caseId);
+}
+
 export async function deleteOpsInspectionCase(db: WolfDb, caseId: string): Promise<void> {
-  await db.transaction(['opsCases', 'opsObservations', 'opsEvidence'], 'readwrite', async (tx) => {
+  await db.transaction(
+    ['opsCases', 'opsObservations', 'opsEvidence', 'opsWorkOrders', 'opsSubmissions', 'opsAnalysisReturns'],
+    'readwrite',
+    async (tx) => {
     const observations = await tx.getAll<OpsObservation>('opsObservations');
     for (const observation of observations) {
       if (observation.caseId === caseId) {
@@ -116,8 +150,21 @@ export async function deleteOpsInspectionCase(db: WolfDb, caseId: string): Promi
     for (const artifact of artifacts) {
       if (artifact.caseId === caseId) await tx.delete('opsEvidence', artifact.artifactId);
     }
+    const workOrders = await tx.getAll<OpsWorkOrder>('opsWorkOrders');
+    for (const workOrder of workOrders) {
+      if (workOrder.caseId === caseId) await tx.delete('opsWorkOrders', workOrder.workOrderId);
+    }
+    const submissions = await tx.getAll<StoredOpsSubmission>('opsSubmissions');
+    for (const submission of submissions) {
+      if (submission.caseId === caseId) await tx.delete('opsSubmissions', submission.submissionId);
+    }
+    const analysisReturns = await tx.getAll<OpsAnalysisReceipt>('opsAnalysisReturns');
+    for (const receipt of analysisReturns) {
+      if (receipt.caseId === caseId) await tx.delete('opsAnalysisReturns', receipt.responseId);
+    }
     await tx.delete('opsCases', caseId);
-  });
+    },
+  );
 }
 
 export async function deleteOpsAssetPassport(db: WolfDb, assetId: string): Promise<void> {

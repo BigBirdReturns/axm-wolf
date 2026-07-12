@@ -147,8 +147,12 @@ Do not mark Phase 7 complete until those gates have been run in an environment w
 
 ## Known gaps
 
-- No media interpreter converts photograph or video pixels into observations. The current UI captures, labels, stores, and requests evidence only.
-- WOLF Ops cases and media do not yet have a portable export and import bundle.
+- No media interpreter converts photograph or video pixels into observations. The current UI captures, labels, stores, requests, and portably backs up evidence only.
+- WOLF Ops backups are unencrypted JSON with embedded media and can become large.
+- Analysis handoffs and returns now support an asynchronous human/subscription interpretation loop without a runtime inference API. Handoffs remain unencrypted pending owner-key configuration.
+- Guided recipient links now provide one-tap start/resume, writing-screen coaching, simplified navigation, and a native share/download delivery path for testimony records.
+- The local survey dashboard creates uniquely labeled invitations, matches returned records by assignment ID, accepts multiple return files, filters by recipient/survey/pack, and tracks invited/received/analyzing/completed workflow states.
+- The optional Glass Onion v0.2 adapter serves friendly `/wolf/SUR##` interviews, synchronizes local records through D1, protects recipient and dashboard access separately, and carries operator-uploaded analysis returns back to the participant page without runtime AI calls.
 - The initial decision metrics are relative priors rather than local quotations or calibrated lifetime-cost estimates.
 - No browser-driven camera and Blob-restoration end-to-end test has run yet.
 - Existing full Playwright coverage still requires a browser binary in an allowlisted environment; the dependency-free static PWA smoke remains the portable gate.

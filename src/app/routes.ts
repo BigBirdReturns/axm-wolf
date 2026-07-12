@@ -5,6 +5,14 @@
 
 export type Route =
   | { name: 'launch' }
+  | { name: 'hosted-survey'; code: string }
+  | {
+      name: 'guided-start';
+      packId: string;
+      assignmentId?: string;
+      recipientLabel?: string;
+      surveyLabel?: string;
+    }
   | { name: 'records' }
   | { name: 'record'; recordId: string }
   | { name: 'record-section'; recordId: string; sectionId: string }
@@ -23,10 +31,14 @@ export type Route =
  */
 export function parseRoute(hash: string): Route {
   let path = hash.startsWith('#') ? hash.slice(1) : hash;
+  let query = '';
 
   // Strip query string / fragment-of-fragment, if any.
   const queryIndex = path.indexOf('?');
-  if (queryIndex !== -1) path = path.slice(0, queryIndex);
+  if (queryIndex !== -1) {
+    query = path.slice(queryIndex + 1);
+    path = path.slice(0, queryIndex);
+  }
 
   // Normalize: ensure leading slash, drop trailing slash (except root).
   if (path === '' || path === '/') return { name: 'launch' };
@@ -37,6 +49,20 @@ export function parseRoute(hash: string): Route {
 
   if (segments.length === 1 && segments[0] === 'records') {
     return { name: 'records' };
+  }
+
+  if (segments.length === 2 && segments[0] === 'start' && segments[1].length > 0) {
+    const params = new URLSearchParams(query);
+    const assignmentId = cleanParam(params.get('assignment'));
+    const recipientLabel = cleanParam(params.get('recipient'));
+    const surveyLabel = cleanParam(params.get('survey'));
+    return {
+      name: 'guided-start',
+      packId: segments[1],
+      ...(assignmentId ? { assignmentId } : {}),
+      ...(recipientLabel ? { recipientLabel } : {}),
+      ...(surveyLabel ? { surveyLabel } : {}),
+    };
   }
 
   if (segments.length === 1 && segments[0] === 'packs') {
@@ -91,6 +117,10 @@ export function routeToHash(route: Route): string {
   switch (route.name) {
     case 'launch':
       return '#/';
+    case 'hosted-survey':
+      return `/wolf/${encodeURIComponent(route.code)}`;
+    case 'guided-start':
+      return guidedStartHash(route);
     case 'records':
       return '#/records';
     case 'record':
@@ -112,4 +142,18 @@ export function routeToHash(route: Route): string {
     case 'not-found':
       return `#${route.path}`;
   }
+}
+
+function cleanParam(value: string | null): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed.slice(0, 200) : undefined;
+}
+
+function guidedStartHash(route: Extract<Route, { name: 'guided-start' }>): string {
+  const params = new URLSearchParams();
+  if (route.assignmentId) params.set('assignment', route.assignmentId);
+  if (route.recipientLabel) params.set('recipient', route.recipientLabel);
+  if (route.surveyLabel) params.set('survey', route.surveyLabel);
+  const query = params.toString();
+  return `#/start/${encodeURIComponent(route.packId)}${query ? `?${query}` : ''}`;
 }

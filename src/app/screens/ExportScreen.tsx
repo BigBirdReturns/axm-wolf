@@ -15,7 +15,9 @@ import {
   WolfValidationError,
   type WolfRecord,
 } from '../../engine/index.js';
-import { downloadText } from '../lib/download.js';
+import { downloadText, shareOrDownloadText } from '../lib/download.js';
+import { guidedPackId } from '../lib/guided.js';
+import { hostedSessionForRecord, syncHostedRecord } from '../lib/hosted.js';
 import { bundleToRecord, makeImportCopy } from '../lib/import.js';
 import '../styles/data.css';
 
@@ -50,6 +52,7 @@ export function ExportScreen({ db, recordId, onNavigate, onRecordDeleted }: Expo
   const [deleteTitleInput, setDeleteTitleInput] = useState('');
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [archiveError, setArchiveError] = useState<string | null>(null);
+  const [deliveryNotice, setDeliveryNotice] = useState<string | null>(null);
 
   async function refreshRecord(): Promise<void> {
     const loaded = await loadRecord(db, recordId);
@@ -93,6 +96,47 @@ export function ExportScreen({ db, recordId, onNavigate, onRecordDeleted }: Expo
       await markExported();
     } catch (err) {
       setExportError(err instanceof Error ? err.message : String(err));
+    }
+  }
+
+  async function handleSendBundle(): Promise<void> {
+    if (!record) return;
+    setExportError(null);
+    setDeliveryNotice(null);
+    try {
+      const bundle = buildRecordBundle(record, { includeDrafts: true });
+      const filename = `${sanitizeFilename(record.title)}.wolfrecord.json`;
+      const result = await shareOrDownloadText(
+        filename,
+        'application/json',
+        JSON.stringify(bundle, null, 2),
+        `WOLF record: ${record.title}`,
+        'Here is my WOLF response record.',
+      );
+      if (result !== 'cancelled') await markExported();
+      setDeliveryNotice(
+        result === 'shared'
+          ? 'Your browser opened its share options with the record attached.'
+          : result === 'downloaded'
+            ? 'The record was downloaded. Attach that .wolfrecord.json file to your message to the person who invited you.'
+            : 'Sharing was cancelled. Your answers remain saved here.',
+      );
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : String(err));
+    }
+  }
+
+  async function handleHostedSubmit(): Promise<void> {
+    if (!record) return;
+    setExportError(null);
+    setDeliveryNotice('Submitting your saved answers…');
+    try {
+      await syncHostedRecord(record, true);
+      await markExported();
+      setDeliveryNotice('Submitted. Your interviewer can now open these answers. Your local copy remains on this device.');
+    } catch (err) {
+      setDeliveryNotice(null);
+      setExportError(`${err instanceof Error ? err.message : String(err)} Your answers remain saved on this device; use the backup button below if needed.`);
     }
   }
 
@@ -229,12 +273,69 @@ export function ExportScreen({ db, recordId, onNavigate, onRecordDeleted }: Expo
     );
   }
 
+  const isGuided = guidedPackId() === record.packId;
+  const isHosted = hostedSessionForRecord(record.recordId) !== null;
+
+  if (isGuided) {
+    return (
+      <div className="stack">
+        <h1>Send your answers</h1>
+        <p className="muted">{record.title}</p>
+
+        <section className="card stack" aria-labelledby="send-heading">
+          <h2 id="send-heading">Your answers are ready</h2>
+          <p>
+            {isHosted
+              ? 'Submit your saved answers directly to the interviewer. Your local copy stays on this device.'
+              : 'This creates one file containing your saved answers and any unfinished drafts. On a phone, choose the person or app you normally use to send files.'}
+          </p>
+          <button type="button" className="btn" onClick={() => void (isHosted ? handleHostedSubmit() : handleSendBundle())}>
+            {isHosted ? 'Submit my answers' : 'Send my answers'}
+          </button>
+          {isHosted ? <button type="button" className="btn btn--secondary" onClick={() => void handleSendBundle()}>Download or share a backup</button> : null}
+          {deliveryNotice ? <p className="notice" role="status">{deliveryNotice}</p> : null}
+          {exportError ? <p className="notice" role="alert">{exportError}</p> : null}
+          <p className="meta">
+            {isHosted ? 'WOLF synchronizes only this invitation record. It does not access other browser data.' : "WOLF never sends anything automatically. You choose the recipient in your device's share screen."}
+          </p>
+        </section>
+
+        <button
+          type="button"
+          className="btn btn--secondary"
+          onClick={() => onNavigate(`#/record/${encodeURIComponent(record.recordId)}`)}
+        >
+          Return to my answers
+        </button>
+
+        <section aria-labelledby="guided-data-heading">
+          <h2 id="guided-data-heading">Your privacy</h2>
+          <p className="notice">
+            {isHosted
+              ? 'Your responses are saved on this device and synchronized to this private invitation when online. Clearing browser data removes the local copy.'
+              : 'Your responses remain in this browser on this device until you choose to send them. Clearing browser data may remove them.'}
+          </p>
+        </section>
+      </div>
+    );
+  }
+
   const deleteConfirmed = deleteTitleInput === record.title;
 
   return (
     <div className="stack">
       <h1>Export and data</h1>
       <p className="muted">{record.title}</p>
+
+      {isGuided ? (
+        <section className="card stack" aria-labelledby="send-heading">
+          <h2 id="send-heading">Send your answers</h2>
+          <p>This creates one file containing your saved answers and any unfinished drafts. On a phone, choose the person or app you normally use to send files.</p>
+          <button type="button" className="btn" onClick={() => void handleSendBundle()}>Send my answers</button>
+          {deliveryNotice ? <p className="notice" role="status">{deliveryNotice}</p> : null}
+          <p className="meta">WOLF never sends anything automatically. You choose the recipient in your device’s share screen.</p>
+        </section>
+      ) : null}
 
       <hr className="section-rule" />
 

@@ -11,9 +11,11 @@ import {
   createRecord,
   type CapturePack,
   type PackTrust,
+  type SubjectMetadata,
 } from '../../engine/index.js';
 import type { LegacyMigrationSummary } from '../../storage/index.js';
 import wolfsDepositionPackJson from '../../packs/wolfs-deposition/wolfs-deposition.wolfpack.json' with { type: 'json' };
+import fieldOperatorReportPackJson from '../../packs/field-operator-report/field-operator-report.wolfpack.json' with { type: 'json' };
 import { runLegacyMigrationIfNeeded } from '../lib/legacyMigrationRunner.js';
 import { APP_VERSION } from '../config.js';
 
@@ -58,7 +60,7 @@ export type WolfAppState = {
   migrationSummary: LegacyMigrationSummary | null;
 };
 
-const BUNDLED_PACK = wolfsDepositionPackJson as unknown;
+const BUNDLED_PACKS: unknown[] = [wolfsDepositionPackJson, fieldOperatorReportPackJson];
 
 /**
  * On first load: opens the database, validates and installs the bundled
@@ -81,20 +83,21 @@ export function useWolfApp(): WolfAppState {
         const wolfDb = await openWolfDb();
         if (cancelled) return;
 
-        const pack = validatePack(BUNDLED_PACK);
-        const digest = await digestPack(pack);
-
-        const existing = await wolfDb.get<StoredPack>('packs', pack.packId);
-        if (!existing) {
-          const storedPack: StoredPack = {
-            packId: pack.packId,
-            packVersion: pack.packVersion,
-            digest,
-            trust: 'bundled',
-            installedAt: new Date().toISOString(),
-            pack,
-          };
-          await wolfDb.put('packs', storedPack);
+        for (const bundledPack of BUNDLED_PACKS) {
+          const pack = validatePack(bundledPack);
+          const digest = await digestPack(pack);
+          const existing = await wolfDb.get<StoredPack>('packs', pack.packId);
+          if (!existing) {
+            const storedPack: StoredPack = {
+              packId: pack.packId,
+              packVersion: pack.packVersion,
+              digest,
+              trust: 'bundled',
+              installedAt: new Date().toISOString(),
+              pack,
+            };
+            await wolfDb.put('packs', storedPack);
+          }
         }
 
         const installedPacks = await wolfDb.getAll<StoredPack>('packs');
@@ -147,17 +150,20 @@ export async function createAndSaveRecord(
   db: WolfDb,
   storedPack: StoredPack,
   refreshRecords: () => Promise<void>,
+  options: { recordId?: string; title?: string; subject?: SubjectMetadata } = {},
 ): Promise<string> {
-  const recordId =
-    typeof crypto !== 'undefined' && 'randomUUID' in crypto
+  const recordId = options.recordId ??
+    (typeof crypto !== 'undefined' && 'randomUUID' in crypto
       ? crypto.randomUUID()
-      : `record-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      : `record-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 
   const record = createRecord({
     recordId,
     pack: storedPack.pack,
     packDigest: storedPack.digest,
     appVersion: APP_VERSION,
+    ...(options.title ? { title: options.title } : {}),
+    ...(options.subject ? { subject: options.subject } : {}),
   });
 
   await saveRecord(db, record);

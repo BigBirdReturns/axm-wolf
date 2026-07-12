@@ -37,6 +37,9 @@ export function createObservation(input: {
     evidenceArtifactIds: [...new Set(input.evidenceArtifactIds ?? [])],
     supersedesObservationId: input.supersedesObservationId ?? null,
     status: 'active',
+    analysisResponseId: null,
+    analysisClaimId: null,
+    analysisReviewStatus: null,
   };
 }
 
@@ -65,7 +68,11 @@ function defaultConfidence(
   sourceClass: EvidenceSourceClass,
   kind: ObservationKind,
 ): EvidenceConfidence {
-  if (sourceClass === 'system_inferred' || kind === 'inference') return 'possible';
+  if (
+    sourceClass === 'system_inferred' ||
+    sourceClass === 'subscription_assisted_analysis' ||
+    kind === 'inference'
+  ) return 'possible';
   if (sourceClass === 'operator_observed' || sourceClass === 'contractor_documented') return 'confirmed';
   if (sourceClass === 'manufacturer_documented' || sourceClass === 'official_source') return 'confirmed';
   return 'unknown';

@@ -12,7 +12,8 @@ import { VitePWA } from 'vite-plugin-pwa';
 // hosting; the relative `start_url`/`scope` in the manifest keep the PWA
 // install + service worker valid at any subpath (DESIGN.md 11.3).
 
-const PAGES_BASE = '/axm-wolf/app/';
+const GITHUB_PAGES_BASE = '/axm-wolf/app/';
+const GLASS_ONION_BASE = '/wolf/';
 
 // Minimal ambient declaration so this file type-checks without `@types/node`
 // (the project has no other Node-typed sources). `vite.config.ts` only runs
@@ -35,8 +36,8 @@ const manifestDescription = isSinglePack
   ? "William Sandhu's oral history, captured locally in this browser."
   : 'A local-first engine for capturing tacit institutional knowledge through structured, self-directed testimony.';
 
-export default defineConfig({
-  base: PAGES_BASE,
+export default defineConfig(({ mode }) => ({
+  base: mode === 'glass-onion' ? GLASS_ONION_BASE : GITHUB_PAGES_BASE,
   plugins: [
     react(),
     VitePWA({
@@ -85,7 +86,7 @@ export default defineConfig({
     }),
   ],
   build: {
-    outDir: 'docs/app',
+    outDir: mode === 'glass-onion' ? 'dist/wolf' : 'docs/app',
     emptyOutDir: true,
   },
-});
+}));

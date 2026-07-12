@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -20,6 +20,7 @@ import genericPackJson from '../../src/test-fixtures/generic-engineer.wolfpack.j
  * is stable in practice for a single keystroke against an in-memory db.
  */
 describe('PromptScreen', () => {
+  afterEach(() => sessionStorage.clear());
   it('accepts textarea input and announces the draft-saved status via aria-live', async () => {
     const user = userEvent.setup();
     const pack = validatePack(genericPackJson);
@@ -57,4 +58,19 @@ describe('PromptScreen', () => {
       { timeout: 5000 },
     );
   }, 10000);
+
+  it('explains voice, draft, commit, and stopping behavior in a guided session', async () => {
+    const pack = validatePack(genericPackJson);
+    const digest = await digestPack(pack);
+    const db = await openWolfDb();
+    const record = createRecord({ recordId: 'guided-record', pack, packDigest: digest, appVersion: '0.1.0' });
+    await saveRecord(db, record);
+    sessionStorage.setItem('axm-wolf-guided-pack', pack.packId);
+    render(<PromptScreen db={db} recordId={record.recordId} promptId={pack.prompts[0].id} onNavigate={() => {}} />);
+
+    expect(await screen.findByRole('heading', { name: 'How to answer this question' })).toBeInTheDocument();
+    expect(screen.getByText(/Your draft saves while you work, but it is not part of the finished record/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Choose another question or finish' })).toBeInTheDocument();
+    db.close();
+  });
 });

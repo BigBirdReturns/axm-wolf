@@ -20,9 +20,10 @@ import { join } from 'node:path';
 const root = process.cwd();
 const distDir = join(root, 'docs', 'app');
 const BASE = '/axm-wolf/app/';
+const viteCli = join(root, 'node_modules', 'vite', 'bin', 'vite.js');
 
 console.log('Building app (vite build)...');
-execFileSync('npx', ['vite', 'build'], { cwd: root, stdio: 'inherit' });
+execFileSync(process.execPath, [viteCli, 'build'], { cwd: root, stdio: 'inherit' });
 
 function requireFile(relPath) {
   const full = join(distDir, relPath);

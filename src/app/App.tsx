@@ -14,18 +14,22 @@ import { RecordsScreen } from './screens/RecordsScreen.js';
 import { PacksScreen } from './screens/PacksScreen.js';
 import { OpsScreen } from './screens/OpsScreen.js';
 import { SettingsScreen } from './screens/SettingsScreen.js';
+import { GuidedStartScreen } from './screens/GuidedStartScreen.js';
+import { guidedPackId } from './lib/guided.js';
+import { HostedSurveyScreen } from './screens/HostedSurveyScreen.js';
 
 export function App(): JSX.Element {
   const route = useHashRoute();
   const wolfApp = useWolfApp();
   const swUpdate = useServiceWorkerUpdate();
+  const guided = route.name === 'guided-start' || guidedPackId() !== null;
 
   return (
     <div className="app-shell">
       <UpdateBanner {...swUpdate} />
       <AppHeader>
-        <a className="btn btn--secondary" href="#/records">
-          Records
+        {!guided ? <><a className="btn btn--secondary" href={window.location.pathname.startsWith('/wolf') ? '/wolf/dashboard' : '#/records'}>
+          Dashboard
         </a>
         <a className="btn btn--secondary" href="#/packs">
           Packs
@@ -36,6 +40,7 @@ export function App(): JSX.Element {
         <a className="btn btn--secondary" href="#/settings">
           Settings
         </a>
+        </> : null}
       </AppHeader>
 
       <main className="app-main">
@@ -51,7 +56,7 @@ export function App(): JSX.Element {
       </main>
 
       <footer className="app-footer">
-        <p>AXM Wolf &mdash; local-first institutional knowledge capture.</p>
+        <p>{guided ? 'Your work saves on this device. You can stop and return later.' : 'AXM Wolf — local-first institutional knowledge capture.'}</p>
       </footer>
     </div>
   );
@@ -69,6 +74,10 @@ function renderRoute(route: ReturnType<typeof useHashRoute>, wolfApp: ReturnType
   switch (route.name) {
     case 'launch':
       return <LaunchScreen {...wolfApp} />;
+    case 'hosted-survey':
+      return <HostedSurveyScreen {...wolfApp} code={route.code} onNavigate={navigate} />;
+    case 'guided-start':
+      return <GuidedStartScreen {...wolfApp} invitation={route} onNavigate={navigate} />;
     case 'records':
       return <RecordsScreen {...wolfApp} />;
     case 'record':

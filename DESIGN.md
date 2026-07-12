@@ -1,6 +1,8 @@
 # axm-wolf
 ## Institutional Knowledge Capture Engine - Design Authority Document v0.1
 
+> **Owner-authorized hosted-mode amendment (v0.2, 2026-07-12):** The v0.1 local-first engine and portable record model remain unchanged. A deployment may add an optional same-origin synchronization adapter under `/wolf/api/`, backed by Cloudflare Pages advanced mode and D1. Hosted mode must preserve IndexedDB as the working offline copy, use capability-scoped recipient invitations, require separate dashboard authorization, make no runtime AI calls, and retain file export/import as a fallback. The v0.1 statements below describing “no backend” remain requirements for the standalone build, not prohibitions on this explicitly optional adapter.
+
 **Repository:** `BigBirdReturns/axm-wolf`  
 **Product:** AXM Wolf  
 **First bundled capture pack:** The Wolf's Deposition  

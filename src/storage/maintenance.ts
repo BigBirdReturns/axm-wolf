@@ -29,6 +29,10 @@ const SINGLE_KEY_FIELD: Partial<Record<StoreName, string>> = {
   opsAssets: 'assetId',
   opsObservations: 'observationId',
   opsEvidence: 'artifactId',
+  opsWorkOrders: 'workOrderId',
+  opsSubmissions: 'submissionId',
+  opsAnalysisReturns: 'responseId',
+  surveyAssignments: 'assignmentId',
 };
 
 /**

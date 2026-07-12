@@ -2,6 +2,7 @@ import type {
   CaptureRequest,
   EvidenceArtifact,
   FactCondition,
+  FactProvenance,
   InspectionGuidance,
   InspectionPlaybook,
   OpsInspectionCase,
@@ -61,6 +62,7 @@ export function createInspectionCase(input: {
     siteLabel: input.siteLabel ?? null,
     assetId: input.assetId ?? null,
     facts: {},
+    factProvenance: {},
     completedRequestIds: [],
     skippedRequests: [],
     evidenceArtifactIds: [],
@@ -75,10 +77,23 @@ export function setInspectionFact(
   factKey: string,
   value: ScalarFact,
   now = new Date().toISOString(),
+  provenance: Partial<FactProvenance> = {},
 ): OpsInspectionCase {
+  const note = provenance.note?.trim() || null;
+  const factProvenance: FactProvenance = {
+    sourceClass: provenance.sourceClass ?? 'operator_observed',
+    recordedAt: provenance.recordedAt ?? now,
+    evidenceArtifactIds: [...new Set(provenance.evidenceArtifactIds ?? [])],
+    note,
+  };
+
   return {
     ...inspectionCase,
     facts: { ...inspectionCase.facts, [factKey]: value },
+    factProvenance: {
+      ...(inspectionCase.factProvenance ?? {}),
+      [factKey]: factProvenance,
+    },
     status: inspectionCase.status === 'draft' ? 'capturing' : inspectionCase.status,
     updatedAt: now,
   };

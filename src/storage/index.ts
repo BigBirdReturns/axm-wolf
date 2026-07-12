@@ -16,6 +16,7 @@ export {
   loadOpsInspectionCase,
   listOpsInspectionCases,
   saveOpsEvidenceArtifact,
+  commitOpsEvidenceCapture,
   listOpsEvidenceArtifacts,
   deleteOpsInspectionCase,
 } from './opsRepository.js';

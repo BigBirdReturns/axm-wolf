@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 import { IDBFactory } from 'fake-indexeddb';
 
-import { openWolfDb, STORE_NAMES } from '../../src/storage/db.js';
+import { DB_NAME, DB_VERSION, openWolfDb, STORE_NAMES } from '../../src/storage/db.js';
 
 function freshFactory(): IDBFactory {
   return new IDBFactory();
@@ -100,6 +100,36 @@ test('delete removes a stored value', async () => {
 
     await db.delete('settings', 'theme');
     assert.equal(await db.get('settings', 'theme'), undefined);
+  } finally {
+    db.close();
+  }
+});
+
+test('opening a v1 database upgrades it in place with WOLF Ops stores', async () => {
+  const factory = freshFactory();
+  await new Promise<void>((resolve, reject) => {
+    const request = factory.open(DB_NAME, 1);
+    request.onupgradeneeded = () => {
+      const legacyDb = request.result;
+      legacyDb.createObjectStore('packs', { keyPath: 'packId' });
+      legacyDb.createObjectStore('records', { keyPath: 'recordId' });
+      legacyDb.createObjectStore('responses', { keyPath: ['recordId', 'promptId'] });
+      legacyDb.createObjectStore('drafts', { keyPath: ['recordId', 'promptId'] });
+      legacyDb.createObjectStore('settings', { keyPath: 'key' });
+      legacyDb.createObjectStore('migrations', { keyPath: 'id' });
+    };
+    request.onsuccess = () => {
+      request.result.close();
+      resolve();
+    };
+    request.onerror = () => reject(request.error);
+  });
+
+  assert.equal(DB_VERSION, 2);
+  const db = await openWolfDb(factory);
+  try {
+    assert.equal(await db.get('opsCases', 'missing'), undefined);
+    assert.equal(await db.get('opsEvidence', 'missing'), undefined);
   } finally {
     db.close();
   }

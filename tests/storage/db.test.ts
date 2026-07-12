@@ -129,6 +129,8 @@ test('opening a v1 database upgrades it in place with WOLF Ops stores', async ()
   const db = await openWolfDb(factory);
   try {
     assert.equal(await db.get('opsCases', 'missing'), undefined);
+    assert.equal(await db.get('opsAssets', 'missing'), undefined);
+    assert.equal(await db.get('opsObservations', 'missing'), undefined);
     assert.equal(await db.get('opsEvidence', 'missing'), undefined);
   } finally {
     db.close();

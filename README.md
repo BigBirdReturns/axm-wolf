@@ -21,6 +21,18 @@ The first bundled pack is The Wolf's Deposition, a primary-source record for Wil
 
 The engine performs no inference. v0.1 is not an AI interviewer: it asks fixed prompts from a pack and stores what the subject types or dictates, verbatim.
 
+## WOLF Ops prototype
+
+`src/ops/` is a separate deterministic decision-support layer. It does not alter testimony. It:
+
+- builds guided inspection plans that request the highest-value safe photograph, video, document, measurement, or spoken answer still missing from an asset model
+- marks contractor and licensed-professional capture separately instead of instructing a subject to perform unsafe disassembly or energized testing
+- preserves a Pareto frontier of materially different cost, recurrence, disruption, compliance, reversibility, attention, and evidence tradeoffs rather than collapsing a case to one answer
+- enforces durable work-order closure so a temporary patch cannot be verified or closed as a permanent resolution
+- includes first pilot templates for mixed discontinued recessed lighting and café display preventive care
+
+The prototype defines the evidence and decision contract but does not yet interpret media or persist attachments. See [docs/OPS.md](docs/OPS.md).
+
 ## What a capture pack is
 
 A capture pack is a validated JSON document (`*.wolfpack.json`) describing a question library: sections, prompts grouped by lens (a labeled angle on a topic), and presentation defaults. A pack contains no responses. The same engine and UI run any valid pack. See [docs/PACK_AUTHORING.md](docs/PACK_AUTHORING.md) for the full schema and a minimal example.
@@ -36,6 +48,7 @@ The legacy proof of concept (`reference/legacy-v0/`) carried a comment claiming 
 | Layer | Path | May import from |
 | --- | --- | --- |
 | Engine | `src/engine/` | nothing else in the repo |
+| Ops | `src/ops/` | only other files under `src/ops/` |
 | Storage | `src/storage/` | `src/engine/` |
 | Packs | `src/packs/`, `src/test-fixtures/` | (data only; no code imports) |
 | App | `src/app/` | `src/engine/`, `src/storage/`, `src/packs/` |
@@ -68,7 +81,7 @@ npm run lint     # engine boundary + content checks
 npm run test:e2e # smoke script (scripts/e2e-smoke.mjs)
 ```
 
-The current suite has 200 passing tests covering engine logic, pack validation, storage (via `fake-indexeddb`), the first-pack content audit, and the legacy migration map.
+The suite covers engine logic, pack validation, storage through `fake-indexeddb`, the first-pack content audit, legacy migration, guided inspection, decision-frontier evaluation, and durable work-order closure.
 
 ## Deployment modes
 
@@ -93,7 +106,7 @@ To write your own capture pack, see [docs/PACK_AUTHORING.md](docs/PACK_AUTHORING
 - Voice transcription is a progressive enhancement: availability and network use depend on the browser, and it is not part of the offline guarantee.
 - No at-rest application encryption and no cryptographic identity signatures. Pack and record digests detect accidental changes, not authorship.
 - Imported packs must be schema-valid JSON with no HTML; only one response kind (`long_text`) is supported in v1.
-- Record import (`.wolfrecord.json`) is implemented in the Export and data screen. Importing a *pack* file through the UI is not yet implemented; new packs currently ship with the app.
+- The Ops prototype does not yet interpret photographs or video, persist media evidence, or expose its models through the production UI.
 
 ## Roadmap
 
@@ -102,8 +115,8 @@ Architectural reserves for future versions (DESIGN.md Part 18), not v0.1 commitm
 - signed packs, building on the existing `packDigest` field
 - encrypted record exports (wrapping the existing bundle format)
 - a derived-knowledge layer (timelines, entity indexes, summaries) that always cites `recordId` / `promptId` / `revisionId` and never overwrites testimony
+- media evidence, asset passports, guided inspection sessions, and source-cited operational decision cases
 - multiple respondents combined into one knowledge collection
-- attachments and evidence references alongside text responses
 - optional hosted synchronization of encrypted bundles, with the local engine remaining fully functional without it
 
 ## AXM family

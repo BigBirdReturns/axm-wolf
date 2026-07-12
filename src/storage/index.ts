@@ -11,3 +11,11 @@ export type { StoredRecordMeta, StoredResponseRow, StoredDraftRow } from './reco
 export { saveDraft, getDraft, deleteDraft, listDrafts } from './draftRepository.js';
 export { migrateLegacyAnswers } from './legacyMigration.js';
 export type { LegacyMigrationConfig, LegacyMigrationSummary } from './legacyMigration.js';
+export {
+  saveOpsInspectionCase,
+  loadOpsInspectionCase,
+  listOpsInspectionCases,
+  saveOpsEvidenceArtifact,
+  listOpsEvidenceArtifacts,
+  deleteOpsInspectionCase,
+} from './opsRepository.js';

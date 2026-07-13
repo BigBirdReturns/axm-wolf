@@ -21,6 +21,27 @@ describe('Survey dashboard', () => {
     db?.close();
     db = null;
     vi.restoreAllMocks();
+    window.history.replaceState({}, '', '/');
+  });
+
+  it('opens an authenticated operator inside only their assigned workspace', async () => {
+    const { state } = await setupState();
+    window.history.replaceState({}, '', '/wolf/dashboard');
+    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+      const path = typeof input === 'string' ? input : input instanceof URL ? input.pathname : new URL(input.url).pathname;
+      if (path === '/wolf/api/operator/session') return new Response(JSON.stringify({ identity: { email: 'helen@example.com', isRoot: false }, workspaces: [{ id: 'helen', name: "Helen's interviews", slug: 'helen', role: 'steward' }] }), { status: 200 });
+      if (path.endsWith('/surveys')) return new Response(JSON.stringify({ surveys: [] }), { status: 200 });
+      if (path.endsWith('/members')) return new Response(JSON.stringify({ members: [{ email: 'helen@example.com', role: 'steward', status: 'active', created_at: '2026-07-12T10:00:00.000Z' }] }), { status: 200 });
+      return new Response(JSON.stringify({ error: `Unexpected path ${path}` }), { status: 404 });
+    }));
+
+    const { unmount } = render(<RecordsScreen {...state} />);
+
+    expect(await screen.findByText(/Signed in as/)).toHaveTextContent('helen@example.com');
+    expect(screen.getByLabelText('Workspace')).toHaveValue('helen');
+    expect(await screen.findByText(/Current members:/)).toHaveTextContent('helen@example.com (steward)');
+    expect(screen.queryByRole('heading', { name: 'Create another workspace' })).not.toBeInTheDocument();
+    unmount();
   });
 
   async function setupState(): Promise<{ state: WolfAppState; pack: ReturnType<typeof validatePack> }> {

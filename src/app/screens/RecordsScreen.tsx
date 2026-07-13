@@ -14,15 +14,18 @@ import { bundleToRecord } from '../lib/import.js';
 import type { WolfAppState } from '../hooks/useWolfApp.js';
 import { routeToHash } from '../routes.js';
 import {
+  addHostedMember,
+  createHostedWorkspace,
   createHostedSurvey,
   fetchHostedRecord,
+  getHostedOperatorSession,
   isHostedDashboard,
+  listHostedMembers,
   listHostedSurveys,
-  rememberAdminKey,
-  storedAdminKey,
-  unlockHostedDashboard,
   updateHostedSurveyStatus,
   uploadHostedAnalysis,
+  type HostedMember,
+  type HostedOperatorSession,
 } from '../lib/hosted.js';
 import '../styles/data.css';
 
@@ -42,9 +45,16 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
   const [working, setWorking] = useState(false);
   const [availableRecordIds, setAvailableRecordIds] = useState<Set<string>>(() => new Set(records.map((record) => record.recordId)));
   const [remoteRecordIds, setRemoteRecordIds] = useState<Set<string>>(new Set());
-  const [adminKeyInput, setAdminKeyInput] = useState(storedAdminKey());
-  const [hostedUnlocked, setHostedUnlocked] = useState(false);
+  const [operatorSession, setOperatorSession] = useState<HostedOperatorSession | null>(null);
+  const [workspaceId, setWorkspaceId] = useState('');
+  const [members, setMembers] = useState<HostedMember[]>([]);
+  const [memberEmail, setMemberEmail] = useState('');
+  const [memberRole, setMemberRole] = useState<HostedMember['role']>('interviewer');
+  const [workspaceName, setWorkspaceName] = useState('');
   const hostedDashboard = isHostedDashboard();
+  const hostedUnlocked = Boolean(operatorSession && workspaceId);
+  const selectedWorkspace = operatorSession?.workspaces.find((workspace) => workspace.id === workspaceId);
+  const canManageMembers = operatorSession?.identity.isRoot || selectedWorkspace?.role === 'steward' || selectedWorkspace?.role === 'owner';
 
   const selectedPackId = packId || packs[0]?.packId || '';
 
@@ -58,11 +68,16 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
   }, [db]);
 
   useEffect(() => {
-    if (!hostedDashboard || !storedAdminKey()) return;
-    void refreshHostedDashboard().catch(() => setHostedUnlocked(false));
-    const interval = window.setInterval(() => void refreshHostedDashboard().catch(() => undefined), 30_000);
-    return () => window.clearInterval(interval);
+    if (!hostedDashboard) return;
+    void connectHostedDashboard();
   }, [hostedDashboard]);
+
+  useEffect(() => {
+    if (!hostedDashboard || !workspaceId) return;
+    void refreshHostedDashboard(workspaceId);
+    const interval = window.setInterval(() => void refreshHostedDashboard(workspaceId).catch(() => undefined), 30_000);
+    return () => window.clearInterval(interval);
+  }, [hostedDashboard, workspaceId]);
 
   useEffect(() => {
     setAvailableRecordIds(new Set(records.map((record) => record.recordId)));
@@ -95,9 +110,11 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
     return new URL(hash, window.location.href).toString();
   }
 
-  async function refreshHostedDashboard(): Promise<void> {
-    if (!db) return;
-    const surveys = await listHostedSurveys();
+  async function refreshHostedDashboard(targetWorkspaceId = workspaceId): Promise<void> {
+    if (!db || !targetWorkspaceId) return;
+    const workspace = operatorSession?.workspaces.find((candidate) => candidate.id === targetWorkspaceId);
+    const mayListMembers = operatorSession?.identity.isRoot || workspace?.role === 'steward' || workspace?.role === 'owner';
+    const [surveys, remoteMembers] = await Promise.all([listHostedSurveys(targetWorkspaceId), mayListMembers ? listHostedMembers(targetWorkspaceId) : Promise.resolve([])]);
     const local = await listSurveyAssignments(db);
     const localById = new Map(local.map((assignment) => [assignment.assignmentId, assignment]));
     setAssignments(surveys.map((survey) => ({
@@ -113,23 +130,47 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
       invitationToken: localById.get(survey.code)?.invitationToken,
     })));
     setRemoteRecordIds(new Set(surveys.filter((survey) => Boolean(survey.has_record)).map((survey) => survey.code)));
-    setHostedUnlocked(true);
+    setMembers(remoteMembers);
   }
 
   async function connectHostedDashboard(): Promise<void> {
     setWorking(true);
     setError(null);
     try {
-      await unlockHostedDashboard(adminKeyInput.trim());
-      await refreshHostedDashboard();
-      setNotice('Hosted dashboard connected.');
+      const session = await getHostedOperatorSession();
+      setOperatorSession(session);
+      const firstWorkspace = session.workspaces[0]?.id ?? '';
+      setWorkspaceId((current) => current || firstWorkspace);
+      if (!firstWorkspace) setError('Your email is authenticated but has not been assigned to a WOLF workspace.');
     } catch (err) {
-      rememberAdminKey('');
-      setHostedUnlocked(false);
+      setOperatorSession(null);
       setError(err instanceof Error ? err.message : String(err));
     } finally {
       setWorking(false);
     }
+  }
+
+  async function createWorkspace(): Promise<void> {
+    if (!workspaceName.trim()) return;
+    setWorking(true); setError(null);
+    try {
+      const workspace = await createHostedWorkspace(workspaceName.trim());
+      const session = await getHostedOperatorSession();
+      setOperatorSession(session); setWorkspaceId(workspace.id); setWorkspaceName('');
+      setNotice(`${workspace.name} workspace created.`);
+    } catch (err) { setError(err instanceof Error ? err.message : String(err)); }
+    finally { setWorking(false); }
+  }
+
+  async function inviteMember(): Promise<void> {
+    if (!workspaceId || !memberEmail.trim()) return;
+    setWorking(true); setError(null);
+    try {
+      await addHostedMember(workspaceId, memberEmail.trim(), memberRole);
+      setMembers(await listHostedMembers(workspaceId)); setMemberEmail('');
+      setNotice(`${memberEmail.trim()} can now open this workspace using a Cloudflare email code.`);
+    } catch (err) { setError(err instanceof Error ? err.message : String(err)); }
+    finally { setWorking(false); }
   }
 
   async function copyInvitation(assignment: SurveyAssignment): Promise<void> {
@@ -153,7 +194,7 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
       const now = new Date().toISOString();
       const label = surveyLabel.trim() || packs.find((pack) => pack.packId === selectedPackId)?.pack.title || 'WOLF survey';
       const hosted = hostedDashboard && hostedUnlocked
-        ? await createHostedSurvey({ packId: selectedPackId, recipientLabel: recipientLabel.trim(), surveyLabel: label })
+        ? await createHostedSurvey(workspaceId, { packId: selectedPackId, recipientLabel: recipientLabel.trim(), surveyLabel: label })
         : null;
       const assignment: SurveyAssignment = {
         assignmentId: hosted?.code ?? crypto.randomUUID(),
@@ -170,7 +211,7 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
       await saveSurveyAssignment(db, assignment);
       await refreshAssignments();
       await copyInvitation(assignment);
-      if (hosted) await refreshHostedDashboard();
+      if (hosted) await refreshHostedDashboard(workspaceId);
       setRecipientLabel('');
       setSurveyLabel('');
     } catch (err) {
@@ -186,7 +227,7 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
       const assignment = assignments.find((candidate) => candidate.assignmentId === assignmentId);
       if (assignment?.hosted) await updateHostedSurveyStatus(assignmentId, status);
       await updateSurveyAssignmentStatus(db, assignmentId, status);
-      if (assignment?.hosted) await refreshHostedDashboard();
+      if (assignment?.hosted) await refreshHostedDashboard(workspaceId);
       else await refreshAssignments();
       setNotice(`Survey moved to ${status}.`);
       setError(null);
@@ -222,7 +263,7 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
     try {
       const payload = JSON.parse(await file.text()) as unknown;
       await uploadHostedAnalysis(code, payload);
-      await refreshHostedDashboard();
+      await refreshHostedDashboard(workspaceId);
       setNotice(`Analysis return published to ${code}.`);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
@@ -272,7 +313,7 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
       }
     }
     await refreshRecords();
-    if (hostedUnlocked) await refreshHostedDashboard();
+    if (hostedUnlocked) await refreshHostedDashboard(workspaceId);
     else await refreshAssignments();
     setWorking(false);
     setNotice(`Imported ${imported} return${imported === 1 ? '' : 's'}${duplicates ? `; skipped ${duplicates} existing record${duplicates === 1 ? '' : 's'}` : ''}.`);
@@ -295,13 +336,36 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
 
       {hostedDashboard ? (
         <section className="card stack" aria-labelledby="hosted-access-heading">
-          <h2 id="hosted-access-heading">Hosted dashboard access</h2>
-          {hostedUnlocked ? (
-            <div className="row"><span className="field-chip">connected</span><button type="button" className="btn btn--secondary" onClick={() => void refreshHostedDashboard()}>Refresh now</button></div>
-          ) : (
-            <><label htmlFor="admin-key">Dashboard key</label><input id="admin-key" type="password" value={adminKeyInput} onChange={(event) => setAdminKeyInput(event.target.value)} autoComplete="current-password" /><button type="button" className="btn" disabled={working || !adminKeyInput.trim()} onClick={() => void connectHostedDashboard()}>Unlock hosted dashboard</button></>
-          )}
-          <p className="meta">The key is kept only in this browser tab and is never included in the deployed files.</p>
+          <h2 id="hosted-access-heading">Your WOLF workspace</h2>
+          {operatorSession ? <>
+            <p>Signed in as <strong>{operatorSession.identity.email}</strong>.</p>
+            <label htmlFor="workspace-select">Workspace</label>
+            <select id="workspace-select" value={workspaceId} onChange={(event) => setWorkspaceId(event.target.value)}>
+              {operatorSession.workspaces.map((workspace) => <option key={workspace.id} value={workspace.id}>{workspace.name} — {workspace.role}</option>)}
+            </select>
+            <div className="row"><span className="field-chip">email-code protected</span><button type="button" className="btn btn--secondary" onClick={() => void refreshHostedDashboard(workspaceId)}>Refresh now</button></div>
+            <p className="meta"><a href="/cdn-cgi/access/logout">Sign out of this device</a></p>
+            {operatorSession.identity.isRoot ? <div className="stack">
+              <h3>Create another workspace</h3>
+              <label htmlFor="workspace-name">Workspace name</label>
+              <input id="workspace-name" value={workspaceName} onChange={(event) => setWorkspaceName(event.target.value)} placeholder="Helen's interviews" />
+              <button type="button" className="btn" disabled={working || !workspaceName.trim()} onClick={() => void createWorkspace()}>Create workspace</button>
+            </div> : null}
+            {canManageMembers && workspaceId ? <div className="stack">
+              <h3>Give someone operator access</h3>
+              <p className="muted">They use their email and a one-time Cloudflare code. No Google account or WOLF password is required.</p>
+              <label htmlFor="member-email">Email</label>
+              <input id="member-email" type="email" value={memberEmail} onChange={(event) => setMemberEmail(event.target.value)} placeholder="helen@example.com" />
+              <label htmlFor="member-role">Permission</label>
+              <select id="member-role" value={memberRole} onChange={(event) => setMemberRole(event.target.value as HostedMember['role'])}>
+                <option value="interviewer">Interviewer — create and manage interviews</option>
+                <option value="viewer">Viewer — read only</option>
+                {operatorSession.identity.isRoot ? <option value="steward">Steward — manage interviews and members</option> : null}
+              </select>
+              <button type="button" className="btn" disabled={working || !memberEmail.trim()} onClick={() => void inviteMember()}>Grant workspace access</button>
+              {members.length ? <p className="meta">Current members: {members.map((member) => `${member.email} (${member.role})`).join(', ')}</p> : null}
+            </div> : null}
+          </> : <p>Cloudflare Access will ask for your email and send a single-use code. If you are authenticated but not invited, WOLF reveals no workspace data.</p>}
         </section>
       ) : null}
 
@@ -311,7 +375,7 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
           {WORKFLOW_STATUSES.map((status) => <span className="field-chip" key={status}>{status}: {counts[status]}</span>)}
           <span className="field-chip">total: {assignments.length}</span>
         </div>
-        <p className="meta">{hostedUnlocked ? 'Hosted invitations update automatically while recipients work online. This view refreshes every 30 seconds.' : 'Local-only invitations remain invited until their return file is imported here.'}</p>
+        <p className="meta">{hostedUnlocked ? `Hosted invitations in ${selectedWorkspace?.name ?? 'this workspace'} update automatically while recipients work online. This view refreshes every 30 seconds.` : 'Local-only invitations remain invited until their return file is imported here.'}</p>
       </section>
 
       <section className="card stack" aria-labelledby="invite-heading">

@@ -1,7 +1,6 @@
 import type { WolfRecord } from '../../engine/index.js';
 
 const HOSTED_SESSION_KEY = 'axm-wolf-hosted-session';
-const ADMIN_KEY = 'axm-wolf-admin-key';
 
 export type HostedSurveySession = {
   code: string;
@@ -22,6 +21,7 @@ export type HostedBootstrap = {
 
 export type HostedSurveySummary = {
   code: string;
+  workspace_id: string;
   pack_id: string;
   recipient_label: string;
   survey_label: string;
@@ -33,6 +33,10 @@ export type HostedSurveySummary = {
   submitted_at: string | null;
   updated_at: string;
 };
+
+export type HostedWorkspace = { id: string; name: string; slug: string; role: 'owner' | 'steward' | 'interviewer' | 'viewer' };
+export type HostedOperatorSession = { identity: { email: string; isRoot: boolean }; workspaces: HostedWorkspace[] };
+export type HostedMember = { email: string; role: 'steward' | 'interviewer' | 'viewer'; status: string; created_at: string };
 
 export function hostedSurveyCode(pathname = window.location.pathname): string | null {
   const match = pathname.match(/\/wolf\/(SUR\d+)\/?$/i);
@@ -61,15 +65,6 @@ export function hostedSessionForRecord(recordId: string): HostedSurveySession | 
   }
 }
 
-export function storedAdminKey(): string {
-  return sessionStorage.getItem(ADMIN_KEY) ?? '';
-}
-
-export function rememberAdminKey(key: string): void {
-  if (key) sessionStorage.setItem(ADMIN_KEY, key);
-  else sessionStorage.removeItem(ADMIN_KEY);
-}
-
 export async function bootstrapHostedSurvey(code: string, token: string): Promise<HostedBootstrap> {
   return apiJson(`/wolf/api/surveys/${encodeURIComponent(code)}/bootstrap`, { headers: recipientHeaders(token) });
 }
@@ -89,44 +84,56 @@ export async function syncHostedRecord(record: WolfRecord, submitted = false): P
   return result;
 }
 
-export async function unlockHostedDashboard(key: string): Promise<void> {
-  await apiJson('/wolf/api/admin/session', { headers: adminHeaders(key) });
-  rememberAdminKey(key);
+export async function getHostedOperatorSession(): Promise<HostedOperatorSession> {
+  return apiJson('/wolf/api/operator/session', { headers: jsonHeaders() });
 }
 
-export async function listHostedSurveys(key = storedAdminKey()): Promise<HostedSurveySummary[]> {
-  const result = await apiJson<{ surveys: HostedSurveySummary[] }>('/wolf/api/admin/surveys', { headers: adminHeaders(key) });
+export async function createHostedWorkspace(name: string): Promise<HostedWorkspace> {
+  return apiJson('/wolf/api/operator/workspaces', { method: 'POST', headers: jsonHeaders(), body: JSON.stringify({ name }) });
+}
+
+export async function listHostedMembers(workspaceId: string): Promise<HostedMember[]> {
+  const result = await apiJson<{ members: HostedMember[] }>(`/wolf/api/operator/workspaces/${encodeURIComponent(workspaceId)}/members`, { headers: jsonHeaders() });
+  return result.members;
+}
+
+export async function addHostedMember(workspaceId: string, email: string, role: HostedMember['role']): Promise<void> {
+  await apiJson(`/wolf/api/operator/workspaces/${encodeURIComponent(workspaceId)}/members`, { method: 'POST', headers: jsonHeaders(), body: JSON.stringify({ email, role }) });
+}
+
+export async function listHostedSurveys(workspaceId: string): Promise<HostedSurveySummary[]> {
+  const result = await apiJson<{ surveys: HostedSurveySummary[] }>(`/wolf/api/operator/workspaces/${encodeURIComponent(workspaceId)}/surveys`, { headers: jsonHeaders() });
   return result.surveys;
 }
 
 export async function createHostedSurvey(
+  workspaceId: string,
   input: { packId: string; recipientLabel: string; surveyLabel: string },
-  key = storedAdminKey(),
 ): Promise<{ code: string; token: string; invitationUrl: string; createdAt: string; status: string }> {
-  return apiJson('/wolf/api/admin/surveys', {
+  return apiJson(`/wolf/api/operator/workspaces/${encodeURIComponent(workspaceId)}/surveys`, {
     method: 'POST',
-    headers: adminHeaders(key),
+    headers: jsonHeaders(),
     body: JSON.stringify(input),
   });
 }
 
-export async function updateHostedSurveyStatus(code: string, status: string, key = storedAdminKey()): Promise<void> {
-  await apiJson(`/wolf/api/admin/surveys/${encodeURIComponent(code)}`, {
+export async function updateHostedSurveyStatus(code: string, status: string): Promise<void> {
+  await apiJson(`/wolf/api/operator/surveys/${encodeURIComponent(code)}`, {
     method: 'PATCH',
-    headers: adminHeaders(key),
+    headers: jsonHeaders(),
     body: JSON.stringify({ status }),
   });
 }
 
-export async function fetchHostedRecord(code: string, key = storedAdminKey()): Promise<WolfRecord | null> {
-  const result = await apiJson<{ record: WolfRecord | null }>(`/wolf/api/admin/surveys/${encodeURIComponent(code)}/record`, { headers: adminHeaders(key) });
+export async function fetchHostedRecord(code: string): Promise<WolfRecord | null> {
+  const result = await apiJson<{ record: WolfRecord | null }>(`/wolf/api/operator/surveys/${encodeURIComponent(code)}/record`, { headers: jsonHeaders() });
   return result.record;
 }
 
-export async function uploadHostedAnalysis(code: string, payload: unknown, key = storedAdminKey()): Promise<void> {
-  await apiJson(`/wolf/api/admin/surveys/${encodeURIComponent(code)}/analysis`, {
+export async function uploadHostedAnalysis(code: string, payload: unknown): Promise<void> {
+  await apiJson(`/wolf/api/operator/surveys/${encodeURIComponent(code)}/analysis`, {
     method: 'POST',
-    headers: adminHeaders(key),
+    headers: jsonHeaders(),
     body: JSON.stringify({ payload }),
   });
 }
@@ -141,9 +148,7 @@ function recipientHeaders(token: string): HeadersInit {
   return { authorization: `Bearer ${token}`, 'content-type': 'application/json' };
 }
 
-function adminHeaders(key: string): HeadersInit {
-  return { 'x-wolf-admin-key': key, 'content-type': 'application/json' };
-}
+function jsonHeaders(): HeadersInit { return { 'content-type': 'application/json' }; }
 
 async function apiJson<T>(path: string, init: RequestInit): Promise<T> {
   const response = await fetch(path, init);

@@ -19,11 +19,11 @@ test('non-WOLF paths pass through unchanged', async () => {
   assert.equal(path, '/autopsy/03/');
 });
 
-test('dashboard API rejects requests without the configured key before querying D1', async () => {
-  const env = { WOLF_DB: {}, WOLF_ADMIN_KEY: 'secret', ASSETS: { fetch() { throw new Error('unexpected'); } } };
-  const response = await worker.fetch(new Request('https://axm.tools/wolf/api/admin/session'), env);
+test('operator API requires a Cloudflare Access identity before querying D1', async () => {
+  const env = { WOLF_DB: {}, ASSETS: { fetch() { throw new Error('unexpected'); } } };
+  const response = await worker.fetch(new Request('https://axm.tools/wolf/api/operator/session'), env);
   assert.equal(response.status, 401);
-  assert.match(await response.text(), /authorization required/i);
+  assert.match(await response.text(), /access login required/i);
 });
 
 test('capability tokens are random and hash deterministically', async () => {
@@ -35,31 +35,43 @@ test('capability tokens are random and hash deterministically', async () => {
   assert.notEqual(await __test.sha256(first), first);
 });
 
-test('admin creates a numbered invitation and stores only the token hash', async () => {
+test('workspace operator creates a numbered invitation and stores only the token hash', async () => {
   let inserted = null;
   const db = {
+    async batch() { return [{ success: true }, { success: true, results: [{ value: 1 }] }]; },
     prepare(sql) {
       return {
         values: [],
         bind(...values) { this.values = values; return this; },
-        async first() { return { maximum: 0 }; },
+        async first() { return null; },
         async run() { inserted = { sql, values: this.values }; return { meta: { changes: 1 } }; },
       };
     },
   };
-  const request = new Request('https://axm.tools/wolf/api/admin/surveys', {
+  const request = new Request('https://axm.tools/wolf/api/operator/workspaces/root/surveys', {
     method: 'POST',
-    headers: { 'x-wolf-admin-key': 'owner-secret', 'content-type': 'application/json' },
+    headers: { 'x-wolf-test-email': 'owner@example.com', 'content-type': 'application/json' },
     body: JSON.stringify({ packId: 'field-operator-report', recipientLabel: 'Lotus', surveyLabel: 'July walkthrough' }),
   });
-  const response = await worker.fetch(request, { WOLF_DB: db, WOLF_ADMIN_KEY: 'owner-secret' });
+  const response = await worker.fetch(request, { WOLF_DB: db, WOLF_TEST_MODE: 'true', WOLF_OWNER_EMAIL: 'owner@example.com' });
   const body = await response.json();
   assert.equal(response.status, 201);
   assert.equal(body.code, 'SUR01');
   assert.match(body.invitationUrl, /^https:\/\/axm\.tools\/wolf\/SUR01#k=/);
   assert.equal(inserted.values[0], 'SUR01');
-  assert.notEqual(inserted.values[4], body.token);
-  assert.equal(inserted.values[4], await __test.sha256(body.token));
+  assert.equal(inserted.values[1], 'root');
+  assert.notEqual(inserted.values[5], body.token);
+  assert.equal(inserted.values[5], await __test.sha256(body.token));
+});
+
+test('an authenticated operator cannot cross an unassigned workspace boundary', async () => {
+  const db = { prepare() { return { bind() { return this; }, async first() { return null; } }; } };
+  const request = new Request('https://axm.tools/wolf/api/operator/workspaces/helen/surveys', {
+    headers: { 'x-wolf-test-email': 'lotus@example.com' },
+  });
+  const response = await worker.fetch(request, { WOLF_DB: db, WOLF_TEST_MODE: 'true', WOLF_OWNER_EMAIL: 'owner@example.com' });
+  assert.equal(response.status, 403);
+  assert.match(await response.text(), /do not have access/i);
 });
 
 test('recipient sync rejects a stale base revision without overwriting the server copy', async () => {
@@ -80,4 +92,17 @@ test('recipient sync rejects a stale base revision without overwriting the serve
   assert.equal(response.status, 409);
   assert.equal(body.conflict, true);
   assert.equal(body.revision, 3);
+});
+
+test('completed interviews are readable but reject further writes', async () => {
+  const token = 'recipient-secret';
+  const row = { code: 'SUR01', pack_id: 'field-operator-report', token_hash: await __test.sha256(token), revision: 3, record_json: '{"recordId":"SUR01"}', status: 'completed' };
+  const db = { prepare() { return { bind() { return this; }, async first() { return row; } }; } };
+  const request = new Request('https://axm.tools/wolf/api/surveys/SUR01/sync', {
+    method: 'PUT', headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ baseRevision: 3, record: { recordId: 'SUR01', packId: 'field-operator-report' } }),
+  });
+  const response = await worker.fetch(request, { WOLF_DB: db });
+  assert.equal(response.status, 423);
+  assert.match(await response.text(), /read-only/i);
 });

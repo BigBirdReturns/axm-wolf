@@ -32,7 +32,7 @@ The testimony engine performs no inference. v0.1 is not an AI interviewer: it as
 - asynchronous `.wolfhandoff.json` / `.wolfreturn.json` analysis exchange that preserves work performed while analysis is pending
 - recipient-safe `#/start/<pack-id>` invitations with one-tap start/resume, in-context voice/save coaching, and device-native answer sharing
 - a local survey dashboard for labeled invitations, multi-file return intake, recipient/survey filters, and invited/received/analyzing/completed workflow states
-- optional Glass Onion hosted mode at `/wolf/SUR##`, using a prebuilt Cloudflare Pages `_worker.js` and D1 for automatic synchronization without any AI API
+- optional Glass Onion hosted mode at `/wolf/SUR##`, with Cloudflare Access email-code operator login, isolated workspaces, and D1 synchronization without any AI API
 - a bundled **Tell Us What Happened** field-report pack for voice or text that requires no photographs, screenshots, or technical knowledge
 - branch-changing fact prompts and safety blockers
 - local evidence artifacts tied to the question they resolve
@@ -115,7 +115,7 @@ To write a capture pack, see [docs/PACK_AUTHORING.md](docs/PACK_AUTHORING.md) fo
 
 ## Known limitations
 
-- The standalone v0.1 build has no hosted backend. The owner-authorized v0.2 Glass Onion build adds an optional same-origin D1 synchronization adapter while retaining IndexedDB and file transfer as fallbacks.
+- The standalone v0.1 build has no hosted backend. The owner-authorized v0.3 Glass Onion build adds optional same-origin D1 synchronization, Cloudflare Access email-code authentication for operators, and isolated workspaces while retaining IndexedDB and file transfer as fallbacks.
 - No automatic testimony summarization, semantic search, or generated follow-up questions.
 - WOLF Ops captures and organizes photographs and videos but does not yet interpret their pixel content.
 - WOLF Ops backups are unencrypted JSON and may be large because media bytes are embedded.

@@ -80,6 +80,6 @@ AXM Wolf v0.1 and this WOLF Ops prototype have no user accounts, collaborative e
 
 ## Optional hosted interview mode
 
-The Glass Onion v0.2 deployment is an explicit exception to the standalone boundary. Invitations at `/wolf/SUR##` synchronize only their assigned WOLF record to the same-origin `/wolf/api/` service and D1 database. Recipient authorization uses a random capability token placed after `#k=` in the invitation URL; the server stores only its SHA-256 hash. The dashboard uses a separately configured `WOLF_ADMIN_KEY` that is entered by the operator and retained in session storage, not bundled into the site.
+The Glass Onion v0.3 deployment is an explicit exception to the standalone boundary. Invitations at `/wolf/SUR##` synchronize only their assigned WOLF record to the same-origin `/wolf/api/` service and D1 database. Recipient authorization uses a random capability token placed after `#k=` in the invitation URL; the server stores only its SHA-256 hash. Operators authenticate in any modern browser using Cloudflare Access email one-time PINs. The Worker validates the signed Access JWT and then enforces D1 workspace membership for every operator read or write; there is no shared dashboard password.
 
 Hosted capture still writes to IndexedDB first. Network failure does not erase or block local work. File export remains available as a backup. Hosted mode makes no AI calls. Analysis returns uploaded by the operator are displayed as read-only data and never overwrite the participant's answers.

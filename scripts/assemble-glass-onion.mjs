@@ -14,6 +14,7 @@ await cp(wolfBuild, resolve(destination, 'wolf'), { recursive: true });
 await cp(resolve(repo, 'cloudflare/_worker.js'), resolve(destination, '_worker.js'));
 await mkdir(resolve(destination, 'wolf/backend'), { recursive: true });
 await cp(resolve(repo, 'cloudflare/schema.sql'), resolve(destination, 'wolf/backend/schema.sql'));
+await cp(resolve(repo, 'cloudflare/migrate-v0.2-to-v0.3.sql'), resolve(destination, 'wolf/backend/migrate-v0.2-to-v0.3.sql'));
 await cp(resolve(repo, 'cloudflare/DEPLOY.md'), resolve(destination, 'wolf/backend/DEPLOY.md'));
 
 const registryPath = resolve(destination, 'registry/index.html');

@@ -82,7 +82,7 @@ The static deployment cannot observe whether somebody opened or started an invit
 
 Run `npm run build:glass-onion`, then `npm run assemble:glass-onion -- <Glass_Onion source> <destination>`. The assembly preserves the source site, writes the WOLF app under `/wolf/`, adds a prebuilt root `_worker.js`, changes the registry entry from the GitHub Pages URL to `path: 'wolf/'`, and includes `wolf/backend/schema.sql` plus first-deployment instructions.
 
-The existing Cloudflare Pages dashboard drag-and-drop workflow remains valid because advanced-mode `_worker.js` is already compiled. Before the first upload, create and migrate a D1 database, bind it to the existing Pages project as `WOLF_DB`, and configure the encrypted `WOLF_ADMIN_KEY` environment variable. Hosted interview URLs use `/wolf/SUR## #k=<capability>` (without the displayed space). The worker passes all non-WOLF requests to the original static assets.
+The existing Cloudflare Pages dashboard drag-and-drop workflow remains valid because advanced-mode `_worker.js` is already compiled. Before the first upload, create and migrate a D1 database, bind it as `WOLF_DB`, and configure one Cloudflare Access application for `/wolf/dashboard` and `/wolf/api/operator/*` using email one-time PIN authentication. Set `WOLF_OWNER_EMAIL`, `CF_ACCESS_TEAM_DOMAIN`, and `CF_ACCESS_AUD`; the assembled `wolf/backend/DEPLOY.md` gives the exact clicks and values. Hosted interview URLs use `/wolf/SUR## #k=<capability>` (without the displayed space). The worker passes all non-WOLF requests to the original static assets.
 
 ## After deploying
 

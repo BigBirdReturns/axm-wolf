@@ -10,11 +10,11 @@ The survey dashboard is local to the operator's browser profile. It does not pol
 
 ## Local-first
 
-- Responses, drafts, records, installed packs, operational cases, and operational evidence are stored in this browser profile on this device, in an IndexedDB database named `AXMWolf`.
+- Responses, drafts, records, installed packs, source-linked knowledge details, knowledge-review events, operational cases, and operational evidence are stored in this browser profile on this device, in an IndexedDB database named `AXMWolf`.
 - Clearing the browser's site data, using an incognito session that discards storage, or using the in-app wipe-all action removes the corresponding local data.
 - Exporting a testimony record is its backup and transfer mechanism. Nothing is automatically backed up elsewhere.
 - Exporting a WOLF Ops backup is the supported way to preserve and transfer operational cases and their original media.
-- No server receives testimony or operational media in this implementation. There is no account, analytics service, or application backend.
+- In standalone mode, no server receives testimony, knowledge details, or operational media. Optional hosted interview mode is a separate boundary described below.
 
 ## What is stored
 
@@ -31,12 +31,16 @@ The `AXMWolf` IndexedDB database has these object stores:
 | `opsCases` | Guided-inspection facts, completed or deferred evidence requests, status, and local operating context |
 | `opsEvidence` | Photographs, videos, documents, measurements, metadata, source class, and capture timestamp for WOLF Ops cases |
 | `opsWorkOrders` | Assignment, stabilization, verification, recurrence, follow-up, and closure history |
+| `knowledgeDrops` | Private, source-linked details proposed from exact committed response spans, including revision and quote digests |
+| `knowledgeDropEvents` | Append-only, sequenced confirmation, correction, and rejection events for knowledge details |
 
 Pack snapshots travel with each testimony record, so a record remains readable even if the originating pack is later removed or updated.
 
 Operational media can be substantially more sensitive than a checklist. It may unintentionally reveal people, private papers, addresses, access credentials, financial information, tenant belongings, customer information, or business operations. Capture only the view requested by the playbook. Avoid unrelated faces, documents, screens, keys, labels, and possessions. Review the frame before saving it.
 
 The current WOLF Ops interface stores the original browser `Blob` where available and creates temporary local object URLs only to preview that evidence on screen. It does not upload the media or claim that the pixels have been interpreted.
+
+Knowledge candidates always begin private. They retain the exact source quote and cryptographic digests so WOLF can detect broken provenance. This release does not publish or synchronize knowledge details to a workspace, and it does not treat a confirmed observation as a deidentified pattern or runnable instruction.
 
 ## What leaves the device
 
@@ -64,11 +68,15 @@ Operational cases and evidence are not included in testimony-record exports. Use
 
 An imported `.wolfreturn.json` must match a submission created on the same device and may cite only evidence included in that frozen submission. It appends pending `subscription_assisted_analysis` observations without replacing current facts or later user work. The operator explicitly accepts or rejects each returned claim. Duplicate response IDs do not create duplicate residue.
 
+Use **Export knowledge backup** in Settings to create an unencrypted `.wolfkb.json` custody archive containing knowledge details, their exact source quotes, source digests, and review events. Restore the source `.wolfrecord.json` records first, then restore the knowledge archive. Restore verifies every cited record, prompt, revision, quote, digest, and event chain and refuses to replace a nonempty knowledge store.
+
+A manual ChatGPT or Claude subscription run occurs only after a person deliberately exports and transfers a handoff file. WOLF does not send that file itself. The subscription provider's retention and training settings are outside WOLF's control, so use only an approved account and appropriate source material.
+
 ## Deletion
 
-Deleting a testimony record from the Export and data screen requires the record title and an explicit irreversible confirmation. Removing an installed pack does not delete records created from it because each record carries its own pack snapshot.
+Deleting a testimony record from the Export and data screen requires the record title and an explicit irreversible confirmation. The same transaction deletes all knowledge details and review events that quote that record. Removing an installed pack does not delete records created from it because each record carries its own pack snapshot.
 
-Resetting a WOLF Ops inspection deletes that local case and its linked evidence after confirmation. The Settings wipe-all action deletes packs, testimony records, responses, drafts, settings, migration rows, operational cases, and operational evidence from the browser profile after the required confirmation sequence.
+Resetting a WOLF Ops inspection deletes that local case and its linked evidence after confirmation. The Settings wipe-all action deletes packs, testimony records, responses, drafts, settings, migration rows, knowledge details, review events, operational cases, and operational evidence from the browser profile after the required confirmation sequence.
 
 ## Security limits
 
@@ -76,10 +84,12 @@ AXM Wolf does not currently provide application-level encryption at rest. Anyone
 
 ## No accounts, analytics, or backend
 
-AXM Wolf v0.1 and this WOLF Ops prototype have no user accounts, collaborative editing, multi-device synchronization, hosted backend, or application inference API. The local browser profile remains the data boundary.
+Standalone AXM Wolf and the WOLF Ops prototype have no user accounts, collaborative editing, multi-device synchronization, hosted backend, or application inference API. The local browser profile remains their data boundary.
 
 ## Optional hosted interview mode
 
 The Glass Onion v0.3 deployment is an explicit exception to the standalone boundary. Invitations at `/wolf/SUR##` synchronize only their assigned WOLF record to the same-origin `/wolf/api/` service and D1 database. Recipient authorization uses a random capability token placed after `#k=` in the invitation URL; the server stores only its SHA-256 hash. Operators authenticate in any modern browser using Cloudflare Access email one-time PINs. The Worker validates the signed Access JWT and then enforces D1 workspace membership for every operator read or write; there is no shared dashboard password.
 
 Hosted capture still writes to IndexedDB first. Network failure does not erase or block local work. File export remains available as a backup. Hosted mode makes no AI calls. Analysis returns uploaded by the operator are displayed as read-only data and never overwrite the participant's answers.
+
+Knowledge details and knowledge-review events are not synchronized by hosted interview mode in this release. A `workspace` knowledge transport is not yet available; the Cloudflare custody tables are reserved for a later API that will require explicit consent and server-side authorization before use.

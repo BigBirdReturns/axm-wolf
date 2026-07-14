@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { SettingsScreen } from '../../src/app/screens/SettingsScreen.js';
@@ -18,6 +18,15 @@ import { SettingsScreen } from '../../src/app/screens/SettingsScreen.js';
  * not implemented in jsdom and would throw.
  */
 describe('SettingsScreen', () => {
+  it('exposes a separate knowledge custody backup with restore-order and encryption warnings', async () => {
+    render(<SettingsScreen />);
+    const exportButton = await screen.findByRole('button', { name: 'Export knowledge backup' });
+    await waitFor(() => expect(exportButton).toBeEnabled());
+    expect(screen.getByLabelText('Restore knowledge backup')).toHaveAttribute('accept', expect.stringContaining('.wolfkb.json'));
+    expect(screen.getByRole('heading', { name: 'Knowledge backup' }).parentElement).toHaveTextContent(/import the source.*records first/i);
+    expect(screen.getByText(/Knowledge backups are not encrypted/i)).toBeInTheDocument();
+  });
+
   it('disables "Delete all local data" until both the checkbox and phrase are provided', async () => {
     const user = userEvent.setup();
     render(<SettingsScreen />);

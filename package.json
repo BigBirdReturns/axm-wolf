@@ -15,6 +15,7 @@
     "test:components:watch": "vitest",
     "test:e2e": "node scripts/e2e-smoke.mjs",
     "test:e2e:real": "playwright test",
+    "playtest:helen-lotus": "tsc -p tsconfig.test.json && node scripts/run-helen-lotus-playtest.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "node scripts/lint-boundary.mjs",
     "check": "npm run lint && npm run typecheck && npm test && npm run test:worker && npm run test:components && npm run build && npm run build:glass-onion"

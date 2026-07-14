@@ -2,6 +2,8 @@ export { DB_NAME, DB_VERSION, STORE_NAMES, WolfDb, WolfTx, openWolfDb } from './
 export type { StoreName, IDBTransactionMode } from './db.js';
 export { exportOpsArchive, importOpsArchive, parseOpsArchive } from './opsArchive.js';
 export type { OpsArchive } from './opsArchive.js';
+export { exportKnowledgeArchive, importKnowledgeArchive, parseKnowledgeArchive } from './knowledgeArchive.js';
+export type { WolfKnowledgeArchive } from './knowledgeArchive.js';
 export {
   createOpsAnalysisSubmission,
   parseOpsAnalysisReturn,
@@ -26,6 +28,14 @@ export {
   markSurveyReceived,
 } from './surveyRepository.js';
 export type { SurveyAssignment, SurveyWorkflowStatus } from './surveyRepository.js';
+export {
+  createDropFromStoredRevision,
+  loadKnowledgeDrop,
+  listKnowledgeDrops,
+  listKnowledgeDropReviewEvents,
+  appendKnowledgeDropReview,
+  validateKnowledgeDrop,
+} from './knowledgeRepository.js';
 export { saveDraft, getDraft, deleteDraft, listDrafts } from './draftRepository.js';
 export { migrateLegacyAnswers } from './legacyMigration.js';
 export type { LegacyMigrationConfig, LegacyMigrationSummary } from './legacyMigration.js';

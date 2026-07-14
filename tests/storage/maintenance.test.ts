@@ -121,6 +121,42 @@ async function seedDb(db: Awaited<ReturnType<typeof openWolfDb>>): Promise<void>
     updatedAt: FIXED_NOW,
     receivedAt: null,
   });
+  await db.put('knowledgeDrops', {
+    schemaVersion: 1,
+    dropId: 'drop-1',
+    source: { recordId: 'rec-a', promptId: PROMPT_CONT_1, revisionId: 'r1', revisionDigest: 'a'.repeat(64), offsetEncoding: 'utf16-code-unit', startOffset: 0, endOffset: 6, exactQuote: 'answer', quoteDigest: 'b'.repeat(64) },
+    kind: 'unwritten_rule',
+    text: 'answer',
+    operationalPattern: null,
+    reviewStatus: 'pending',
+    visibility: 'private',
+    extractionMethod: 'human_marked',
+    version: 1,
+    createdAt: FIXED_NOW,
+    updatedAt: FIXED_NOW,
+    reviewHistory: [],
+  });
+  await db.put('knowledgeDropEvents', {
+    eventId: 'drop-event-1',
+    dropId: 'drop-1',
+    sequence: 1,
+    expectedPriorVersion: 1,
+    requestId: 'drop-request-1',
+    action: 'confirm',
+    actor: 'Lotus',
+    at: FIXED_NOW,
+    priorStatus: 'pending',
+    nextStatus: 'confirmed',
+    priorVisibility: 'private',
+    nextVisibility: 'private',
+    priorText: 'answer',
+    nextText: 'answer',
+    priorKind: 'unwritten_rule',
+    nextKind: 'unwritten_rule',
+    note: null,
+    priorEventDigest: null,
+    eventDigest: 'c'.repeat(64),
+  });
 }
 
 test('clearAllData empties every store after seeding', async () => {

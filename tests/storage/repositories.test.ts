@@ -11,6 +11,7 @@ import type { CapturePack, WolfRecord } from '../../src/engine/types.js';
 
 import { openWolfDb } from '../../src/storage/db.js';
 import { saveRecord, loadRecord, listRecords, deleteRecord, commitResponseAtomic } from '../../src/storage/recordRepository.js';
+import { appendKnowledgeDropReview, createDropFromStoredRevision } from '../../src/storage/knowledgeRepository.js';
 import { saveDraft, getDraft, deleteDraft, listDrafts } from '../../src/storage/draftRepository.js';
 
 const pack: CapturePack = validatePack(genericPackJson);
@@ -239,7 +240,7 @@ test('commitResponseAtomic rejects empty/whitespace text with WolfValidationErro
   }
 });
 
-test('deleteRecord removes meta + responses + drafts, other records untouched', async () => {
+test('deleteRecord removes source-linked knowledge residue while other records remain untouched', async () => {
   const db = await openWolfDb(freshFactory());
   try {
     const recordA = buildRecord('rec-a');
@@ -251,10 +252,18 @@ test('deleteRecord removes meta + responses + drafts, other records untouched', 
     await commitResponseAtomic(db, 'rec-b', PROMPT_OPS_1, 'answer b', 'typed', '2024-01-15T11:00:00.000Z');
     await saveDraft(db, 'rec-a', PROMPT_OPS_2, 'draft a', '2024-01-15T10:30:00.000Z');
     await saveDraft(db, 'rec-b', PROMPT_OPS_2, 'draft b', '2024-01-15T10:30:00.000Z');
+    const dropA = await createDropFromStoredRevision(db, { recordId: 'rec-a', promptId: PROMPT_OPS_1, revisionId: (await loadRecord(db, 'rec-a'))!.responses[0]!.revisions[0]!.revisionId, kind: 'unwritten_rule', startOffset: 0, endOffset: 6 });
+    const dropB = await createDropFromStoredRevision(db, { recordId: 'rec-b', promptId: PROMPT_OPS_1, revisionId: (await loadRecord(db, 'rec-b'))!.responses[0]!.revisions[0]!.revisionId, kind: 'unwritten_rule', startOffset: 0, endOffset: 6 });
+    await appendKnowledgeDropReview(db, { dropId: dropA.dropId, expectedPriorVersion: 1, requestId: 'review-rec-a', review: { action: 'confirm', actor: 'owner' } });
+    await appendKnowledgeDropReview(db, { dropId: dropB.dropId, expectedPriorVersion: 1, requestId: 'review-rec-b', review: { action: 'confirm', actor: 'owner' } });
 
     await deleteRecord(db, 'rec-a');
 
     assert.equal(await loadRecord(db, 'rec-a'), null);
+    assert.equal(await db.get('knowledgeDrops', dropA.dropId), undefined);
+    assert.equal((await db.getAll<{ dropId: string }>('knowledgeDropEvents')).some((event) => event.dropId === dropA.dropId), false);
+    assert.ok(await db.get('knowledgeDrops', dropB.dropId));
+    assert.equal((await db.getAll<{ dropId: string }>('knowledgeDropEvents')).some((event) => event.dropId === dropB.dropId), true);
 
     const loadedB = await loadRecord(db, 'rec-b');
     assert.ok(loadedB !== null);

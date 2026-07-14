@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "thecaptureengine",
+  "pages_build_output_dir": "dist/Glass_Onion",
+  "compatibility_date": "2026-07-13",
+  "d1_databases": [
+    {
+      "binding": "WOLF_DB",
+      "database_name": "axm-wolf-prod",
+      "database_id": "4cc5dbf3-9fac-4309-a31a-e79f9cd79227"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "kind": "wolf-survey-analysis-return",
+  "responseId": "manual-return-helen-001",
+  "handoffId": "handoff-helen-001",
+  "analyst": "Manual subscription model run (simulated)",
+  "method": "manual ChatGPT or Claude subscription run",
+  "analyzedAt": "2026-07-13T16:25:00.000Z",
+  "claims": [
+    {
+      "claimId": "helen-summary-1",
+      "kind": "summary",
+      "text": "Helen needs planning views anchored in concrete examples and an explicit morning scan.",
+      "confidence": "confirmed",
+      "sourceReferences": [
+        {
+          "recordId": "survey-helen-july",
+          "promptId": "operations.normal-day",
+          "revisionId": "391ec1f0-1c8c-4f16-96db-c277d218f4e1",
+          "quote": "I start by checking the overnight notes"
+        },
+        {
+          "recordId": "survey-helen-july",
+          "promptId": "operations.normal-day",
+          "revisionId": "391ec1f0-1c8c-4f16-96db-c277d218f4e1",
+          "quote": "short concrete example"
+        }
+      ]
+    },
+    {
+      "claimId": "helen-risk-1",
+      "kind": "risk",
+      "text": "A missing shared calendar can silently break coordination.",
+      "confidence": "probable",
+      "sourceReferences": [
+        {
+          "recordId": "survey-helen-july",
+          "promptId": "operations.hidden-dependency",
+          "revisionId": "469750d4-c850-4c4c-b4f8-9ea37f87bbe7",
+          "quote": "shared calendar"
+        }
+      ]
+    },
+    {
+      "claimId": "helen-plan-1",
+      "kind": "planning-suggestion",
+      "text": "Automatically restructure Helen’s workflow immediately.",
+      "confidence": "possible",
+      "sourceReferences": [
+        {
+          "recordId": "survey-helen-july",
+          "promptId": "operations.normal-day",
+          "revisionId": "391ec1f0-1c8c-4f16-96db-c277d218f4e1",
+          "quote": "overnight notes"
+        }
+      ]
+    }
+  ]
+}

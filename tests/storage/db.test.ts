@@ -125,7 +125,7 @@ test('opening a v1 database upgrades it in place with all current stores', async
     request.onerror = () => reject(request.error);
   });
 
-  assert.equal(DB_VERSION, 5);
+  assert.equal(DB_VERSION, 7);
   const db = await openWolfDb(factory);
   try {
     assert.equal(await db.get('opsCases', 'missing'), undefined);
@@ -136,6 +136,8 @@ test('opening a v1 database upgrades it in place with all current stores', async
     assert.equal(await db.get('opsSubmissions', 'missing'), undefined);
     assert.equal(await db.get('opsAnalysisReturns', 'missing'), undefined);
     assert.equal(await db.get('surveyAssignments', 'missing'), undefined);
+    assert.equal(await db.get('knowledgeDrops', 'missing'), undefined);
+    assert.equal(await db.get('knowledgeDropEvents', 'missing'), undefined);
   } finally {
     db.close();
   }

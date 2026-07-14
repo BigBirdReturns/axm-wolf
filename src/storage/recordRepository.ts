@@ -140,9 +140,17 @@ export async function listRecords(
  * single read-write transaction. Other records' rows are untouched.
  */
 export async function deleteRecord(db: WolfDb, recordId: string): Promise<void> {
-  await db.transaction(['records', 'responses', 'drafts'], 'readwrite', async (tx) => {
+  await db.transaction(['records', 'responses', 'drafts', 'knowledgeDrops', 'knowledgeDropEvents'], 'readwrite', async (tx) => {
     const allResponses = await tx.getAll<StoredResponseRow>('responses');
     const allDrafts = await tx.getAll<StoredDraftRow>('drafts');
+    const allDrops = await tx.getAll<{ dropId: string; source: { recordId: string } }>('knowledgeDrops');
+    const allEvents = await tx.getAll<{ eventId: string; dropId: string }>('knowledgeDropEvents');
+    const deletedDropIds = new Set(allDrops.filter((drop) => drop.source.recordId === recordId).map((drop) => drop.dropId));
+
+    for (const event of allEvents) {
+      if (deletedDropIds.has(event.dropId)) await tx.delete('knowledgeDropEvents', event.eventId);
+    }
+    for (const dropId of deletedDropIds) await tx.delete('knowledgeDrops', dropId);
 
     await tx.delete('records', recordId);
 

@@ -11,7 +11,7 @@
 // the API under Node.
 
 export const DB_NAME = 'AXMWolf';
-export const DB_VERSION = 5;
+export const DB_VERSION = 7;
 
 export type StoreName =
   | 'packs'
@@ -27,7 +27,9 @@ export type StoreName =
   | 'opsWorkOrders'
   | 'opsSubmissions'
   | 'opsAnalysisReturns'
-  | 'surveyAssignments';
+  | 'surveyAssignments'
+  | 'knowledgeDrops'
+  | 'knowledgeDropEvents';
 
 export const STORE_NAMES: StoreName[] = [
   'packs',
@@ -44,6 +46,8 @@ export const STORE_NAMES: StoreName[] = [
   'opsSubmissions',
   'opsAnalysisReturns',
   'surveyAssignments',
+  'knowledgeDrops',
+  'knowledgeDropEvents',
 ];
 
 export type IDBTransactionMode = 'readonly' | 'readwrite';
@@ -297,6 +301,24 @@ export function openWolfDb(factory?: IDBFactory): Promise<WolfDb> {
         assignments.createIndex('byPackId', 'packId');
         assignments.createIndex('byStatus', 'status');
         assignments.createIndex('byUpdatedAt', 'updatedAt');
+      }
+
+      if (!db.objectStoreNames.contains('knowledgeDrops')) {
+        const drops = db.createObjectStore('knowledgeDrops', { keyPath: 'dropId' });
+        drops.createIndex('byRecordId', 'source.recordId');
+        drops.createIndex('byReviewStatus', 'reviewStatus');
+        drops.createIndex('byVisibility', 'visibility');
+        drops.createIndex('byUpdatedAt', 'updatedAt');
+      } else {
+        const drops = request.transaction!.objectStore('knowledgeDrops');
+        if (!drops.indexNames.contains('byVisibility')) drops.createIndex('byVisibility', 'visibility');
+      }
+
+      if (!db.objectStoreNames.contains('knowledgeDropEvents')) {
+        const events = db.createObjectStore('knowledgeDropEvents', { keyPath: 'eventId' });
+        events.createIndex('byDropId', 'dropId');
+        events.createIndex('byRequestId', 'requestId', { unique: true });
+        events.createIndex('byDropSequence', ['dropId', 'sequence'], { unique: true });
       }
     };
 

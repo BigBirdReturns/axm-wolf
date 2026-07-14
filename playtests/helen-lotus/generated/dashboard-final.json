@@ -1,0 +1,24 @@
+[
+  {
+    "assignmentId": "survey-lotus-july",
+    "recipientLabel": "Lotus",
+    "surveyLabel": "How your operating knowledge should become a usable plan",
+    "status": "completed",
+    "answeredPrompts": 3,
+    "pendingDrafts": 0,
+    "acceptedClaims": 3,
+    "rejectedClaims": 0,
+    "nextAction": "Test the site-versus-dashboard discrepancy checkpoint with Lotus on the next walkthrough."
+  },
+  {
+    "assignmentId": "survey-helen-july",
+    "recipientLabel": "Helen",
+    "surveyLabel": "How your operating knowledge should become a usable plan",
+    "status": "completed",
+    "answeredPrompts": 3,
+    "pendingDrafts": 0,
+    "acceptedClaims": 2,
+    "rejectedClaims": 1,
+    "nextAction": "Show Helen the two cited findings and ask before changing her workflow."
+  }
+]

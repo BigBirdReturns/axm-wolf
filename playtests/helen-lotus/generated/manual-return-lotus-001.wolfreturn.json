@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "kind": "wolf-survey-analysis-return",
+  "responseId": "manual-return-lotus-001",
+  "handoffId": "handoff-lotus-001",
+  "analyst": "Manual subscription model run (simulated)",
+  "method": "manual ChatGPT or Claude subscription run",
+  "analyzedAt": "2026-07-13T17:25:00.000Z",
+  "claims": [
+    {
+      "claimId": "lotus-summary-1",
+      "kind": "summary",
+      "text": "Lotus uses a visual site pass before trusting a dashboard.",
+      "confidence": "confirmed",
+      "sourceReferences": [
+        {
+          "recordId": "survey-lotus-july",
+          "promptId": "operations.normal-day",
+          "revisionId": "48d60cf9-0ffa-4df7-99b7-395b3325e7c8",
+          "quote": "walk the site once"
+        }
+      ]
+    },
+    {
+      "claimId": "lotus-risk-1",
+      "kind": "risk",
+      "text": "The unowned Airtable view is a continuity risk.",
+      "confidence": "probable",
+      "sourceReferences": [
+        {
+          "recordId": "survey-lotus-july",
+          "promptId": "operations.hidden-dependency",
+          "revisionId": "75903cdd-e8ee-4c63-981f-88d7965cf240",
+          "quote": "unowned Airtable view"
+        }
+      ]
+    },
+    {
+      "claimId": "lotus-plan-1",
+      "kind": "planning-suggestion",
+      "text": "Add a dashboard checkpoint asking whether the site view and Airtable disagree before planning work.",
+      "confidence": "possible",
+      "sourceReferences": [
+        {
+          "recordId": "survey-lotus-july",
+          "promptId": "operations.first-alert",
+          "revisionId": "2ad943be-df34-4a82-ba9f-00dc4af77862",
+          "quote": "numbers look normal but the room feels wrong"
+        }
+      ]
+    }
+  ]
+}

@@ -35,5 +35,6 @@ describe('hosted survey client', () => {
     expect(fetchMock.mock.calls[1]?.[0]).toBe('/wolf/api/surveys/SUR01/submit');
     expect((fetchMock.mock.calls[0]?.[1] as RequestInit).headers).toMatchObject({ authorization: 'Bearer private-token' });
     expect(JSON.parse((fetchMock.mock.calls[1]?.[1] as RequestInit).body as string).baseRevision).toBe(1);
+    expect(JSON.parse((fetchMock.mock.calls[1]?.[1] as RequestInit).body as string).analysisConsent).toBe(false);
   });
 });

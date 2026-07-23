@@ -15,7 +15,10 @@ await cp(resolve(repo, 'cloudflare/_worker.js'), resolve(destination, '_worker.j
 await mkdir(resolve(destination, 'wolf/backend'), { recursive: true });
 await cp(resolve(repo, 'cloudflare/schema.sql'), resolve(destination, 'wolf/backend/schema.sql'));
 await cp(resolve(repo, 'cloudflare/migrate-v0.2-to-v0.3.sql'), resolve(destination, 'wolf/backend/migrate-v0.2-to-v0.3.sql'));
+await cp(resolve(repo, 'cloudflare/migrate-v0.3-to-v0.4.sql'), resolve(destination, 'wolf/backend/migrate-v0.3-to-v0.4.sql'));
+await cp(resolve(repo, 'cloudflare/migrate-v0.4-to-v0.5.sql'), resolve(destination, 'wolf/backend/migrate-v0.4-to-v0.5.sql'));
 await cp(resolve(repo, 'cloudflare/DEPLOY.md'), resolve(destination, 'wolf/backend/DEPLOY.md'));
+await writeFile(resolve(destination, '.assetsignore'), '_worker.js\n');
 
 const registryPath = resolve(destination, 'registry/index.html');
 let registry = await readFile(registryPath, 'utf8');
@@ -33,7 +36,7 @@ readme = readme.replace(
   '3. Satellites (wolf, chat, show, embodied, genesis, core) stay on github.io;\n   they\'re `url:` entries in the registry list.',
   '3. Most satellites stay on github.io. Wolf is the hosted exception at `/wolf/`; its prebuilt `_worker.js` and D1 binding provide interview synchronization.',
 );
-readme += '\n\n## WOLF hosted exception\n\n`/wolf/` is compiled before assembly. The root `_worker.js` is prebuilt for Cloudflare Pages advanced mode, so the complete folder remains compatible with dashboard drag-and-drop deployment. See `wolf/backend/DEPLOY.md` before the first hosted upload.\n';
+readme += '\n\n## WOLF hosted exception\n\n`/wolf/` is compiled before assembly. The complete folder remains the deployment artifact; Wrangler uploads its static files and deploys the prebuilt root `_worker.js` to the existing `axm.tools` Worker. See `wolf/backend/DEPLOY.md` before the first hosted upload.\n';
 await writeFile(readmePath, readme, 'utf8');
 
 console.log(`Assembled Glass Onion deployment at ${destination}`);

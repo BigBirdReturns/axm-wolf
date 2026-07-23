@@ -53,6 +53,7 @@ export function ExportScreen({ db, recordId, onNavigate, onRecordDeleted }: Expo
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [archiveError, setArchiveError] = useState<string | null>(null);
   const [deliveryNotice, setDeliveryNotice] = useState<string | null>(null);
+  const [analysisConsent, setAnalysisConsent] = useState(false);
 
   async function refreshRecord(): Promise<void> {
     const loaded = await loadRecord(db, recordId);
@@ -131,7 +132,7 @@ export function ExportScreen({ db, recordId, onNavigate, onRecordDeleted }: Expo
     setExportError(null);
     setDeliveryNotice('Submitting your saved answers…');
     try {
-      await syncHostedRecord(record, true);
+      await syncHostedRecord(record, true, analysisConsent);
       await markExported();
       setDeliveryNotice('Submitted. Your interviewer can now open these answers. Your local copy remains on this device.');
     } catch (err) {
@@ -289,6 +290,15 @@ export function ExportScreen({ db, recordId, onNavigate, onRecordDeleted }: Expo
               ? 'Submit your saved answers directly to the interviewer. Your local copy stays on this device.'
               : 'This creates one file containing your saved answers and any unfinished drafts. On a phone, choose the person or app you normally use to send files.'}
           </p>
+          {isHosted ? (
+            <div className="consent-choice">
+              <div className="checkbox-row">
+                <input id="analysis-consent" type="checkbox" checked={analysisConsent} onChange={(event) => setAnalysisConsent(event.target.checked)} />
+                <label htmlFor="analysis-consent">Allow a frozen copy of my submitted answers to be analyzed manually in the interviewer’s approved ChatGPT or Claude subscription.</label>
+              </div>
+              <p className="meta">Optional. You can submit without checking this. Any model output must cite your exact words, stays separate from your answers, and requires human review. The subscription provider’s retention rules apply to the frozen copy.</p>
+            </div>
+          ) : null}
           <button type="button" className="btn" onClick={() => void (isHosted ? handleHostedSubmit() : handleSendBundle())}>
             {isHosted ? 'Submit my answers' : 'Send my answers'}
           </button>

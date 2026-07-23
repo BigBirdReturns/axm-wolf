@@ -9,7 +9,7 @@ test('friendly survey and dashboard paths are rewritten to the WOLF shell', asyn
   const dashboard = await worker.fetch(new Request('https://axm.tools/wolf/dashboard'), env);
   assert.equal(await survey.text(), 'shell');
   assert.equal(await dashboard.text(), 'shell');
-  assert.deepEqual(seen, ['/wolf/index.html', '/wolf/index.html']);
+  assert.deepEqual(seen, ['/wolf/', '/wolf/']);
 });
 
 test('non-WOLF paths pass through unchanged', async () => {
@@ -105,4 +105,34 @@ test('completed interviews are readable but reject further writes', async () => 
   const response = await worker.fetch(request, { WOLF_DB: db });
   assert.equal(response.status, 423);
   assert.match(await response.text(), /read-only/i);
+});
+
+test('analysis returns must cite exact synchronized testimony', () => {
+  const record = {
+    recordId: 'SUR01',
+    responses: [{ promptId: 'operations.normal-day', revisions: [{ revisionId: 'rev-1', text: 'I check the overnight notes first.' }] }],
+  };
+  assert.doesNotThrow(() => __test.validateAnalysisReturnAgainstRecord({
+    schemaVersion: 1,
+    kind: 'wolf-survey-analysis-return',
+    claims: [{ claimId: 'claim-1', sourceReferences: [{ recordId: 'SUR01', promptId: 'operations.normal-day', revisionId: 'rev-1', quote: 'overnight notes' }] }],
+  }, record));
+  assert.throws(() => __test.validateAnalysisReturnAgainstRecord({
+    schemaVersion: 1,
+    kind: 'wolf-survey-analysis-return',
+    claims: [{ claimId: 'claim-1', sourceReferences: [{ recordId: 'SUR01', promptId: 'operations.normal-day', revisionId: 'rev-1', quote: 'invented words' }] }],
+  }, record), /outside the synchronized record/i);
+});
+
+test('operator cannot publish a manual analysis return without participant authorization', async () => {
+  const row = { code: 'SUR01', workspace_id: 'root', analysis_consent: 0, record_json: JSON.stringify({ recordId: 'SUR01', responses: [] }) };
+  const db = { prepare() { return { bind() { return this; }, async first() { return row; } }; } };
+  const request = new Request('https://axm.tools/wolf/api/operator/surveys/SUR01/analysis', {
+    method: 'POST',
+    headers: { 'x-wolf-test-email': 'owner@example.com', 'content-type': 'application/json' },
+    body: JSON.stringify({ payload: { schemaVersion: 1, kind: 'wolf-survey-analysis-return', claims: [] } }),
+  });
+  const response = await worker.fetch(request, { WOLF_DB: db, WOLF_TEST_MODE: 'true', WOLF_OWNER_EMAIL: 'owner@example.com' });
+  assert.equal(response.status, 403);
+  assert.match(await response.text(), /did not authorize/i);
 });

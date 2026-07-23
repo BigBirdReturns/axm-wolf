@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "kind": "wolf-survey-analysis-return",
   "responseId": "manual-return-lotus-001",
-  "handoffId": "handoff-lotus-001",
+  "handoffId": "handoff-survey-lotus-july-f8f0924fc3fe2a0b",
   "analyst": "Manual subscription model run (simulated)",
   "method": "manual ChatGPT or Claude subscription run",
   "analyzedAt": "2026-07-13T17:25:00.000Z",
@@ -16,7 +16,7 @@
         {
           "recordId": "survey-lotus-july",
           "promptId": "operations.normal-day",
-          "revisionId": "48d60cf9-0ffa-4df7-99b7-395b3325e7c8",
+          "revisionId": "931868ef-97ff-425d-860f-d449da1b0b75",
           "quote": "walk the site once"
         }
       ]
@@ -30,7 +30,7 @@
         {
           "recordId": "survey-lotus-july",
           "promptId": "operations.hidden-dependency",
-          "revisionId": "75903cdd-e8ee-4c63-981f-88d7965cf240",
+          "revisionId": "bfa77064-c0dc-49c9-845f-65cf829daa8c",
           "quote": "unowned Airtable view"
         }
       ]
@@ -44,7 +44,7 @@
         {
           "recordId": "survey-lotus-july",
           "promptId": "operations.first-alert",
-          "revisionId": "2ad943be-df34-4a82-ba9f-00dc4af77862",
+          "revisionId": "dcd01b66-2d0f-439a-a0b3-250e362e65da",
           "quote": "numbers look normal but the room feels wrong"
         }
       ]

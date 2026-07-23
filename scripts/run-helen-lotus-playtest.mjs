@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, unlink, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runHelenLotusPlaytest } from '../dist-tests/tests/playtest/helen-lotus.support.js';
@@ -8,6 +8,11 @@ const outputDir = resolve(root, 'playtests/helen-lotus/generated');
 const result = await runHelenLotusPlaytest();
 
 await mkdir(outputDir, { recursive: true });
+for (const filename of await readdir(outputDir)) {
+  if (filename.endsWith('.wolfhandoff.json') || filename.endsWith('.wolfreturn.json')) {
+    await unlink(resolve(outputDir, filename));
+  }
+}
 await writeFile(resolve(outputDir, 'playtest-log.json'), `${JSON.stringify(result, null, 2)}\n`);
 await writeFile(resolve(outputDir, 'dashboard-final.json'), `${JSON.stringify(result.finalDashboard, null, 2)}\n`);
 for (const handoff of result.handoffs) await writeFile(resolve(outputDir, `${handoff.handoffId}.wolfhandoff.json`), `${JSON.stringify(handoff, null, 2)}\n`);

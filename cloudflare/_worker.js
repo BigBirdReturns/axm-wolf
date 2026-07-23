@@ -18,7 +18,7 @@ export default {
       }
       if (url.pathname.startsWith('/wolf/api/')) return await handleApi(request, env, url);
       if (url.pathname === '/wolf/dashboard' || /^\/wolf\/SUR\d+\/?$/.test(url.pathname)) {
-        return env.ASSETS.fetch(new Request(new URL('/wolf/index.html', url), request));
+        return env.ASSETS.fetch(new Request(new URL('/wolf/', url), request));
       }
       return env.ASSETS.fetch(request);
     } catch (error) {
@@ -28,7 +28,7 @@ export default {
 };
 
 async function handleApi(request, env, url) {
-  if (!env.WOLF_DB) return json({ error: 'WOLF_DB is not bound to this Pages project.' }, 503);
+  if (!env.WOLF_DB) return json({ error: 'WOLF_DB is not bound to this deployment.' }, 503);
   const parts = url.pathname.split('/').filter(Boolean);
   if (parts[2] === 'operator') return handleOperator(request, env, url, parts.slice(3));
   if (parts[2] === 'surveys' && parts[3]) return handleRecipient(request, env, parts[3].toUpperCase(), parts.slice(4));
@@ -83,9 +83,13 @@ async function handleOperator(request, env, url, parts) {
 
     if (parts[2] === 'surveys' && request.method === 'GET') {
       const result = await env.WOLF_DB.prepare(
-        `SELECT code, workspace_id, pack_id, recipient_label, survey_label, status, revision,
-                record_json IS NOT NULL AS has_record, created_at, started_at, submitted_at, updated_at
-           FROM wolf_surveys WHERE workspace_id = ? ORDER BY updated_at DESC`,
+        `SELECT s.code, s.workspace_id, s.pack_id, s.recipient_label, s.survey_label, s.status, s.revision,
+                s.record_json IS NOT NULL AS has_record,
+                EXISTS (SELECT 1 FROM wolf_analysis_returns a WHERE a.survey_code = s.code) AS has_analysis,
+                (SELECT a.created_at FROM wolf_analysis_returns a WHERE a.survey_code = s.code ORDER BY a.created_at DESC LIMIT 1) AS analysis_created_at,
+                s.analysis_consent, s.analysis_consent_at,
+                s.created_at, s.started_at, s.submitted_at, s.updated_at
+           FROM wolf_surveys s WHERE s.workspace_id = ? ORDER BY s.updated_at DESC`,
       ).bind(workspaceId).all();
       return json({ surveys: result.results ?? [] });
     }
@@ -103,6 +107,10 @@ async function handleOperator(request, env, url, parts) {
     if (!row) throw new HttpError('Survey not found.', 404);
     const role = await requireWorkspace(env.WOLF_DB, identity, row.workspace_id, ['owner', 'steward', 'interviewer', 'viewer']);
 
+    if (parts.length === 2 && request.method === 'GET') {
+      return json({ code, status: row.status, revision: row.revision, record: parseStoredJson(row.record_json), analysis: await latestAnalysis(env.WOLF_DB, code), analysisConsent: row.analysis_consent === null ? null : Boolean(row.analysis_consent), analysisConsentAt: row.analysis_consent_at });
+    }
+
     if (parts.length === 2 && request.method === 'PATCH') {
       if (role === 'viewer') throw new HttpError('Viewer access cannot change interviews.', 403);
       const body = await readJson(request);
@@ -117,8 +125,10 @@ async function handleOperator(request, env, url, parts) {
     }
     if (parts[2] === 'analysis' && request.method === 'POST') {
       if (role === 'viewer') throw new HttpError('Viewer access cannot publish analysis.', 403);
+      if (row.analysis_consent !== 1) throw new HttpError('The participant did not authorize manual subscription analysis for this interview.', 403);
       const body = await readJson(request);
       if (body.payload === undefined) throw new HttpError('payload is required.', 400);
+      validateAnalysisReturnAgainstRecord(body.payload, parseStoredJson(row.record_json));
       const encoded = JSON.stringify(body.payload);
       if (encoded.length > MAX_RECORD_BYTES) throw new HttpError('Analysis return is too large.', 413);
       const id = crypto.randomUUID();
@@ -179,11 +189,17 @@ async function handleRecipient(request, env, code, parts) {
     if (encoded.length > MAX_RECORD_BYTES) return json({ error: 'Record is too large.' }, 413);
     const now = new Date().toISOString();
     const submitted = parts[0] === 'submit';
+    const analysisConsent = submitted ? body.analysisConsent : null;
+    if (submitted && typeof analysisConsent !== 'boolean') return json({ error: 'analysisConsent must explicitly be true or false when submitting.' }, 400);
     const nextStatus = submitted ? 'submitted' : row.status === 'invited' ? 'started' : row.status;
     const nextRevision = Number(row.revision) + 1;
     await env.WOLF_DB.prepare(
-      `UPDATE wolf_surveys SET record_json = ?, revision = ?, status = ?, started_at = COALESCE(started_at, ?), submitted_at = CASE WHEN ? THEN ? ELSE submitted_at END, updated_at = ? WHERE code = ?`,
-    ).bind(encoded, nextRevision, nextStatus, now, submitted ? 1 : 0, now, now, code).run();
+      `UPDATE wolf_surveys SET record_json = ?, revision = ?, status = ?, started_at = COALESCE(started_at, ?),
+              submitted_at = CASE WHEN ? THEN ? ELSE submitted_at END,
+              analysis_consent = CASE WHEN ? THEN ? ELSE analysis_consent END,
+              analysis_consent_at = CASE WHEN ? THEN ? ELSE analysis_consent_at END,
+              updated_at = ? WHERE code = ?`,
+    ).bind(encoded, nextRevision, nextStatus, now, submitted ? 1 : 0, now, submitted ? 1 : 0, analysisConsent ? 1 : 0, submitted ? 1 : 0, now, now, code).run();
     return json({ code, status: nextStatus, revision: nextRevision, updatedAt: now });
   }
   if (parts[0] === 'updates' && request.method === 'GET') return json({ code, status: row.status, revision: row.revision, analysis: await latestAnalysis(env.WOLF_DB, code) });
@@ -281,6 +297,29 @@ function requiredText(value, field, maximum) {
 function normalizeEmail(value) { return String(value ?? '').trim().toLowerCase(); }
 function slugify(value) { return value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'workspace'; }
 function parseStoredJson(value) { if (!value) return null; try { return JSON.parse(value); } catch { return null; } }
+function validateAnalysisReturnAgainstRecord(payload, record) {
+  if (!record || !Array.isArray(record.responses)) throw new HttpError('This interview has no synchronized testimony to analyze.', 409);
+  if (!payload || typeof payload !== 'object' || Array.isArray(payload) || payload.schemaVersion !== 1 || payload.kind !== 'wolf-survey-analysis-return') {
+    throw new HttpError('Analysis return must be schemaVersion 1 and kind wolf-survey-analysis-return.', 400);
+  }
+  if (!Array.isArray(payload.claims) || payload.claims.length === 0) throw new HttpError('Analysis return must contain at least one cited claim.', 400);
+  const frozen = new Map();
+  for (const response of record.responses) {
+    const revision = Array.isArray(response?.revisions) ? response.revisions.at(-1) : null;
+    if (revision) frozen.set(`${record.recordId}|${response.promptId}|${revision.revisionId}`, revision.text);
+  }
+  for (const claim of payload.claims) {
+    if (!claim || typeof claim !== 'object' || typeof claim.claimId !== 'string' || !Array.isArray(claim.sourceReferences) || claim.sourceReferences.length === 0) {
+      throw new HttpError('Every analysis claim must have a claimId and source references.', 400);
+    }
+    for (const reference of claim.sourceReferences) {
+      const sourceText = frozen.get(`${reference?.recordId}|${reference?.promptId}|${reference?.revisionId}`);
+      if (typeof reference?.quote !== 'string' || !reference.quote || !sourceText || !sourceText.includes(reference.quote)) {
+        throw new HttpError(`Analysis claim ${claim.claimId} cites testimony outside the synchronized record.`, 400);
+      }
+    }
+  }
+}
 function randomToken() {
   const bytes = new Uint8Array(32); crypto.getRandomValues(bytes); let binary = '';
   for (const byte of bytes) binary += String.fromCharCode(byte);
@@ -298,4 +337,4 @@ function decodeBase64UrlBytes(value) {
 function json(payload, status = 200) { return new Response(JSON.stringify(payload), { status, headers: JSON_HEADERS }); }
 class HttpError extends Error { constructor(message, status) { super(message); this.status = status; } }
 
-export const __test = { sha256, randomToken, requiredText, makeIdentity, decodeBase64UrlText };
+export const __test = { sha256, randomToken, requiredText, makeIdentity, decodeBase64UrlText, validateAnalysisReturnAgainstRecord };

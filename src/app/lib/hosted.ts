@@ -28,10 +28,25 @@ export type HostedSurveySummary = {
   status: string;
   revision: number;
   has_record: number;
+  has_analysis: number;
+  analysis_created_at: string | null;
+  analysis_consent: number | null;
+  analysis_consent_at: string | null;
   created_at: string;
   started_at: string | null;
   submitted_at: string | null;
   updated_at: string;
+};
+
+export type HostedAnalysis = { id: string; payload: unknown; createdAt: string };
+export type HostedSurveyDetail = {
+  code: string;
+  status: string;
+  revision: number;
+  record: WolfRecord | null;
+  analysis: HostedAnalysis | null;
+  analysisConsent: boolean | null;
+  analysisConsentAt: string | null;
 };
 
 export type HostedWorkspace = { id: string; name: string; slug: string; role: 'owner' | 'steward' | 'interviewer' | 'viewer' };
@@ -69,7 +84,7 @@ export async function bootstrapHostedSurvey(code: string, token: string): Promis
   return apiJson(`/wolf/api/surveys/${encodeURIComponent(code)}/bootstrap`, { headers: recipientHeaders(token) });
 }
 
-export async function syncHostedRecord(record: WolfRecord, submitted = false): Promise<{ revision: number; status: string }> {
+export async function syncHostedRecord(record: WolfRecord, submitted = false, analysisConsent?: boolean): Promise<{ revision: number; status: string }> {
   const session = hostedSessionForRecord(record.recordId);
   if (!session) throw new Error('This record is not connected to a hosted invitation.');
   const result = await apiJson<{ revision: number; status: string }>(
@@ -77,7 +92,7 @@ export async function syncHostedRecord(record: WolfRecord, submitted = false): P
     {
       method: submitted ? 'POST' : 'PUT',
       headers: recipientHeaders(session.token),
-      body: JSON.stringify({ baseRevision: session.revision, record }),
+      body: JSON.stringify({ baseRevision: session.revision, record, ...(submitted ? { analysisConsent: Boolean(analysisConsent) } : {}) }),
     },
   );
   rememberHostedSession({ ...session, revision: result.revision });
@@ -128,6 +143,10 @@ export async function updateHostedSurveyStatus(code: string, status: string): Pr
 export async function fetchHostedRecord(code: string): Promise<WolfRecord | null> {
   const result = await apiJson<{ record: WolfRecord | null }>(`/wolf/api/operator/surveys/${encodeURIComponent(code)}/record`, { headers: jsonHeaders() });
   return result.record;
+}
+
+export async function fetchHostedSurveyDetail(code: string): Promise<HostedSurveyDetail> {
+  return apiJson(`/wolf/api/operator/surveys/${encodeURIComponent(code)}`, { headers: jsonHeaders() });
 }
 
 export async function uploadHostedAnalysis(code: string, payload: unknown): Promise<void> {

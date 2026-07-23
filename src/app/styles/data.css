@@ -106,3 +106,89 @@
   border-color: var(--accent);
   background: var(--accent-lt);
 }
+
+.reality-check,
+.empty-state {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 1px dashed var(--rule-dk);
+  border-radius: 4px;
+  background: var(--paper-alt);
+}
+
+.rehearsal {
+  border-color: var(--accent);
+  background: var(--accent-lt);
+}
+
+.rehearsal-grid,
+.review-band {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.rehearsal-card {
+  padding: 0.9rem;
+  border: 1px solid var(--rule-dk);
+  border-radius: 4px;
+  background: var(--paper);
+}
+
+.plain-list,
+.testimony-list,
+.claim-list {
+  display: grid;
+  gap: 0.75rem;
+  padding-left: 1.35rem;
+}
+
+.interview-review {
+  padding: 1rem;
+  border-left: 4px solid var(--accent);
+  background: var(--paper-alt);
+}
+
+.review-band > div {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.65rem;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+}
+
+.testimony-list li,
+.claim-list li {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+.testimony-list blockquote {
+  margin: 0.6rem 0;
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--rule-dk);
+  white-space: pre-wrap;
+}
+
+.analysis-return {
+  padding: 0.85rem;
+  border: 1px solid var(--rule-dk);
+  background: var(--paper);
+}
+
+.analysis-json {
+  max-height: 24rem;
+  overflow: auto;
+  white-space: pre-wrap;
+  font-size: 0.8rem;
+}
+
+@media (min-width: 720px) {
+  .rehearsal-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .review-band {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

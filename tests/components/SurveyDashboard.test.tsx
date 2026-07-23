@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import genericPackJson from '../../src/test-fixtures/generic-engineer.wolfpack.json' with { type: 'json' };
-import { buildRecordBundle, createRecord, digestPack, validatePack } from '../../src/engine/index.js';
+import { buildRecordBundle, commitResponse, createRecord, digestPack, validatePack } from '../../src/engine/index.js';
 import {
   listSurveyAssignments,
   loadRecord,
@@ -40,6 +40,9 @@ describe('Survey dashboard', () => {
     expect(await screen.findByText(/Signed in as/)).toHaveTextContent('helen@example.com');
     expect(screen.getByLabelText('Workspace')).toHaveValue('helen');
     expect(await screen.findByText(/Current members:/)).toHaveTextContent('helen@example.com (steward)');
+    expect(await screen.findByText(/No live interviews have been created/)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Helen → Lotus playtest' })).toBeInTheDocument();
+    expect(screen.getByText(/neither person said them/i)).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'Create another workspace' })).not.toBeInTheDocument();
     unmount();
   });
@@ -75,6 +78,28 @@ describe('Survey dashboard', () => {
     expect(assignments).toHaveLength(2);
     expect(new Set(assignments.map((assignment) => assignment.assignmentId)).size).toBe(2);
     expect(assignments.every((assignment) => assignment.status === 'invited')).toBe(true);
+  });
+
+  it('reviews synchronized raw testimony in place and keeps analysis separate', async () => {
+    const user = userEvent.setup();
+    const { state, pack } = await setupState();
+    window.history.replaceState({}, '', '/wolf/dashboard');
+    let record = createRecord({ recordId: 'SUR01', pack, packDigest: await digestPack(pack), appVersion: '0.4.0', subject: { displayName: 'Helen' } });
+    record = commitResponse(record, 'operations.normal-day', 'I check the overnight notes first.', 'typed', '2026-07-13T16:00:00.000Z');
+    vi.stubGlobal('fetch', vi.fn(async (input: RequestInfo | URL) => {
+      const path = typeof input === 'string' ? input : input instanceof URL ? input.pathname : new URL(input.url).pathname;
+      if (path === '/wolf/api/operator/session') return new Response(JSON.stringify({ identity: { email: 'owner@example.com', isRoot: true }, workspaces: [{ id: 'root', name: 'AXM', slug: 'axm', role: 'owner' }] }), { status: 200 });
+      if (path === '/wolf/api/operator/workspaces/root/surveys') return new Response(JSON.stringify({ surveys: [{ code: 'SUR01', workspace_id: 'root', pack_id: pack.packId, recipient_label: 'Helen', survey_label: 'Field memory', status: 'submitted', revision: 2, has_record: 1, has_analysis: 0, analysis_created_at: null, analysis_consent: 1, analysis_consent_at: '2026-07-13T16:00:00.000Z', created_at: '2026-07-13T15:00:00.000Z', started_at: '2026-07-13T15:30:00.000Z', submitted_at: '2026-07-13T16:00:00.000Z', updated_at: '2026-07-13T16:00:00.000Z' }] }), { status: 200 });
+      if (path === '/wolf/api/operator/workspaces/root/members') return new Response(JSON.stringify({ members: [] }), { status: 200 });
+      if (path === '/wolf/api/operator/surveys/SUR01') return new Response(JSON.stringify({ code: 'SUR01', status: 'submitted', revision: 2, record, analysis: null, analysisConsent: true, analysisConsentAt: '2026-07-13T16:00:00.000Z' }), { status: 200 });
+      return new Response(JSON.stringify({ error: `Unexpected path ${path}` }), { status: 404 });
+    }));
+
+    render(<RecordsScreen {...state} />);
+    await user.click(await screen.findByRole('button', { name: 'Review interview here' }));
+    expect(await screen.findByText('I check the overnight notes first.')).toBeInTheDocument();
+    expect(screen.getByText('RAW TESTIMONY')).toBeInTheDocument();
+    expect(screen.getByText(/No model return exists/)).toBeInTheDocument();
   });
 
   it('bulk-imports a matching returned record and moves it to received', async () => {

@@ -18,18 +18,30 @@ import {
   createHostedWorkspace,
   createHostedSurvey,
   fetchHostedRecord,
+  fetchHostedSurveyDetail,
   getHostedOperatorSession,
   isHostedDashboard,
   listHostedMembers,
   listHostedSurveys,
   updateHostedSurveyStatus,
   uploadHostedAnalysis,
+  type HostedSurveyDetail,
   type HostedMember,
   type HostedOperatorSession,
 } from '../lib/hosted.js';
+import { downloadText } from '../lib/download.js';
+import {
+  buildSurveyAnalysisHandoff,
+  validateSurveyAnalysisReturn,
+  type SurveyAnalysisClaim,
+} from '../lib/surveyAnalysis.js';
 import '../styles/data.css';
 
 const WORKFLOW_STATUSES: SurveyWorkflowStatus[] = ['invited', 'started', 'received', 'submitted', 'analyzing', 'completed'];
+const REHEARSAL = [
+  { recipient: 'Helen', answers: 3, accepted: 2, rejected: 1, next: 'Show the two cited findings and ask before changing her workflow.' },
+  { recipient: 'Lotus', answers: 3, accepted: 3, rejected: 0, next: 'Test the site-versus-dashboard discrepancy checkpoint on the next walkthrough.' },
+] as const;
 
 export function RecordsScreen({ db, packs, records, refreshRecords, migrationSummary }: WolfAppState): JSX.Element {
   const [assignments, setAssignments] = useState<SurveyAssignment[]>([]);
@@ -51,6 +63,9 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
   const [memberEmail, setMemberEmail] = useState('');
   const [memberRole, setMemberRole] = useState<HostedMember['role']>('interviewer');
   const [workspaceName, setWorkspaceName] = useState('');
+  const [openInterviewCode, setOpenInterviewCode] = useState<string | null>(null);
+  const [hostedDetails, setHostedDetails] = useState<Record<string, HostedSurveyDetail>>({});
+  const [analysisConsentByCode, setAnalysisConsentByCode] = useState<Record<string, boolean | null>>({});
   const hostedDashboard = isHostedDashboard();
   const hostedUnlocked = Boolean(operatorSession && workspaceId);
   const selectedWorkspace = operatorSession?.workspaces.find((workspace) => workspace.id === workspaceId);
@@ -130,6 +145,7 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
       invitationToken: localById.get(survey.code)?.invitationToken,
     })));
     setRemoteRecordIds(new Set(surveys.filter((survey) => Boolean(survey.has_record)).map((survey) => survey.code)));
+    setAnalysisConsentByCode(Object.fromEntries(surveys.map((survey) => [survey.code, survey.analysis_consent === null ? null : Boolean(survey.analysis_consent)])));
     setMembers(remoteMembers);
   }
 
@@ -254,6 +270,43 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
     }
   }
 
+  async function toggleHostedInterview(code: string): Promise<void> {
+    if (openInterviewCode === code) {
+      setOpenInterviewCode(null);
+      return;
+    }
+    setWorking(true);
+    setError(null);
+    try {
+      const detail = await fetchHostedSurveyDetail(code);
+      setHostedDetails((current) => ({ ...current, [code]: detail }));
+      setOpenInterviewCode(code);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setWorking(false);
+    }
+  }
+
+  async function exportAnalysisHandoff(code: string, recipient: string): Promise<void> {
+    setWorking(true);
+    setError(null);
+    try {
+      const detail = hostedDetails[code] ?? await fetchHostedSurveyDetail(code);
+      if (!detail.record) throw new Error('This interview has no synchronized answers yet.');
+      if (detail.analysisConsent !== true) throw new Error('This participant did not authorize manual subscription analysis. Their raw answers remain reviewable, but WOLF will not create a model handoff.');
+      setHostedDetails((current) => ({ ...current, [code]: detail }));
+      const handoff = await buildSurveyAnalysisHandoff(detail.record, recipient);
+      downloadText(`${handoff.handoffId}.wolfhandoff.json`, 'application/json', `${JSON.stringify(handoff, null, 2)}\n`);
+      if (detail.status !== 'analyzing') await changeStatus(code, 'analyzing');
+      setNotice(`Frozen, cited handoff prepared for ${recipient}. Upload it manually to your subscription model; WOLF made no model API call.`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    } finally {
+      setWorking(false);
+    }
+  }
+
   async function importAnalysisReturn(event: React.ChangeEvent<HTMLInputElement>, code: string): Promise<void> {
     const file = event.target.files?.[0];
     event.target.value = '';
@@ -261,15 +314,26 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
     setWorking(true);
     setError(null);
     try {
-      const payload = JSON.parse(await file.text()) as unknown;
+      const detail = hostedDetails[code] ?? await fetchHostedSurveyDetail(code);
+      if (!detail.record) throw new Error('This interview has no synchronized answers to validate against.');
+      const assignment = assignments.find((candidate) => candidate.assignmentId === code);
+      const handoff = await buildSurveyAnalysisHandoff(detail.record, assignment?.recipientLabel ?? code);
+      const payload = validateSurveyAnalysisReturn(JSON.parse(await file.text()) as unknown, handoff);
       await uploadHostedAnalysis(code, payload);
+      setHostedDetails((current) => ({ ...current, [code]: { ...detail, status: 'completed', analysis: { id: payload.responseId, payload, createdAt: payload.analyzedAt } } }));
       await refreshHostedDashboard(workspaceId);
-      setNotice(`Analysis return published to ${code}.`);
+      setNotice(`Validated analysis return published to ${code}. Raw testimony was not changed.`);
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err));
     } finally {
       setWorking(false);
     }
+  }
+
+  function prepareRealInterview(recipient: 'Helen' | 'Lotus'): void {
+    setRecipientLabel(recipient);
+    setSurveyLabel('How your operating knowledge should become a usable plan');
+    document.getElementById('invite-heading')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
   async function importReturns(event: React.ChangeEvent<HTMLInputElement>): Promise<void> {
@@ -325,9 +389,9 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
   return (
     <div className="stack">
       <header>
-        <p className="meta">LOCAL OPERATOR CONTROL</p>
-        <h1>Survey dashboard</h1>
-        <p className="muted">Create labeled invitations, receive many WOLF records, and move each response through analysis without mixing people or surveys.</p>
+        <p className="meta">{hostedDashboard ? 'LIVE WOLF WORKSPACE' : 'LOCAL OPERATOR CONTROL'}</p>
+        <h1>Interview workspace</h1>
+        <p className="muted">Invite someone, see exactly what arrived, preserve raw testimony, and carry only cited claims into a human-reviewed plan.</p>
       </header>
 
       {migrationSummary ? <p className="notice" role="status">Migrated {migrationSummary.migrated} legacy answers.</p> : null}
@@ -370,13 +434,50 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
       ) : null}
 
       <section className="card stack" aria-labelledby="summary-heading">
-        <h2 id="summary-heading">Pipeline</h2>
+        <h2 id="summary-heading">What is actually here</h2>
         <div className="row">
           {WORKFLOW_STATUSES.map((status) => <span className="field-chip" key={status}>{status}: {counts[status]}</span>)}
           <span className="field-chip">total: {assignments.length}</span>
         </div>
         <p className="meta">{hostedUnlocked ? `Hosted invitations in ${selectedWorkspace?.name ?? 'this workspace'} update automatically while recipients work online. This view refreshes every 30 seconds.` : 'Local-only invitations remain invited until their return file is imported here.'}</p>
+        {hostedUnlocked && assignments.length === 0 ? (
+          <div className="reality-check" role="status">
+            <strong>No live interviews have been created in this workspace yet.</strong>
+            <span>That is why Helen and Lotus do not appear in the response inbox. The rehearsal below is test evidence, not their testimony.</span>
+          </div>
+        ) : null}
       </section>
+
+      {hostedDashboard ? (
+        <section className="card stack rehearsal" aria-labelledby="rehearsal-heading">
+          <div>
+            <p className="meta">SYNTHETIC REHEARSAL · NOT PARTICIPANT TESTIMONY</p>
+            <h2 id="rehearsal-heading">Helen → Lotus playtest</h2>
+            <p>We ran both complete loops locally: invitation, draft/resume, committed answers, frozen manual-subscription handoff, cited return, and owner review. The words were invented UX fixtures; neither person said them.</p>
+          </div>
+          <div className="rehearsal-grid">
+            {REHEARSAL.map((entry) => (
+              <article className="rehearsal-card" key={entry.recipient}>
+                <h3>{entry.recipient}</h3>
+                <p className="meta">completed rehearsal</p>
+                <p><strong>{entry.answers}</strong> answers · <strong>{entry.accepted}</strong> accepted claims · <strong>{entry.rejected}</strong> rejected</p>
+                <p>{entry.next}</p>
+                <button type="button" className="btn btn--secondary" disabled={!hostedUnlocked} onClick={() => prepareRealInterview(entry.recipient)}>
+                  Prepare real {entry.recipient} invitation
+                </button>
+              </article>
+            ))}
+          </div>
+          <details>
+            <summary>What this proves—and what it does not</summary>
+            <ul className="plain-list">
+              <li>Proved: people stay isolated, drafts survive, answer revisions remain source truth, and model claims can be checked against exact quotes.</li>
+              <li>Proved: the model loop can use a manual ChatGPT or Claude subscription with a file export/import and zero WOLF API tokens.</li>
+              <li>Not proved: Helen or Lotus has opened a real link, consented, or supplied any testimony. A real invitation and submission must happen next.</li>
+            </ul>
+          </details>
+        </section>
+      ) : null}
 
       <section className="card stack" aria-labelledby="invite-heading">
         <h2 id="invite-heading">Create a recipient invitation</h2>
@@ -423,28 +524,39 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
           </select>
         </div>
 
-        {filteredAssignments.length === 0 ? <p className="muted">No invitations or returned surveys match these filters.</p> : (
+        {filteredAssignments.length === 0 ? (
+          <div className="empty-state">
+            <h3>{assignments.length === 0 ? 'No live interviews yet' : 'Nothing matches these filters'}</h3>
+            <p>{assignments.length === 0 ? 'Create an invitation above. The card will appear here immediately; synchronized answers become reviewable on the same card.' : 'Clear or change the filters to see the rest of the workspace.'}</p>
+          </div>
+        ) : (
           <ul className="card-list">
             {filteredAssignments.map((assignment) => {
               const hasRecord = availableRecordIds.has(assignment.assignmentId);
               const hasRemoteRecord = remoteRecordIds.has(assignment.assignmentId);
+              const detail = hostedDetails[assignment.assignmentId];
+              const open = openInterviewCode === assignment.assignmentId;
               return (
                 <li className="card stack" key={assignment.assignmentId}>
                   <div>
                     <h3>{assignment.recipientLabel}</h3>
                     <p>{assignment.surveyLabel}</p>
                     <p className="meta"><span className="field-chip">{assignment.status}</span> <span className="field-chip">pack: {assignment.packId}</span></p>
+                    {assignment.hosted && hasRemoteRecord ? <p className="meta"><span className="field-chip">manual LLM: {analysisConsentByCode[assignment.assignmentId] === true ? 'authorized' : analysisConsentByCode[assignment.assignmentId] === false ? 'declined' : 'not decided'}</span></p> : null}
                   </div>
                   <label htmlFor={`status-${assignment.assignmentId}`}>Workflow status</label>
                   <select id={`status-${assignment.assignmentId}`} value={assignment.status} onChange={(event) => void changeStatus(assignment.assignmentId, event.target.value as SurveyWorkflowStatus)}>
                     {WORKFLOW_STATUSES.map((status) => <option key={status} value={status}>{status}</option>)}
                   </select>
                   <div className="row">
-                    <button type="button" className="btn btn--secondary" onClick={() => void copyInvitation(assignment)}>Copy invitation</button>
-                    {assignment.hosted && hasRemoteRecord ? <button type="button" className="btn" onClick={() => void openHostedRecord(assignment.assignmentId)}>Open synchronized answers</button> : null}
-                    {assignment.hosted && hasRemoteRecord ? <><label className="btn btn--secondary" htmlFor={`analysis-${assignment.assignmentId}`}>Publish analysis return</label><input id={`analysis-${assignment.assignmentId}`} className="visually-hidden" type="file" accept=".json,application/json" onChange={(event) => void importAnalysisReturn(event, assignment.assignmentId)} /></> : null}
+                    {assignment.status !== 'completed' ? <button type="button" className="btn btn--secondary" onClick={() => void copyInvitation(assignment)}>Copy invitation</button> : null}
+                    {assignment.hosted && hasRemoteRecord ? <button type="button" className="btn" onClick={() => void toggleHostedInterview(assignment.assignmentId)}>{open ? 'Close interview' : 'Review interview here'}</button> : null}
+                    {assignment.hosted && hasRemoteRecord ? <button type="button" className="btn btn--secondary" disabled={analysisConsentByCode[assignment.assignmentId] !== true} onClick={() => void exportAnalysisHandoff(assignment.assignmentId, assignment.recipientLabel)}>Export cited LLM handoff</button> : null}
+                    {assignment.hosted && hasRemoteRecord && analysisConsentByCode[assignment.assignmentId] === true ? <><label className="btn btn--secondary" htmlFor={`analysis-${assignment.assignmentId}`}>Import cited LLM return</label><input id={`analysis-${assignment.assignmentId}`} className="visually-hidden" type="file" accept=".wolfreturn.json,.json,application/json" onChange={(event) => void importAnalysisReturn(event, assignment.assignmentId)} /></> : null}
+                    {assignment.hosted && hasRemoteRecord ? <button type="button" className="btn btn--secondary" onClick={() => void openHostedRecord(assignment.assignmentId)}>Open full record</button> : null}
                     {hasRecord ? <a className="btn" href={`#/record/${encodeURIComponent(assignment.assignmentId)}`}>Open returned answers</a> : null}
                   </div>
+                  {open ? <HostedInterviewReview detail={detail} /> : null}
                   <p className="meta">Created {assignment.createdAt}{assignment.receivedAt ? ` · received ${assignment.receivedAt}` : ''}</p>
                 </li>
               );
@@ -464,4 +576,64 @@ export function RecordsScreen({ db, packs, records, refreshRecords, migrationSum
       ) : null}
     </div>
   );
+}
+
+function HostedInterviewReview({ detail }: { detail: HostedSurveyDetail | undefined }): JSX.Element {
+  if (!detail) return <p className="muted">Loading synchronized interview…</p>;
+  if (!detail.record) return <p className="notice">The invitation exists, but no synchronized answers have arrived.</p>;
+  const record = detail.record;
+  const prompts = new Map(record.packSnapshot.prompts.map((prompt) => [prompt.id, prompt]));
+  const claims = analysisClaims(detail.analysis?.payload);
+  return (
+    <section className="interview-review stack" aria-label={`Synchronized interview ${detail.code}`}>
+      <div className="review-band">
+        <div><span className="meta">RAW TESTIMONY</span><strong>{record.responses.length} answered prompts</strong></div>
+        <div><span className="meta">SERVER REVISION</span><strong>{detail.revision}</strong></div>
+        <div><span className="meta">MANUAL ANALYSIS</span><strong>{detail.analysisConsent === true ? (detail.analysis ? 'returned' : 'authorized') : detail.analysisConsent === false ? 'declined' : 'not decided'}</strong></div>
+      </div>
+      <p className="muted">Answers below are the source of truth. Analysis is displayed separately and never overwrites them.</p>
+      <ol className="testimony-list">
+        {record.responses.map((response) => {
+          const current = response.revisions.at(-1);
+          if (!current) return null;
+          return (
+            <li key={response.promptId}>
+              <p className="meta">{response.promptId} · {response.revisions.length} revision{response.revisions.length === 1 ? '' : 's'}</p>
+              <h4>{prompts.get(response.promptId)?.text ?? response.promptId}</h4>
+              <blockquote>{current.text}</blockquote>
+              <p className="meta">Committed {current.capturedAt} · source: {current.source}</p>
+            </li>
+          );
+        })}
+      </ol>
+      {detail.analysis ? (
+        <div className="analysis-return stack">
+          <div>
+            <p className="meta">DERIVED · MANUAL SUBSCRIPTION RETURN · HUMAN REVIEW REQUIRED</p>
+            <h4>Analysis return</h4>
+          </div>
+          {claims ? (
+            <ul className="claim-list">
+              {claims.map((claim) => <li key={claim.claimId}><span className="field-chip">{claim.kind}</span><span className="field-chip">{claim.confidence}</span><p>{claim.text}</p><p className="meta">{claim.sourceReferences.length} exact source citation{claim.sourceReferences.length === 1 ? '' : 's'}</p></li>)}
+            </ul>
+          ) : <pre className="analysis-json">{JSON.stringify(detail.analysis.payload, null, 2)}</pre>}
+          <p className="meta">Returned {detail.analysis.createdAt} · receipt {detail.analysis.id}</p>
+        </div>
+      ) : detail.analysisConsent === true ? (
+        <p className="notice">No model return exists. Export the cited handoff, run it manually in your subscription, then import the returned JSON here.</p>
+      ) : <p className="notice">No model handoff is available because manual subscription analysis was not authorized. The raw interview remains intact and reviewable.</p>}
+    </section>
+  );
+}
+
+function analysisClaims(value: unknown): SurveyAnalysisClaim[] | null {
+  if (!value || typeof value !== 'object' || !('claims' in value) || !Array.isArray(value.claims)) return null;
+  return value.claims.every((claim) => claim && typeof claim === 'object'
+    && 'claimId' in claim && typeof claim.claimId === 'string'
+    && 'kind' in claim && typeof claim.kind === 'string'
+    && 'text' in claim && typeof claim.text === 'string'
+    && 'confidence' in claim && typeof claim.confidence === 'string'
+    && 'sourceReferences' in claim && Array.isArray(claim.sourceReferences))
+    ? value.claims as SurveyAnalysisClaim[]
+    : null;
 }

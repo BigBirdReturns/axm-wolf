@@ -46,6 +46,8 @@ CREATE TABLE IF NOT EXISTS wolf_surveys (
   created_at TEXT NOT NULL,
   started_at TEXT,
   submitted_at TEXT,
+  analysis_consent INTEGER CHECK (analysis_consent IN (0, 1)),
+  analysis_consent_at TEXT,
   updated_at TEXT NOT NULL,
   FOREIGN KEY (workspace_id) REFERENCES wolf_workspaces(id) ON DELETE CASCADE
 );
@@ -112,4 +114,4 @@ CREATE TABLE IF NOT EXISTS wolf_knowledge_drop_events (
 
 CREATE INDEX IF NOT EXISTS wolf_knowledge_events_drop_idx ON wolf_knowledge_drop_events(drop_id, sequence);
 
-INSERT OR IGNORE INTO wolf_schema_migrations (version, applied_at) VALUES ('0.4', datetime('now'));
+INSERT OR IGNORE INTO wolf_schema_migrations (version, applied_at) VALUES ('0.5', datetime('now'));

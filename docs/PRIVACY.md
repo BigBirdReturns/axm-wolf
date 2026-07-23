@@ -92,4 +92,6 @@ The Glass Onion v0.3 deployment is an explicit exception to the standalone bound
 
 Hosted capture still writes to IndexedDB first. Network failure does not erase or block local work. File export remains available as a backup. Hosted mode makes no AI calls. Analysis returns uploaded by the operator are displayed as read-only data and never overwrite the participant's answers.
 
+At hosted submission, the participant separately allows or declines a frozen manual-analysis copy for the interviewer's approved ChatGPT or Claude subscription. Declining does not block testimony submission. The D1 survey row stores the choice and its timestamp; WOLF refuses both handoff export in the operator UI and analysis-return publication in the Worker unless the choice is affirmative. Any subscription provider retention or training policy remains outside WOLF and is disclosed before the choice.
+
 Knowledge details and knowledge-review events are not synchronized by hosted interview mode in this release. A `workspace` knowledge transport is not yet available; the Cloudflare custody tables are reserved for a later API that will require explicit consent and server-side authorization before use.

@@ -1,8 +1,21 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "thecaptureengine",
-  "pages_build_output_dir": "dist/Glass_Onion",
+  "name": "holy-dream-3851",
+  "main": "dist/Glass_Onion/_worker.js",
   "compatibility_date": "2026-07-13",
+  "assets": {
+    "directory": "dist/Glass_Onion",
+    "binding": "ASSETS",
+    "run_worker_first": [
+      "/wolf",
+      "/wolf/*"
+    ]
+  },
+  "vars": {
+    "WOLF_OWNER_EMAIL": "thisalmostsavagelad@gmail.com",
+    "CF_ACCESS_TEAM_DOMAIN": "thisalmostsavagelad.cloudflareaccess.com",
+    "CF_ACCESS_AUD": "150eccd95ad77f7fbde73efb12eb880cd07ee416a786ab8eea62f1a75e3cbb0e"
+  },
   "d1_databases": [
     {
       "binding": "WOLF_DB",

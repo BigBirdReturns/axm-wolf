@@ -80,9 +80,9 @@ The static deployment cannot observe whether somebody opened or started an invit
 
 ### Glass Onion hosted mode
 
-Run `npm run build:glass-onion`, then `npm run assemble:glass-onion -- <Glass_Onion source> <destination>`. The assembly preserves the source site, writes the WOLF app under `/wolf/`, adds a prebuilt root `_worker.js`, changes the registry entry from the GitHub Pages URL to `path: 'wolf/'`, and includes `wolf/backend/schema.sql` plus first-deployment instructions.
+Run `npm run build:glass-onion`, then `npm run assemble:glass-onion -- <Glass_Onion source> <destination>`. The assembly preserves the source site, writes the WOLF app under `/wolf/`, adds a prebuilt root `_worker.js`, changes the registry entry from the GitHub Pages URL to `path: 'wolf/'`, and includes `wolf/backend/schema.sql`, migrations, and first-deployment instructions.
 
-The existing Cloudflare Pages dashboard drag-and-drop workflow remains valid because advanced-mode `_worker.js` is already compiled. Before the first upload, create and migrate a D1 database, bind it as `WOLF_DB`, and configure one Cloudflare Access application for `/wolf/dashboard` and `/wolf/api/operator/*` using email one-time PIN authentication. Set `WOLF_OWNER_EMAIL`, `CF_ACCESS_TEAM_DOMAIN`, and `CF_ACCESS_AUD`; the assembled `wolf/backend/DEPLOY.md` gives the exact clicks and values. Hosted interview URLs use `/wolf/SUR## #k=<capability>` (without the displayed space). The worker passes all non-WOLF requests to the original static assets.
+The complete folder remains the release artifact, but the live `axm.tools` target is now a Workers Static Assets project. Deploy it with the checked-in Wrangler configuration so the root Worker script, static assets, and D1 binding travel together. Before the first deployment, create and migrate the D1 database, bind it as `WOLF_DB`, and configure one Cloudflare Access application for `/wolf/dashboard` and `/wolf/api/operator/*` using email one-time PIN authentication. Set `WOLF_OWNER_EMAIL`, `CF_ACCESS_TEAM_DOMAIN`, and `CF_ACCESS_AUD`; the assembled `wolf/backend/DEPLOY.md` gives the exact values. Hosted interview URLs use `/wolf/SUR## #k=<capability>` (without the displayed space). Non-WOLF assets remain unchanged and bypass the Worker script.
 
 ## After deploying
 

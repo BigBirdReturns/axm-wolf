@@ -98,6 +98,7 @@ export function GuidedStartScreen({
           <li>Stop whenever you want. This link brings you back to your saved work on this device.</li>
         </ol>
         <p className="notice">{isHosted ? 'Your answers save on this device and synchronize to this private interview when you are online.' : 'Your answers stay in this browser on this device until you choose to export or share them.'} Voice input creates text; WOLF does not keep an audio recording.</p>
+        {isHosted ? <p className="muted">At submission, you can separately allow or decline a frozen manual analysis copy for the interviewer’s approved ChatGPT or Claude subscription. Declining does not prevent submission. Any resulting claims must cite your exact words and cannot change your answers.</p> : null}
       </section>
 
       <section className="card stack" aria-labelledby="guided-start-heading">

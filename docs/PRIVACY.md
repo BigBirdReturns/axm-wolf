@@ -5,8 +5,9 @@ This describes what AXM Wolf stores, where it stores it, and what (if anything) 
 ## Local-first
 
 - All responses, drafts, records, and installed packs are stored in this browser profile on this device, in an IndexedDB database named `AXMWolf`.
-- Clearing your browser's site data (or using a private/incognito session that discards storage on close) removes the local record.
-- Exporting a record is the backup and transfer mechanism. Nothing is automatically backed up elsewhere.
+- Clearing your browser's site data (or using a private/incognito session that discards storage on close) removes the local record. Browsers may also evict a site's stored data on their own under storage pressure, without asking.
+- Once a record exists, Wolf asks the browser for persistent storage (`navigator.storage.persist()`), which exempts the data from automatic eviction where the browser grants it. The Export and data screen shows whether the grant was given. A denial is not an error — it means exports matter more.
+- Exporting a record is the backup and transfer mechanism. Nothing is automatically backed up elsewhere. See [ARCHIVING.md](ARCHIVING.md) for turning exports into a durable archive.
 - No server receives your testimony in v0.1. There is no account, no analytics, and no backend.
 
 ## What's stored, and where

@@ -1,0 +1,113 @@
+{
+  "comment": "FICTIONAL TESTIMONY. Marisol Vega, the Ash Creek Municipal Water District, and every event described here are invented. This file is the authored source for the demo record; scripts/generate-demo-record.mjs turns it into a valid .wolfrecord.json through the real engine. It exists to demonstrate the product, never to be mistaken for a primary source.",
+  "recordId": "b6d1c3a9-52f4-4e08-9a7d-31c85e2f9b04",
+  "title": "The Night Superintendent's Deposition",
+  "status": "active",
+  "createdAt": "2026-03-04T03:58:00Z",
+  "exportedAt": "2026-04-19T02:30:00Z",
+  "appVersion": "0.1.0",
+  "entries": [
+    {
+      "promptId": "pumphouse.first-night-alone",
+      "revisions": [
+        {
+          "capturedAt": "2026-03-04T04:12:00Z",
+          "source": "typed",
+          "text": "Gus worked the first two weeks of nights with me and then one Tuesday he didn't. Nobody announced it. His thermos just wasn't on the windowsill, and that was the handoff.\n\nThe high-service pumphouse in 1993 was four pumps, two of them older than my father, in a brick building that sweated in August and iced up inside the door in January. You learned the building by ear before you learned it any other way. Pump 3 had a bearing whine you could sing along to. The chlorine room door buzzed against its frame when 1 and 4 ran together. When the whole building went quiet at once, that was not peace, that was the thing you got out of your chair for.\n\nI was told to watch the wet-well level, the discharge pressure, and the chlorine residual, in that order. I was told to leave the number 2 discharge valve alone, because it would close nine-tenths of the way and lie to you about the last tenth, and the man who knew its moods was asleep across town."
+        }
+      ]
+    },
+    {
+      "promptId": "pumphouse.what-gus-kept-in-his-head",
+      "revisions": [
+        {
+          "capturedAt": "2026-03-06T05:02:00Z",
+          "source": "typed",
+          "text": "The distribution maps showed where the valves ought to be. Gus knew where they were. Those are two different towns.\n\nHe knew which gate valves would take a full wrench and which would snap their stems if you breathed on them wrong. He knew the hydrants that had been painted shut since before I was hired. He knew that the map said eight-inch main under Croft Street and the ground said six, because the map was drawn from the bid documents and the contractor had substituted and nobody wrote it down in 1971.\n\nI learned it the hard way in February 1995, when I sent a crew to isolate a leak using the map instead of using Gus. Wrong valve, wrong block, four extra basements full of water, and an old man at my shoulder the next night saying, gently, that the map was a fine story about the system. After that I started my own card index. One card per intersection, written in the truck, in pencil. When Gus died in 2011 I understood what I'd been watching all those years: the district had been renting his memory. It never owned it."
+        }
+      ]
+    },
+    {
+      "promptId": "pumphouse.paper-log-ritual",
+      "revisions": [
+        {
+          "capturedAt": "2026-03-09T04:40:00Z",
+          "source": "typed",
+          "text": "The log was written for two readers: the day superintendent at six in the morning, and a lawyer none of us had met yet. You learned to write for both at once.\n\nNumbers went in exactly. Times went in exactly. Causes went in carefully. If you wrote 'operator error' you had better mean your own, because the log outlived every friendship in that building.\n\nWhat deliberately didn't go in: the workarounds. If you wrote down that pump 2 came back because you tapped the relay cabinet twice below the latch, then at the next inspection they'd condemn the relay cabinet, and you would still need pump 2, and now you'd need it without the trick. The workarounds lived in the margins of the shift, passed mouth to mouth, and the log stayed clean and slightly false. I am not defending it. I'm telling you how it worked. This record you're reading is the first place I've written some of it down."
+        }
+      ]
+    },
+    {
+      "promptId": "pumphouse.first-main-break",
+      "revisions": [
+        {
+          "capturedAt": "2026-03-13T05:15:00Z",
+          "source": "speech_transcript",
+          "text": "Okay. The first big one. Winter of ninety-six, the sixteen-inch main under Delancey let go about one in the morning, and I knew before the pressure chart did because the sound of the plant changed, the pumps leaned into it, you could hear them working downhill. The call list on the wall said supervisor first, then the streets department, then the on-call engineer. I made those calls in that order and I'd make them again. But the call that wasn't on any list was Dot at the all-night diner on the corner of Delancey and Fourth, because her basement took the water first every single time that main so much as sneezed, and because she'd have coffee going for the crew before the backhoe was off the trailer. You want to know how the system actually ran at two in the morning, it ran on the official list plus Dot. Every night shift in every trade has a Dot. No org chart has ever printed one."
+        }
+      ]
+    },
+    {
+      "promptId": "scada.day-the-screens-arrived",
+      "revisions": [
+        {
+          "capturedAt": "2026-03-18T04:25:00Z",
+          "source": "typed",
+          "text": "They mounted the screens where the window used to be. I have never gotten over that as a piece of symbolism, and I watched it happen with my own eyes: the view of the wet well traded for a picture of the wet well.\n\nFor the first month we ran the plant both ways. The screens said what the plant was doing, and we walked the building to see whether they were telling the truth. Mostly they were. That month was the best training the district ever accidentally provided, because everyone on nights learned exactly where the picture and the plant could disagree.\n\nWhat changed was where people looked. What pretended to change was what they understood. A new operator could now recite the discharge pressure from across the room and could not tell you which pump was making the noise. The screens didn't remove the need for the old knowledge. They removed the reminder that you needed it."
+        }
+      ]
+    },
+    {
+      "promptId": "scada.trusting-the-sensor",
+      "revisions": [
+        {
+          "capturedAt": "2026-03-24T05:55:00Z",
+          "source": "mixed",
+          "text": "Spring of 2006. The screen said the wet well was steady at nine feet. The pumps said otherwise -- you could hear the cavitation starting, that gravel sound, pumps beginning to chew air. The level transducer had fouled and it was holding its last honest reading like a man asleep at a green light.\n\nSo: the workaround. I put a strip of tape under that screen with three words on it, TRUST THE PUMPS, and it stayed there through two monitor replacements because the crews moved it each time like it was a gauge. The rule I taught with it: read the trend, not the number. A number can be wrong all by itself, quietly, forever. A trend has to work harder to lie to you -- a flat line during a storm is not calm, it is a dead sensor doing an impression of calm.\n\nI taught it to every operator who stood still long enough. The tape is a joke until the night it isn't."
+        }
+      ]
+    },
+    {
+      "promptId": "scada.alarm-flood-night",
+      "revisions": [
+        {
+          "capturedAt": "2026-03-30T04:33:00Z",
+          "source": "typed",
+          "text": "The utility power blinked twice and came back in the summer of 2012, and the system decided this was four hundred and some alarms, every one of them flashing red, every one of them marked priority. When the vendor configured the system, every alarm was a priority. Which means none of them were.\n\nThere was a moment, maybe ninety seconds in, when I understood that the screens had become weather. Noise with a color scheme. So I physically turned my chair around, put my back to the wall of red, and made the kid on shift with me build the world from scratch out loud: what do we know is true without the system. Power's on in half the building because the lights say so. Pump 1 is running because we can feel it in the floor. Chlorine residual was fine forty minutes ago and the feed hasn't stopped. Tank level can't have moved far in two minutes of chaos.\n\nWe ran the plant off that spoken list for an hour while the system got over itself. Afterward I spent three years of committee meetings getting the alarm priorities rationalized, and I'd call that hour the cheapest part of the whole affair."
+        }
+      ]
+    },
+    {
+      "promptId": "flood.labor-day-timeline",
+      "revisions": [
+        {
+          "capturedAt": "2026-04-02T05:20:00Z",
+          "source": "typed",
+          "text": "First call came at 11:40 p.m. from the fellow who maintained the river gauges under contract -- not from any official channel, from him personally, because he was looking at a rate of rise he'd never seen and my number was in his phone. That call bought us the night.\n\nBy midnight I had both night operators in and we were sandbagging the low doorway on the east side, the one the 1987 addition put four inches below grade, which everyone had agreed to fix for twenty-eight years.\n\nAt 2:05 a.m. I killed power to the lower switchgear. That decision was mine alone. The water hadn't reached it and the model said it might not. If I was wrong, the town woke up to low pressure and a boil order with my name on the paperwork. If I was right, we kept the motors, and the difference was measured in months of recovery, not days. The water proved me right by about forty minutes.\n\nBy 4:30 the rise was slowing and the sandbags were holding, and I knew the plant would hold. I stood in the doorway and watched the water find its level against our little wall like it was deciding whether to be insulted."
+        },
+        {
+          "capturedAt": "2026-04-09T04:47:00Z",
+          "source": "typed",
+          "text": "First call came at 11:15 p.m. from the fellow who maintained the river gauges under contract -- not from any official channel, from him personally, because he was looking at a rate of rise he'd never seen and my number was in his phone. That call bought us the night.\n\nBy midnight I had both night operators in and we were sandbagging the low doorway on the east side, the one the 1987 addition put four inches below grade, which everyone had agreed to fix for twenty-eight years.\n\nAt 2:05 a.m. I killed power to the lower switchgear. The water hadn't reached it and the model said it might not. If I was wrong, the town woke up to low pressure and a boil order with my name on the paperwork. If I was right, we kept the motors, and the difference was measured in months of recovery, not days. The water proved me right by about forty minutes.\n\nBy 4:30 the rise was slowing and the sandbags were holding, and I knew the plant would hold.\n\nTwo corrections on reading this back. I wrote 11:40 for the gauge call the first time. Ray's log says 11:15, and Ray's log is better than my memory, so it's 11:15. And I called the switchgear decision mine alone, which is true the way a headline is true. I decided first -- Ray and Tomás were nodding before I finished the sentence, and their nod is why I trusted myself to make it. Deciding first and deciding alone are different things, and thirty years of night shifts is me learning that difference."
+        }
+      ]
+    },
+    {
+      "promptId": "flood.what-the-report-left-out",
+      "revisions": [
+        {
+          "capturedAt": "2026-04-14T05:05:00Z",
+          "source": "typed",
+          "text": "The after-action report says the plant remained in continuous operation throughout the event. That sentence is true and it is doing a lot of quiet work.\n\nIt doesn't say that continuous operation was three people awake for thirty-one hours making it continuous. It doesn't say we broke the two-operator staffing policy at hour twenty because there was no third operator to be had and the alternative was worse. It doesn't say the east doorway had been on the capital list since 1987 and had been deferred in eleven consecutive budgets, because the report had a section for root causes and a separate, quieter understanding about which roots were polite to name.\n\nWhy doesn't it say those things? Because filed reports are written to end conversations, and the people who write them know which sentences start new ones. I signed it. I'd sign it again -- it wasn't false. But there are two records of that night. The filed one, and this one. Now there's a second one on paper."
+        }
+      ]
+    }
+  ],
+  "drafts": [
+    {
+      "promptId": "flood.last-walkthrough",
+      "updatedAt": "2026-04-18T05:47:00Z",
+      "text": "Last walkthrough, June of '24. I keep starting this one over because I want to get it right and getting it right keeps turning into a speech, and it wasn't a speech, it was a walk.\n\nI stopped at pump 3 first. The bearing whine is long gone since the rebuild, but I stood there listening for it anyway, the way you listen for a train that doesn't run anymore. Priya walked with me. She kept her notebook out the whole way and I never once saw her write in it, which is how I knew she was actually listening. At the number 2 discharge valve I put my hand on the wheel and told her"
+    }
+  ]
+}

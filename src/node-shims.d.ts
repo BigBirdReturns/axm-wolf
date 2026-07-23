@@ -6,6 +6,7 @@ declare module 'node:assert/strict' {
   type ThrowsExpectation = RegExp | (new (...args: never[]) => Error);
   const assert: {
     equal(actual: unknown, expected: unknown, message?: string): void;
+    deepEqual(actual: unknown, expected: unknown, message?: string): void;
     ok(value: unknown, message?: string): asserts value;
     match(value: string, regexp: RegExp, message?: string): void;
     throws(fn: () => unknown, expected?: ThrowsExpectation, message?: string): void;

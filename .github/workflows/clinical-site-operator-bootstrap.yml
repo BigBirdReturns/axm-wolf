@@ -33,7 +33,7 @@ jobs:
           echo "e894633fd35c4380bc435ef5196f6a278f8b13bc8d3b09cfe424877ebda5a199  /tmp/clinical-site-operator-overlay.tar.gz" | sha256sum --check --strict
           tar -xzf /tmp/clinical-site-operator-overlay.tar.gz -C .
 
-      - name: Apply reviewed type-safe test fix
+      - name: Apply reviewed pack-test corrections
         shell: bash
         run: |
           python - <<'PY'
@@ -41,10 +41,12 @@ jobs:
           path = Path('tests/packs/clinical-site-operators-deposition.test.ts')
           text = path.read_text()
           old = "prompt.tags.includes('portable-challenge')"
-          new = "(prompt.tags ?? []).includes('portable-challenge')"
+          new = "(prompt.tags ?? []).includes('challenge')"
           if old not in text:
               raise SystemExit('expected test expression not found')
-          path.write_text(text.replace(old, new, 1))
+          text = text.replace(old, new, 1)
+          text = text.replace('must be tagged portable-challenge', 'must be tagged challenge')
+          path.write_text(text)
           PY
 
       - name: Install dependencies

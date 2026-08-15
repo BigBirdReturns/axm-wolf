@@ -1,0 +1,1213 @@
+
+> axm-wolf@0.1.0 check
+> npm run lint && npm run typecheck && npm test && npm run test:components && npm run build
+
+
+> axm-wolf@0.1.0 lint
+> node scripts/lint-boundary.mjs
+
+Engine boundary OK (13 files scanned).
+
+> axm-wolf@0.1.0 typecheck
+> tsc --noEmit
+
+
+> axm-wolf@0.1.0 test
+> tsc -p tsconfig.test.json && node --test dist-tests/tests/**/*.js
+
+TAP version 13
+# Subtest: schedule runs after the delay
+ok 1 - schedule runs after the delay
+  ---
+  duration_ms: 26.256583
+  ...
+# Subtest: a later schedule call cancels the earlier pending call
+ok 2 - a later schedule call cancels the earlier pending call
+  ---
+  duration_ms: 25.259381
+  ...
+# Subtest: cancel prevents the pending call from running
+ok 3 - cancel prevents the pending call from running
+  ---
+  duration_ms: 25.576184
+  ...
+# Subtest: flush runs the pending call immediately and clears it
+ok 4 - flush runs the pending call immediately and clears it
+  ---
+  duration_ms: 1100.425639
+  ...
+# Subtest: flush with nothing pending is a no-op
+ok 5 - flush with nothing pending is a no-op
+  ---
+  duration_ms: 0.344297
+  ...
+# Subtest: bundleToRecord maps fields 1:1 and resets lastExportedAt
+ok 6 - bundleToRecord maps fields 1:1 and resets lastExportedAt
+  ---
+  duration_ms: 1.033179
+  ...
+# Subtest: makeImportCopy assigns a new recordId and suffixes the title
+ok 7 - makeImportCopy assigns a new recordId and suffixes the title
+  ---
+  duration_ms: 0.152536
+  ...
+# Subtest: parsePackFromText accepts the generic fixture
+ok 8 - parsePackFromText accepts the generic fixture
+  ---
+  duration_ms: 8.607318
+  ...
+# Subtest: parsePackFromText rejects non-JSON text with WolfValidationError
+ok 9 - parsePackFromText rejects non-JSON text with WolfValidationError
+  ---
+  duration_ms: 0.501386
+  ...
+# Subtest: parsePackFromText rejects a malformed pack
+ok 10 - parsePackFromText rejects a malformed pack
+  ---
+  duration_ms: 0.390735
+  ...
+# Subtest: bundledPackToStoredPack produces trust imported_unsigned and a valid digest
+ok 11 - bundledPackToStoredPack produces trust imported_unsigned and a valid digest
+  ---
+  duration_ms: 3.092303
+  ...
+# Subtest: empty and root hashes resolve to launch
+ok 12 - empty and root hashes resolve to launch
+  ---
+  duration_ms: 1.405896
+  ...
+# Subtest: parses \#/records
+ok 13 - parses \#/records
+  ---
+  duration_ms: 0.184657
+  ...
+# Subtest: parses \#/packs and \#/settings
+ok 14 - parses \#/packs and \#/settings
+  ---
+  duration_ms: 0.876403
+  ...
+# Subtest: parses \#/record/:recordId
+ok 15 - parses \#/record/:recordId
+  ---
+  duration_ms: 0.283623
+  ...
+# Subtest: parses \#/record/:recordId/section/:sectionId
+ok 16 - parses \#/record/:recordId/section/:sectionId
+  ---
+  duration_ms: 0.19566
+  ...
+# Subtest: parses \#/record/:recordId/prompt/:promptId
+ok 17 - parses \#/record/:recordId/prompt/:promptId
+  ---
+  duration_ms: 0.164426
+  ...
+# Subtest: parses \#/record/:recordId/search and /export
+ok 18 - parses \#/record/:recordId/search and /export
+  ---
+  duration_ms: 0.175767
+  ...
+# Subtest: trailing slash is normalized
+ok 19 - trailing slash is normalized
+  ---
+  duration_ms: 0.147506
+  ...
+# Subtest: unknown paths resolve to not-found
+ok 20 - unknown paths resolve to not-found
+  ---
+  duration_ms: 0.236757
+  ...
+# Subtest: routeToHash inverts parseRoute for known routes
+ok 21 - routeToHash inverts parseRoute for known routes
+  ---
+  duration_ms: 0.363367
+  ...
+# Subtest: routeToHash for launch route
+ok 22 - routeToHash for launch route
+  ---
+  duration_ms: 0.240379
+  ...
+# Subtest: handles ids containing special characters via encoding
+ok 23 - handles ids containing special characters via encoding
+  ---
+  duration_ms: 0.195027
+  ...
+# Subtest: buildRecordBundle: schemaVersion is 1
+ok 24 - buildRecordBundle: schemaVersion is 1
+  ---
+  duration_ms: 1.339485
+  ...
+# Subtest: buildRecordBundle: copies record identity fields
+ok 25 - buildRecordBundle: copies record identity fields
+  ---
+  duration_ms: 0.220603
+  ...
+# Subtest: buildRecordBundle: pack identity fields come from record
+ok 26 - buildRecordBundle: pack identity fields come from record
+  ---
+  duration_ms: 0.157686
+  ...
+# Subtest: buildRecordBundle: pack snapshot is deep clone (same content)
+ok 27 - buildRecordBundle: pack snapshot is deep clone (same content)
+  ---
+  duration_ms: 0.192338
+  ...
+# Subtest: buildRecordBundle: responses are deep-cloned
+ok 28 - buildRecordBundle: responses are deep-cloned
+  ---
+  duration_ms: 0.242679
+  ...
+# Subtest: buildRecordBundle: drafts omitted by default
+ok 29 - buildRecordBundle: drafts omitted by default
+  ---
+  duration_ms: 0.143766
+  ...
+# Subtest: buildRecordBundle: includeDrafts=true includes drafts
+ok 30 - buildRecordBundle: includeDrafts=true includes drafts
+  ---
+  duration_ms: 0.148586
+  ...
+# Subtest: buildRecordBundle: includeDrafts=false omits drafts
+ok 31 - buildRecordBundle: includeDrafts=false omits drafts
+  ---
+  duration_ms: 0.226604
+  ...
+# Subtest: buildRecordBundle: provenance.appVersion defaults to record.appVersion
+ok 32 - buildRecordBundle: provenance.appVersion defaults to record.appVersion
+  ---
+  duration_ms: 0.231125
+  ...
+# Subtest: buildRecordBundle: provenance.appVersion uses options.appVersion when provided
+ok 33 - buildRecordBundle: provenance.appVersion uses options.appVersion when provided
+  ---
+  duration_ms: 0.206365
+  ...
+# Subtest: buildRecordBundle: provenance.engineVersion defaults to 0.1.0
+ok 34 - buildRecordBundle: provenance.engineVersion defaults to 0.1.0
+  ---
+  duration_ms: 0.147826
+  ...
+# Subtest: buildRecordBundle: provenance.engineVersion uses options.engineVersion when provided
+ok 35 - buildRecordBundle: provenance.engineVersion uses options.engineVersion when provided
+  ---
+  duration_ms: 0.155398
+  ...
+# Subtest: buildRecordBundle: provenance.exportedAt uses options.exportedAt when provided
+ok 36 - buildRecordBundle: provenance.exportedAt uses options.exportedAt when provided
+  ---
+  duration_ms: 0.170175
+  ...
+# Subtest: buildRecordBundle: provenance.exportedAt is an ISO string when not provided
+ok 37 - buildRecordBundle: provenance.exportedAt is an ISO string when not provided
+  ---
+  duration_ms: 0.244212
+  ...
+# Subtest: buildRecordBundle: does not mutate input record
+ok 38 - buildRecordBundle: does not mutate input record
+  ---
+  duration_ms: 0.129175
+  ...
+# Subtest: round-trip is semantically lossless (no drafts)
+ok 39 - round-trip is semantically lossless (no drafts)
+  ---
+  duration_ms: 0.707433
+  ...
+# Subtest: round-trip is semantically lossless (with drafts)
+ok 40 - round-trip is semantically lossless (with drafts)
+  ---
+  duration_ms: 0.426919
+  ...
+# Subtest: importRecordBundle: rejects non-object input
+ok 41 - importRecordBundle: rejects non-object input
+  ---
+  duration_ms: 0.488321
+  ...
+# Subtest: importRecordBundle: rejects wrong schemaVersion
+ok 42 - importRecordBundle: rejects wrong schemaVersion
+  ---
+  duration_ms: 0.301698
+  ...
+# Subtest: importRecordBundle: rejects prototype-pollution key at root
+ok 43 - importRecordBundle: rejects prototype-pollution key at root
+  ---
+  duration_ms: 0.274218
+  ...
+# Subtest: importRecordBundle: rejects prototype-pollution key "prototype"
+ok 44 - importRecordBundle: rejects prototype-pollution key "prototype"
+  ---
+  duration_ms: 0.169885
+  ...
+# Subtest: importRecordBundle: rejects invalid pack snapshot inside bundle
+ok 45 - importRecordBundle: rejects invalid pack snapshot inside bundle
+  ---
+  duration_ms: 0.285264
+  ...
+# Subtest: importRecordBundle: rejects invalid status
+ok 46 - importRecordBundle: rejects invalid status
+  ---
+  duration_ms: 0.831721
+  ...
+# Subtest: importRecordBundle: rejects invalid createdAt timestamp
+ok 47 - importRecordBundle: rejects invalid createdAt timestamp
+  ---
+  duration_ms: 0.209883
+  ...
+# Subtest: importRecordBundle: rejects invalid source in revision
+ok 48 - importRecordBundle: rejects invalid source in revision
+  ---
+  duration_ms: 0.228687
+  ...
+# Subtest: importRecordBundle: allows HTML in response text (free text testimony)
+ok 49 - importRecordBundle: allows HTML in response text (free text testimony)
+  ---
+  duration_ms: 0.269168
+  ...
+# Subtest: importRecordBundle: allows HTML in draft text (free text testimony)
+ok 50 - importRecordBundle: allows HTML in draft text (free text testimony)
+  ---
+  duration_ms: 0.299482
+  ...
+# Subtest: validates and round-trips each valid recommendedCadence value
+ok 51 - validates and round-trips each valid recommendedCadence value
+  ---
+  duration_ms: 2.865939
+  ...
+# Subtest: rejects an invalid recommendedCadence value
+ok 52 - rejects an invalid recommendedCadence value
+  ---
+  duration_ms: 0.460441
+  ...
+# Subtest: a pack without recommendedCadence still validates, leaving it undefined
+ok 53 - a pack without recommendedCadence still validates, leaving it undefined
+  ---
+  duration_ms: 0.141363
+  ...
+# Subtest: cadenceIntervalDays maps cadences to recurring intervals in days
+ok 54 - cadenceIntervalDays maps cadences to recurring intervals in days
+  ---
+  duration_ms: 0.133325
+  ...
+# Subtest: canonical string is stable across key reordering
+ok 55 - canonical string is stable across key reordering
+  ---
+  duration_ms: 2.254681
+  ...
+# Subtest: canonical string is equal for validatePack result and a reordered clone
+ok 56 - canonical string is equal for validatePack result and a reordered clone
+  ---
+  duration_ms: 0.335351
+  ...
+# Subtest: array order is preserved: reversing sections changes the canonical string
+ok 57 - array order is preserved: reversing sections changes the canonical string
+  ---
+  duration_ms: 0.959687
+  ...
+# Subtest: array order is preserved: reversing prompts within a section changes the canonical string
+ok 58 - array order is preserved: reversing prompts within a section changes the canonical string
+  ---
+  duration_ms: 0.277111
+  ...
+# Subtest: canonical string parses back to a valid JSON object
+ok 59 - canonical string parses back to a valid JSON object
+  ---
+  duration_ms: 0.195358
+  ...
+# Subtest: digestPack returns a 64-character lowercase hex string
+ok 60 - digestPack returns a 64-character lowercase hex string
+  ---
+  duration_ms: 5.962656
+  ...
+# Subtest: digestPack is deterministic across repeated calls
+ok 61 - digestPack is deterministic across repeated calls
+  ---
+  duration_ms: 1.021942
+  ...
+# Subtest: digest is identical for key-reordered but logically equal packs
+ok 62 - digest is identical for key-reordered but logically equal packs
+  ---
+  duration_ms: 0.763426
+  ...
+# Subtest: digest differs when a prompt text changes by one character
+ok 63 - digest differs when a prompt text changes by one character
+  ---
+  duration_ms: 0.912258
+  ...
+# Subtest: sanitizeFilename: passes through a clean simple name
+ok 64 - sanitizeFilename: passes through a clean simple name
+  ---
+  duration_ms: 1.046408
+  ...
+# Subtest: sanitizeFilename: replaces spaces with dashes
+ok 65 - sanitizeFilename: replaces spaces with dashes
+  ---
+  duration_ms: 0.17057
+  ...
+# Subtest: sanitizeFilename: replaces whitespace runs with a single dash
+ok 66 - sanitizeFilename: replaces whitespace runs with a single dash
+  ---
+  duration_ms: 0.12885
+  ...
+# Subtest: sanitizeFilename: replaces tab whitespace with a dash
+ok 67 - sanitizeFilename: replaces tab whitespace with a dash
+  ---
+  duration_ms: 0.114098
+  ...
+# Subtest: sanitizeFilename: removes unsafe characters
+ok 68 - sanitizeFilename: removes unsafe characters
+  ---
+  duration_ms: 0.139897
+  ...
+# Subtest: sanitizeFilename: removes forward slashes (directory traversal prevention)
+ok 69 - sanitizeFilename: removes forward slashes (directory traversal prevention)
+  ---
+  duration_ms: 0.168934
+  ...
+# Subtest: sanitizeFilename: removes backslashes (directory traversal prevention)
+ok 70 - sanitizeFilename: removes backslashes (directory traversal prevention)
+  ---
+  duration_ms: 0.171847
+  ...
+# Subtest: sanitizeFilename: strips "../" traversal pattern
+ok 71 - sanitizeFilename: strips "../" traversal pattern
+  ---
+  duration_ms: 0.263953
+  ...
+# Subtest: sanitizeFilename: strips ".." from string containing it
+ok 72 - sanitizeFilename: strips ".." from string containing it
+  ---
+  duration_ms: 0.254774
+  ...
+# Subtest: sanitizeFilename: allows dots within names
+ok 73 - sanitizeFilename: allows dots within names
+  ---
+  duration_ms: 0.291123
+  ...
+# Subtest: sanitizeFilename: allows hyphens within names
+ok 74 - sanitizeFilename: allows hyphens within names
+  ---
+  duration_ms: 0.261791
+  ...
+# Subtest: sanitizeFilename: preserves underscores (in the safe set [A-Za-z0-9._-])
+ok 75 - sanitizeFilename: preserves underscores (in the safe set [A-Za-z0-9._-])
+  ---
+  duration_ms: 0.149303
+  ...
+# Subtest: sanitizeFilename: strips leading dots
+ok 76 - sanitizeFilename: strips leading dots
+  ---
+  duration_ms: 0.086814
+  ...
+# Subtest: sanitizeFilename: strips trailing dots
+ok 77 - sanitizeFilename: strips trailing dots
+  ---
+  duration_ms: 0.167368
+  ...
+# Subtest: sanitizeFilename: strips leading dashes
+ok 78 - sanitizeFilename: strips leading dashes
+  ---
+  duration_ms: 0.082612
+  ...
+# Subtest: sanitizeFilename: strips trailing dashes
+ok 79 - sanitizeFilename: strips trailing dashes
+  ---
+  duration_ms: 0.105141
+  ...
+# Subtest: sanitizeFilename: caps at 100 characters
+ok 80 - sanitizeFilename: caps at 100 characters
+  ---
+  duration_ms: 0.801903
+  ...
+# Subtest: sanitizeFilename: returns "record" for empty string
+ok 81 - sanitizeFilename: returns "record" for empty string
+  ---
+  duration_ms: 0.219248
+  ...
+# Subtest: sanitizeFilename: returns "record" for string with only unsafe characters
+ok 82 - sanitizeFilename: returns "record" for string with only unsafe characters
+  ---
+  duration_ms: 0.092635
+  ...
+# Subtest: sanitizeFilename: returns "record" for string of only spaces
+ok 83 - sanitizeFilename: returns "record" for string of only spaces
+  ---
+  duration_ms: 0.100592
+  ...
+# Subtest: sanitizeFilename: strips "../../" traversal attempt
+ok 84 - sanitizeFilename: strips "../../" traversal attempt
+  ---
+  duration_ms: 0.086824
+  ...
+# Subtest: sanitizeFilename: complex traversal with encoded-like pattern
+ok 85 - sanitizeFilename: complex traversal with encoded-like pattern
+  ---
+  duration_ms: 0.055412
+  ...
+# Subtest: sanitizeFilename: collapses repeated dashes
+ok 86 - sanitizeFilename: collapses repeated dashes
+  ---
+  duration_ms: 0.043881
+  ...
+# Subtest: sanitizeFilename: typical record title becomes safe filename
+ok 87 - sanitizeFilename: typical record title becomes safe filename
+  ---
+  duration_ms: 0.043563
+  ...
+# Subtest: sanitizeFilename: pack-style name is preserved
+ok 88 - sanitizeFilename: pack-style name is preserved
+  ---
+  duration_ms: 0.066547
+  ...
+# Subtest: sanitizeFilename: preserves alphanumeric characters
+ok 89 - sanitizeFilename: preserves alphanumeric characters
+  ---
+  duration_ms: 0.042689
+  ...
+# Subtest: validates the generic non-Wolf fixture
+ok 90 - validates the generic non-Wolf fixture
+  ---
+  duration_ms: 2.093207
+  ...
+# Subtest: validates the first bundled capture pack
+ok 91 - validates the first bundled capture pack
+  ---
+  duration_ms: 0.61566
+  ...
+# Subtest: rejects duplicate prompt IDs
+ok 92 - rejects duplicate prompt IDs
+  ---
+  duration_ms: 0.49335
+  ...
+# Subtest: rejects unresolved lens references
+ok 93 - rejects unresolved lens references
+  ---
+  duration_ms: 0.168537
+  ...
+# Subtest: rejects HTML-bearing imported strings
+ok 94 - rejects HTML-bearing imported strings
+  ---
+  duration_ms: 0.189524
+  ...
+# Subtest: rejects unknown fields by default
+ok 95 - rejects unknown fields by default
+  ---
+  duration_ms: 0.107043
+  ...
+# Subtest: rejects incompatible engine versions loudly
+ok 96 - rejects incompatible engine versions loudly
+  ---
+  duration_ms: 0.160421
+  ...
+# Subtest: createRecord: status is active
+ok 97 - createRecord: status is active
+  ---
+  duration_ms: 1.798989
+  ...
+# Subtest: createRecord: responses and drafts are empty arrays
+ok 98 - createRecord: responses and drafts are empty arrays
+  ---
+  duration_ms: 0.135751
+  ...
+# Subtest: createRecord: packSnapshot is present and matches pack
+ok 99 - createRecord: packSnapshot is present and matches pack
+  ---
+  duration_ms: 0.148389
+  ...
+# Subtest: createRecord: packSnapshot is a deep clone (mutation-proof)
+ok 100 - createRecord: packSnapshot is a deep clone (mutation-proof)
+  ---
+  duration_ms: 0.103667
+  ...
+# Subtest: createRecord: createdAt and updatedAt equal injected now
+ok 101 - createRecord: createdAt and updatedAt equal injected now
+  ---
+  duration_ms: 0.158837
+  ...
+# Subtest: createRecord: title defaults to pack.title when not supplied
+ok 102 - createRecord: title defaults to pack.title when not supplied
+  ---
+  duration_ms: 0.098934
+  ...
+# Subtest: createRecord: title uses input.title when supplied
+ok 103 - createRecord: title uses input.title when supplied
+  ---
+  duration_ms: 0.177568
+  ...
+# Subtest: createRecord: subject defaults to pack.subjectDefaults when not supplied
+ok 104 - createRecord: subject defaults to pack.subjectDefaults when not supplied
+  ---
+  duration_ms: 0.105669
+  ...
+# Subtest: createRecord: subject uses input.subject when supplied
+ok 105 - createRecord: subject uses input.subject when supplied
+  ---
+  duration_ms: 0.226194
+  ...
+# Subtest: createRecord: lastExportedAt is null
+ok 106 - createRecord: lastExportedAt is null
+  ---
+  duration_ms: 0.306296
+  ...
+# Subtest: createRecord: packId and packVersion match pack
+ok 107 - createRecord: packId and packVersion match pack
+  ---
+  duration_ms: 0.209716
+  ...
+# Subtest: createRecord: packDigest is stored
+ok 108 - createRecord: packDigest is stored
+  ---
+  duration_ms: 0.175943
+  ...
+# Subtest: createRecord: appVersion is stored
+ok 109 - createRecord: appVersion is stored
+  ---
+  duration_ms: 0.213969
+  ...
+# Subtest: commitResponse: appends a revision to a new prompt response
+ok 110 - commitResponse: appends a revision to a new prompt response
+  ---
+  duration_ms: 1.735224
+  ...
+# Subtest: commitResponse: first revision has null supersedesRevisionId
+ok 111 - commitResponse: first revision has null supersedesRevisionId
+  ---
+  duration_ms: 0.142836
+  ...
+# Subtest: commitResponse: second commit on same prompt appends (length 2), preserves history
+ok 112 - commitResponse: second commit on same prompt appends (length 2), preserves history
+  ---
+  duration_ms: 0.244424
+  ...
+# Subtest: commitResponse: second revision supersedesRevisionId equals first revision id
+ok 113 - commitResponse: second revision supersedesRevisionId equals first revision id
+  ---
+  duration_ms: 0.162009
+  ...
+# Subtest: commitResponse: does not mutate input record
+ok 114 - commitResponse: does not mutate input record
+  ---
+  duration_ms: 0.213559
+  ...
+# Subtest: commitResponse: updatedAt is set to capturedAt
+ok 115 - commitResponse: updatedAt is set to capturedAt
+  ---
+  duration_ms: 0.121407
+  ...
+# Subtest: commitResponse: source is stored on revision
+ok 116 - commitResponse: source is stored on revision
+  ---
+  duration_ms: 0.13563
+  ...
+# Subtest: commitResponse: locale is en-US
+ok 117 - commitResponse: locale is en-US
+  ---
+  duration_ms: 0.141791
+  ...
+# Subtest: commitResponse: throws WolfValidationError for empty text
+ok 118 - commitResponse: throws WolfValidationError for empty text
+  ---
+  duration_ms: 0.908375
+  ...
+# Subtest: commitResponse: throws WolfValidationError for whitespace-only text
+ok 119 - commitResponse: throws WolfValidationError for whitespace-only text
+  ---
+  duration_ms: 0.207216
+  ...
+# Subtest: commitResponse: throws WolfValidationError for unknown promptId
+ok 120 - commitResponse: throws WolfValidationError for unknown promptId
+  ---
+  duration_ms: 0.139514
+  ...
+# Subtest: commitResponse: clears a draft whose promptId matches
+ok 121 - commitResponse: clears a draft whose promptId matches
+  ---
+  duration_ms: 0.146144
+  ...
+# Subtest: commitResponse: does not clear drafts for other prompts
+ok 122 - commitResponse: does not clear drafts for other prompts
+  ---
+  duration_ms: 0.114159
+  ...
+# Subtest: getCurrentResponse: returns null when no response exists
+ok 123 - getCurrentResponse: returns null when no response exists
+  ---
+  duration_ms: 0.106694
+  ...
+# Subtest: getCurrentResponse: returns the latest revision text after one commit
+ok 124 - getCurrentResponse: returns the latest revision text after one commit
+  ---
+  duration_ms: 0.10419
+  ...
+# Subtest: getCurrentResponse: returns the latest revision after two commits
+ok 125 - getCurrentResponse: returns the latest revision after two commits
+  ---
+  duration_ms: 0.135289
+  ...
+# Subtest: getCurrentResponse: returns null for a different promptId
+ok 126 - getCurrentResponse: returns null for a different promptId
+  ---
+  duration_ms: 0.161245
+  ...
+# Subtest: computeProgress: zero answered on fresh record
+ok 127 - computeProgress: zero answered on fresh record
+  ---
+  duration_ms: 0.269131
+  ...
+# Subtest: computeProgress: counts answered prompt correctly
+ok 128 - computeProgress: counts answered prompt correctly
+  ---
+  duration_ms: 0.242577
+  ...
+# Subtest: computeProgress: wordCount uses shared countWords
+ok 129 - computeProgress: wordCount uses shared countWords
+  ---
+  duration_ms: 0.201215
+  ...
+# Subtest: computeProgress: drafts are not counted as answered
+ok 130 - computeProgress: drafts are not counted as answered
+  ---
+  duration_ms: 0.190486
+  ...
+# Subtest: computeProgress: draftPrompts excludes prompts that are already answered
+ok 131 - computeProgress: draftPrompts excludes prompts that are already answered
+  ---
+  duration_ms: 0.175281
+  ...
+# Subtest: computeProgress: bySection sums are correct
+ok 132 - computeProgress: bySection sums are correct
+  ---
+  duration_ms: 0.189924
+  ...
+# Subtest: computeProgress: stale response IDs not in pack are ignored
+ok 133 - computeProgress: stale response IDs not in pack are ignored
+  ---
+  duration_ms: 0.151222
+  ...
+# Subtest: computeProgress: all prompts answered gives 100 percent
+ok 134 - computeProgress: all prompts answered gives 100 percent
+  ---
+  duration_ms: 0.196732
+  ...
+# Subtest: computeProgress: bySection draftPrompts counts correctly
+ok 135 - computeProgress: bySection draftPrompts counts correctly
+  ---
+  duration_ms: 0.196542
+  ...
+# Subtest: renderMarkdown: contains record title as H1
+ok 136 - renderMarkdown: contains record title as H1
+  ---
+  duration_ms: 1.441865
+  ...
+# Subtest: renderMarkdown: contains subject displayName
+ok 137 - renderMarkdown: contains subject displayName
+  ---
+  duration_ms: 0.210701
+  ...
+# Subtest: renderMarkdown: contains export timestamp
+ok 138 - renderMarkdown: contains export timestamp
+  ---
+  duration_ms: 0.2641
+  ...
+# Subtest: renderMarkdown: contains pack identity and version
+ok 139 - renderMarkdown: contains pack identity and version
+  ---
+  duration_ms: 0.176113
+  ...
+# Subtest: renderMarkdown: contains exact prompt text for answered prompt
+ok 140 - renderMarkdown: contains exact prompt text for answered prompt
+  ---
+  duration_ms: 0.169837
+  ...
+# Subtest: renderMarkdown: contains current response text (last revision)
+ok 141 - renderMarkdown: contains current response text (last revision)
+  ---
+  duration_ms: 0.159135
+  ...
+# Subtest: renderMarkdown: omits unanswered prompts by default
+ok 142 - renderMarkdown: omits unanswered prompts by default
+  ---
+  duration_ms: 0.192391
+  ...
+# Subtest: renderMarkdown: includes unanswered prompts with includeUnanswered=true
+ok 143 - renderMarkdown: includes unanswered prompts with includeUnanswered=true
+  ---
+  duration_ms: 0.213782
+  ...
+# Subtest: renderMarkdown: shows only current revision by default (no revision history)
+ok 144 - renderMarkdown: shows only current revision by default (no revision history)
+  ---
+  duration_ms: 0.235477
+  ...
+# Subtest: renderMarkdown: includeRevisionHistory shows all revisions
+ok 145 - renderMarkdown: includeRevisionHistory shows all revisions
+  ---
+  duration_ms: 0.249824
+  ...
+# Subtest: renderMarkdown: revision history includes capturedAt and source
+ok 146 - renderMarkdown: revision history includes capturedAt and source
+  ---
+  duration_ms: 0.203433
+  ...
+# Subtest: renderMarkdown: sections appear in pack order (Operations before Continuity)
+ok 147 - renderMarkdown: sections appear in pack order (Operations before Continuity)
+  ---
+  duration_ms: 0.14149
+  ...
+# Subtest: renderMarkdown: lens label is used as H3 heading
+ok 148 - renderMarkdown: lens label is used as H3 heading
+  ---
+  duration_ms: 0.191352
+  ...
+# Subtest: renderMarkdown: does not emit HTML tags
+ok 149 - renderMarkdown: does not emit HTML tags
+  ---
+  duration_ms: 0.221406
+  ...
+# Subtest: renderMarkdown: preserves response text exactly (no HTML-escaping)
+ok 150 - renderMarkdown: preserves response text exactly (no HTML-escaping)
+  ---
+  duration_ms: 0.168168
+  ...
+# Subtest: renderPlainText: contains record title
+ok 151 - renderPlainText: contains record title
+  ---
+  duration_ms: 0.303754
+  ...
+# Subtest: renderPlainText: contains subject displayName
+ok 152 - renderPlainText: contains subject displayName
+  ---
+  duration_ms: 0.145445
+  ...
+# Subtest: renderPlainText: contains export timestamp
+ok 153 - renderPlainText: contains export timestamp
+  ---
+  duration_ms: 0.26072
+  ...
+# Subtest: renderPlainText: contains pack identity
+ok 154 - renderPlainText: contains pack identity
+  ---
+  duration_ms: 0.169401
+  ...
+# Subtest: renderPlainText: contains exact prompt text for answered prompt
+ok 155 - renderPlainText: contains exact prompt text for answered prompt
+  ---
+  duration_ms: 0.169969
+  ...
+# Subtest: renderPlainText: contains current response text
+ok 156 - renderPlainText: contains current response text
+  ---
+  duration_ms: 0.586163
+  ...
+# Subtest: renderPlainText: omits unanswered prompts by default
+ok 157 - renderPlainText: omits unanswered prompts by default
+  ---
+  duration_ms: 0.20938
+  ...
+# Subtest: renderPlainText: includes unanswered prompts with includeUnanswered=true
+ok 158 - renderPlainText: includes unanswered prompts with includeUnanswered=true
+  ---
+  duration_ms: 0.2889
+  ...
+# Subtest: renderPlainText: shows only current revision by default
+ok 159 - renderPlainText: shows only current revision by default
+  ---
+  duration_ms: 0.192454
+  ...
+# Subtest: renderPlainText: includeRevisionHistory shows all revisions
+ok 160 - renderPlainText: includeRevisionHistory shows all revisions
+  ---
+  duration_ms: 0.176397
+  ...
+# Subtest: renderPlainText: contains no HTML tags
+ok 161 - renderPlainText: contains no HTML tags
+  ---
+  duration_ms: 0.236732
+  ...
+# Subtest: renderPlainText: no HTML tags even with HTML in response text
+ok 162 - renderPlainText: no HTML tags even with HTML in response text
+  ---
+  duration_ms: 0.187381
+  ...
+# Subtest: renderPlainText: lens label uses plain bracket notation, no markdown
+ok 163 - renderPlainText: lens label uses plain bracket notation, no markdown
+  ---
+  duration_ms: 0.172202
+  ...
+# Subtest: renderPlainText: sections separated by rules
+ok 164 - renderPlainText: sections separated by rules
+  ---
+  duration_ms: 0.201728
+  ...
+# Subtest: empty query returns []
+ok 165 - empty query returns []
+  ---
+  duration_ms: 1.092511
+  ...
+# Subtest: whitespace-only query returns []
+ok 166 - whitespace-only query returns []
+  ---
+  duration_ms: 0.145909
+  ...
+# Subtest: non-matching query returns []
+ok 167 - non-matching query returns []
+  ---
+  duration_ms: 0.184212
+  ...
+# Subtest: search is case-insensitive
+ok 168 - search is case-insensitive
+  ---
+  duration_ms: 0.271371
+  ...
+# Subtest: query matching record title yields field "metadata"
+ok 169 - query matching record title yields field "metadata"
+  ---
+  duration_ms: 0.166532
+  ...
+# Subtest: query matching a prompt text yields field "prompt" with correct sectionId and promptId
+ok 170 - query matching a prompt text yields field "prompt" with correct sectionId and promptId
+  ---
+  duration_ms: 0.140382
+  ...
+# Subtest: query matching only a response text yields field "response" with correct sectionId and promptId
+ok 171 - query matching only a response text yields field "response" with correct sectionId and promptId
+  ---
+  duration_ms: 0.275857
+  ...
+# Subtest: uses the LAST revision as the current response
+ok 172 - uses the LAST revision as the current response
+  ---
+  duration_ms: 0.176069
+  ...
+# Subtest: results are sorted deterministically: score DESC, then recordId/sectionId/promptId/field ASC
+ok 173 - results are sorted deterministically: score DESC, then recordId/sectionId/promptId/field ASC
+  ---
+  duration_ms: 0.364674
+  ...
+# Subtest: same input always produces identical order (stability)
+ok 174 - same input always produces identical order (stability)
+  ---
+  duration_ms: 0.260732
+  ...
+# Subtest: snippet centers around the first match
+ok 175 - snippet centers around the first match
+  ---
+  duration_ms: 0.234462
+  ...
+# Subtest: subject metadata fields match as "metadata"
+ok 176 - subject metadata fields match as "metadata"
+  ---
+  duration_ms: 0.144407
+  ...
+# Subtest: section label matches as "metadata" with correct sectionId
+ok 177 - section label matches as "metadata" with correct sectionId
+  ---
+  duration_ms: 0.104388
+  ...
+# Subtest: lens label matches as "metadata" with empty promptId
+ok 178 - lens label matches as "metadata" with empty promptId
+  ---
+  duration_ms: 0.13995
+  ...
+# Subtest: multiple records are all searched
+ok 179 - multiple records are all searched
+  ---
+  duration_ms: 0.11902
+  ...
+# Subtest: empty records array returns []
+ok 180 - empty records array returns []
+  ---
+  duration_ms: 0.099782
+  ...
+# Subtest: the demo record imports through the same validation the app uses
+ok 181 - the demo record imports through the same validation the app uses
+  ---
+  duration_ms: 2.605924
+  ...
+# Subtest: the demo record declares its subject fictional in exported metadata
+ok 182 - the demo record declares its subject fictional in exported metadata
+  ---
+  duration_ms: 0.493527
+  ...
+# Subtest: the pack snapshot matches the published pack and the digest is genuine
+ok 183 - the pack snapshot matches the published pack and the digest is genuine
+  ---
+  duration_ms: 6.561872
+  ...
+# Subtest: every response targets a snapshot prompt and revision chains link correctly
+ok 184 - every response targets a snapshot prompt and revision chains link correctly
+  ---
+  duration_ms: 0.497094
+  ...
+# Subtest: the demo exercises the states a demo exists to show
+ok 185 - the demo exercises the states a demo exists to show
+  ---
+  duration_ms: 0.695467
+  ...
+# Subtest: the clinical site operator deposition pack validates
+ok 186 - the clinical site operator deposition pack validates
+  ---
+  duration_ms: 2.262686
+  ...
+# Subtest: each section has six prompts and every prompt is referenced exactly once
+ok 187 - each section has six prompts and every prompt is referenced exactly once
+  ---
+  duration_ms: 0.646132
+  ...
+# Subtest: the pack carries all seven clinical retrieval lenses with heavy source and unwritten-rule coverage
+ok 188 - the pack carries all seven clinical retrieval lenses with heavy source and unwritten-rule coverage
+  ---
+  duration_ms: 1.294944
+  ...
+# Subtest: the portable challenge section yields six source-authored adversarial primitives
+not ok 189 - the portable challenge section yields six source-authored adversarial primitives
+  ---
+  duration_ms: 0.920611
+  location: '/home/runner/work/axm-wolf/axm-wolf/dist-tests/tests/packs/clinical-site-operators-deposition.test.js:41:1'
+  failureType: 'testCodeFailure'
+  error: 'portable-challenge.three-vendor-questions must be tagged portable-challenge'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///home/runner/work/axm-wolf/axm-wolf/dist-tests/tests/packs/clinical-site-operators-deposition.test.js:56:16)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: the contracting officers deposition pack validates
+ok 190 - the contracting officers deposition pack validates
+  ---
+  duration_ms: 2.772929
+  ...
+# Subtest: each section contains exactly six prompts and every reference resolves
+ok 191 - each section contains exactly six prompts and every reference resolves
+  ---
+  duration_ms: 0.557077
+  ...
+# Subtest: every prompt resolves a declared lens and the five lenses are all used
+ok 192 - every prompt resolves a declared lens and the five lenses are all used
+  ---
+  duration_ms: 0.366526
+  ...
+# Subtest: the night superintendents deposition pack validates
+ok 193 - the night superintendents deposition pack validates
+  ---
+  duration_ms: 2.227395
+  ...
+# Subtest: the pack declares itself fictional wherever a reader could encounter it
+ok 194 - the pack declares itself fictional wherever a reader could encounter it
+  ---
+  duration_ms: 1.08855
+  ...
+# Subtest: each section contains exactly four prompts and every reference resolves
+ok 195 - each section contains exactly four prompts and every reference resolves
+  ---
+  duration_ms: 0.42371
+  ...
+# Subtest: every prompt resolves a declared lens and each section spreads the lens net
+ok 196 - every prompt resolves a declared lens and each section spreads the lens net
+  ---
+  duration_ms: 0.280008
+  ...
+# Subtest: the departing engineer handoff pack validates
+ok 197 - the departing engineer handoff pack validates
+  ---
+  duration_ms: 2.121785
+  ...
+# Subtest: each section has six prompts and every reference resolves, with no orphans
+ok 198 - each section has six prompts and every reference resolves, with no orphans
+  ---
+  duration_ms: 0.489297
+  ...
+# Subtest: all five engineering lenses resolve and the Unwritten Rule lens carries the most
+ok 199 - all five engineering lenses resolve and the Unwritten Rule lens carries the most
+  ---
+  duration_ms: 0.387479
+  ...
+# Subtest: legacy source inventory is 7 sections and 58 prompts, not the stale 62 claim
+ok 200 - legacy source inventory is 7 sections and 58 prompts, not the stale 62 claim
+  ---
+  duration_ms: 2.029453
+  ...
+# Subtest: first pack has unique prompt IDs and derived totals
+ok 201 - first pack has unique prompt IDs and derived totals
+  ---
+  duration_ms: 1.505097
+  ...
+# Subtest: complete legacy ID migration map targets existing prompt IDs
+ok 202 - complete legacy ID migration map targets existing prompt IDs
+  ---
+  duration_ms: 1.103767
+  ...
+# Subtest: extracted pack preserves legacy prompt text and context cues
+ok 203 - extracted pack preserves legacy prompt text and context cues
+  ---
+  duration_ms: 1.100941
+  ...
+# Subtest: new production sources do not hard-code the stale 62-question claim
+ok 204 - new production sources do not hard-code the stale 62-question claim
+  ---
+  duration_ms: 0.216789
+  ...
+# Subtest: engine/content/storage/UI boundary script passes
+ok 205 - engine/content/storage/UI boundary script passes
+  ---
+  duration_ms: 38.957947
+  ...
+# Subtest: openWolfDb creates all expected object stores
+ok 206 - openWolfDb creates all expected object stores
+  ---
+  duration_ms: 6.927364
+  ...
+# Subtest: put/get round-trip on records store
+ok 207 - put/get round-trip on records store
+  ---
+  duration_ms: 2.427441
+  ...
+# Subtest: composite key store (drafts) put/get with [recordId, promptId]
+ok 208 - composite key store (drafts) put/get with [recordId, promptId]
+  ---
+  duration_ms: 1.73563
+  ...
+# Subtest: transaction commits: two puts in one tx are both visible after
+ok 209 - transaction commits: two puts in one tx are both visible after
+  ---
+  duration_ms: 1.524326
+  ...
+# Subtest: transaction rolls back: fn that puts then throws leaves neither value visible
+ok 210 - transaction rolls back: fn that puts then throws leaves neither value visible
+  ---
+  duration_ms: 2.317321
+  ...
+# Subtest: delete removes a stored value
+ok 211 - delete removes a stored value
+  ---
+  duration_ms: 0.953628
+  ...
+# Subtest: full migration: n answers -> 1 record, n responses, source imported, timestamps preserved
+ok 212 - full migration: n answers -> 1 record, n responses, source imported, timestamps preserved
+  ---
+  duration_ms: 14.627416
+  ...
+# Subtest: unknown key -> recoveryReport entry, not discarded, excluded from migrated count
+ok 213 - unknown key -> recoveryReport entry, not discarded, excluded from migrated count
+  ---
+  duration_ms: 2.122874
+  ...
+# Subtest: idempotence: second run returns alreadyComplete and does not duplicate responses
+ok 214 - idempotence: second run returns alreadyComplete and does not duplicate responses
+  ---
+  duration_ms: 1.891116
+  ...
+# Subtest: missing legacy db -> 0 migrated, marked complete, detection does not create the legacy db
+ok 215 - missing legacy db -> 0 migrated, marked complete, detection does not create the legacy db
+  ---
+  duration_ms: 1.321867
+  ...
+# Subtest: legacy db is not deleted after migration
+ok 216 - legacy db is not deleted after migration
+  ---
+  duration_ms: 2.064281
+  ...
+# Subtest: real checked-in migration map: every value is a prompt id in the real pack, every key matches qid pattern
+ok 217 - real checked-in migration map: every value is a prompt id in the real pack, every key matches qid pattern
+  ---
+  duration_ms: 0.800071
+  ...
+# Subtest: clearAllData empties every store after seeding
+ok 218 - clearAllData empties every store after seeding
+  ---
+  duration_ms: 12.284281
+  ...
+# Subtest: clearAllData on an already-empty database is a no-op
+ok 219 - clearAllData on an already-empty database is a no-op
+  ---
+  duration_ms: 1.774893
+  ...
+# Subtest: unsupported when navigator or the Storage API is missing
+ok 220 - unsupported when navigator or the Storage API is missing
+  ---
+  duration_ms: 1.35671
+  ...
+# Subtest: already-persistent short-circuits without a new request
+ok 221 - already-persistent short-circuits without a new request
+  ---
+  duration_ms: 0.166388
+  ...
+# Subtest: a granted request reports persistent
+ok 222 - a granted request reports persistent
+  ---
+  duration_ms: 0.157001
+  ...
+# Subtest: a denied request degrades to best-effort
+ok 223 - a denied request degrades to best-effort
+  ---
+  duration_ms: 0.138925
+  ...
+# Subtest: a throwing Storage API degrades to best-effort, never throws
+ok 224 - a throwing Storage API degrades to best-effort, never throws
+  ---
+  duration_ms: 0.95169
+  ...
+# Subtest: saveRecord -> loadRecord round-trip equals original (sorted copy)
+ok 225 - saveRecord -> loadRecord round-trip equals original (sorted copy)
+  ---
+  duration_ms: 16.043592
+  ...
+# Subtest: loadRecord returns null for unknown id
+ok 226 - loadRecord returns null for unknown id
+  ---
+  duration_ms: 1.373617
+  ...
+# Subtest: two records do not leak rows into each other
+ok 227 - two records do not leak rows into each other
+  ---
+  duration_ms: 1.917378
+  ...
+# Subtest: listRecords sorted by updatedAt desc
+ok 228 - listRecords sorted by updatedAt desc
+  ---
+  duration_ms: 1.405191
+  ...
+# Subtest: commitResponseAtomic: first commit creates a revision, second appends with supersedes chain, record updatedAt bumped
+ok 229 - commitResponseAtomic: first commit creates a revision, second appends with supersedes chain, record updatedAt bumped
+  ---
+  duration_ms: 6.521344
+  ...
+# Subtest: commitResponseAtomic clears a pre-existing draft for that prompt in the same tx
+ok 230 - commitResponseAtomic clears a pre-existing draft for that prompt in the same tx
+  ---
+  duration_ms: 1.568542
+  ...
+# Subtest: commitResponseAtomic to an unknown promptId throws and leaves prior state intact
+ok 231 - commitResponseAtomic to an unknown promptId throws and leaves prior state intact
+  ---
+  duration_ms: 1.785853
+  ...
+# Subtest: commitResponseAtomic rejects empty/whitespace text with WolfValidationError
+ok 232 - commitResponseAtomic rejects empty/whitespace text with WolfValidationError
+  ---
+  duration_ms: 1.30613
+  ...
+# Subtest: deleteRecord removes meta + responses + drafts, other records untouched
+ok 233 - deleteRecord removes meta + responses + drafts, other records untouched
+  ---
+  duration_ms: 3.298121
+  ...
+# Subtest: draftRepository: save/get/delete/list, and a draft alone never creates a response row
+ok 234 - draftRepository: save/get/delete/list, and a draft alone never creates a response row
+  ---
+  duration_ms: 1.83743
+  ...
+1..234
+# tests 234
+# suites 0
+# pass 233
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1303.81378

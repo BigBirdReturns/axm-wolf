@@ -7,6 +7,7 @@
 // The Wolf's Deposition is already installed as the app's default bundled
 // pack (see useWolfApp.ts), so it is intentionally not duplicated here.
 
+import clinicalSiteOperatorsDepositionPackJson from '../../packs/clinical-site-operators-deposition/clinical-site-operators-deposition.wolfpack.json' with { type: 'json' };
 import contractingOfficersDepositionPackJson from '../../packs/contracting-officers-deposition/contracting-officers-deposition.wolfpack.json' with { type: 'json' };
 import nightSuperintendentsDepositionPackJson from '../../packs/night-superintendents-deposition/night-superintendents-deposition.wolfpack.json' with { type: 'json' };
 
@@ -17,6 +18,12 @@ export type ExamplePack = {
 };
 
 export const EXAMPLE_PACKS: ExamplePack[] = [
+  {
+    pack: clinicalSiteOperatorsDepositionPackJson,
+    label: "The Clinical Site Operator's Deposition",
+    blurb:
+      'Sixty prompts across ten sections for experienced operators who have lived clinical research across site execution, monitoring, investigator oversight, quality or audit, ethics or regulatory review, and clinical leadership. Captures where facts originate, who had authority when, what clean records hide, and the portable challenges another system must survive.',
+  },
   {
     pack: contractingOfficersDepositionPackJson,
     label: "The Contracting Officer's Deposition",

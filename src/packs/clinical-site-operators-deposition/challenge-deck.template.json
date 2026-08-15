@@ -1,0 +1,36 @@
+{
+  "schema": "axm-wolf/adversarial-challenge-deck@1",
+  "deckId": "replace-with-stable-id",
+  "title": "Clinical Site Operator · Portable Challenge Deck",
+  "status": "draft",
+  "sourceRecord": {
+    "recordId": "replace-from-wolf-record",
+    "packId": "clinical-site-operators-deposition",
+    "packVersion": "1.0.0",
+    "packDigest": "replace-from-wolf-record"
+  },
+  "boundary": "Derived from operator testimony. Source-bound does not mean clinically validated, regulator-approved, or universally correct.",
+  "challenges": [
+    {
+      "challengeId": "replace-with-stable-id",
+      "title": "Replace with short challenge title",
+      "status": "draft",
+      "claimUnderTest": "",
+      "adversarialQuestion": "",
+      "requiredEvidence": [],
+      "seat": "",
+      "timeBasis": "",
+      "negativeControl": "",
+      "mustRefuseCondition": "",
+      "providerLossTest": "",
+      "sourceCitations": [
+        {
+          "recordId": "replace-from-wolf-record",
+          "promptId": "portable-challenge.for-the-record",
+          "revisionId": "replace-from-current-response",
+          "exactSourceSpan": ""
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1044 @@
+{
+  "schemaVersion": 1,
+  "packId": "clinical-site-operators-deposition",
+  "packVersion": "1.0.0",
+  "engineVersion": ">=0.1.0 <1.0.0",
+  "title": "The Clinical Site Operator's Deposition",
+  "subtitle": "What happened before the record became clean.",
+  "description": "A cross-seat primary-source capture for experienced clinical-research operators. Sixty prompts across ten sections reconstruct where site facts originate, how protocol versions and authority govern work, how patients, specimens, safety clocks, shared resources, and inspections behave in practice, and how that experience becomes portable adversarial questions. Use de-identified examples only. Do not enter PHI, confidential sponsor or protocol identifiers, unpublished trial results, proprietary SOP text, or identifiable coworker or participant information.",
+  "subjectDefaults": {
+    "displayName": "Clinical Site Operator",
+    "subtitle": "Clinical Trial Operations · Primary Source",
+    "organization": null,
+    "role": "Site operator / investigator / monitor / quality reviewer"
+  },
+  "theme": {
+    "accent": "#5f6650"
+  },
+  "recommendedCadence": "campaign",
+  "lenses": [
+    {
+      "id": "site",
+      "label": "The Site"
+    },
+    {
+      "id": "source",
+      "label": "The Source"
+    },
+    {
+      "id": "seat",
+      "label": "The Seat"
+    },
+    {
+      "id": "clock",
+      "label": "The Clock"
+    },
+    {
+      "id": "inspection",
+      "label": "The Inspection"
+    },
+    {
+      "id": "fork",
+      "label": "The Fork"
+    },
+    {
+      "id": "sop-gap",
+      "label": "The Thing the SOP Does Not Say"
+    }
+  ],
+  "sections": [
+    {
+      "id": "site-is-source",
+      "label": "The Site Is the Source",
+      "rangeLabel": null,
+      "description": "Where clinical data become true before they become clean. Reconstruct the work, not the downstream representation.",
+      "promptIds": [
+        "site-is-source.clean-row-origin",
+        "site-is-source.fact-only-site-can-create",
+        "site-is-source.downstream-compression",
+        "site-is-source.green-dashboard-bad-site-day",
+        "site-is-source.routine-work-nobody-models",
+        "site-is-source.site-native-system-test"
+      ]
+    },
+    {
+      "id": "protocol-in-motion",
+      "label": "The Protocol in Motion",
+      "rangeLabel": null,
+      "description": "The protocol is not a PDF on a shelf. It changes, collides with time, and governs work at the moment the work occurs.",
+      "promptIds": [
+        "protocol-in-motion.amendment-goes-live",
+        "protocol-in-motion.old-version-shadow",
+        "protocol-in-motion.deviation-before-paperwork",
+        "protocol-in-motion.protocol-versus-sop",
+        "protocol-in-motion.reconsent-reality",
+        "protocol-in-motion.unwritten-amendment-rule"
+      ]
+    },
+    {
+      "id": "authority",
+      "label": "Authority Is Temporal",
+      "rangeLabel": null,
+      "description": "A role label is not authority. Delegation, qualification, oversight, protocol scope, and time all matter.",
+      "promptIds": [
+        "authority.delegation-log-versus-authority",
+        "authority.pi-oversight-visible",
+        "authority.monitor-sees-log-not-reality",
+        "authority.authority-at-time-t",
+        "authority.machine-must-hold",
+        "authority.informal-authority-map"
+      ]
+    },
+    {
+      "id": "patient-path",
+      "label": "The Patient Path",
+      "rangeLabel": null,
+      "description": "A participant is not a row. Consent, eligibility, visits, clinical context, and follow-up are lived before they are coded.",
+      "promptIds": [
+        "patient-path.eligibility-judgment",
+        "patient-path.consent-beyond-signature",
+        "patient-path.visit-that-did-not-fit",
+        "patient-path.ehr-edc-disagreement",
+        "patient-path.lost-to-follow-up-work",
+        "patient-path.patient-pool-conflict"
+      ]
+    },
+    {
+      "id": "physical-trial",
+      "label": "The Physical Trial",
+      "rangeLabel": null,
+      "description": "Specimens, kits, drug, equipment, couriers, rooms, and people impose physics that software projections can hide.",
+      "promptIds": [
+        "physical-trial.specimen-from-patient-to-result",
+        "physical-trial.kit-or-courier-failure",
+        "physical-trial.wrong-tube-right-data",
+        "physical-trial.drug-and-supply-reality",
+        "physical-trial.calibration-and-equipment",
+        "physical-trial.physical-workaround"
+      ]
+    },
+    {
+      "id": "safety-clock",
+      "label": "Safety and the Clock",
+      "rangeLabel": null,
+      "description": "Safety obligations are temporal, interpretive, and distributed. A later clean record cannot replace the sequence.",
+      "promptIds": [
+        "safety-clock.awareness-clock",
+        "safety-clock.safety-judgment-seats",
+        "safety-clock.after-hours-escalation",
+        "safety-clock.signal-before-edc",
+        "safety-clock.safety-letter-into-work",
+        "safety-clock.early-phase-pressure"
+      ]
+    },
+    {
+      "id": "many-protocols",
+      "label": "One Site, Many Sponsors",
+      "rangeLabel": null,
+      "description": "The site must coordinate shared people, rooms, patients, and clocks without leaking one sponsor's information to another.",
+      "promptIds": [
+        "many-protocols.coordinator-collision",
+        "many-protocols.shared-resource-collision",
+        "many-protocols.capacity-without-leakage",
+        "many-protocols.patient-pool-across-sponsors",
+        "many-protocols.both-sponsors-think-capacity-exists",
+        "many-protocols.cross-protocol-unwritten-triage"
+      ]
+    },
+    {
+      "id": "cross-seat",
+      "label": "The Same Event, Different Seats",
+      "rangeLabel": null,
+      "description": "Replay the same event through the roles you have actually occupied. The differences between those views are the knowledge.",
+      "promptIds": [
+        "cross-seat.deviation-five-seats",
+        "cross-seat.amendment-site-monitor-irb",
+        "cross-seat.safety-site-sponsor-regulator",
+        "cross-seat.operator-versus-executive",
+        "cross-seat.clean-record-four-interpretations",
+        "cross-seat.judgment-changed-by-seat"
+      ]
+    },
+    {
+      "id": "inspection-evidence",
+      "label": "Inspection and Regulatory Evidence",
+      "rangeLabel": null,
+      "description": "Inspection tests whether the reconstructed story survives contact with source, sequence, authority, and credibility.",
+      "promptIds": [
+        "inspection-evidence.inspector-after-clean-edc",
+        "inspection-evidence.real-capa",
+        "inspection-evidence.audit-ready-theater",
+        "inspection-evidence.amendment-safety-data-integrity",
+        "inspection-evidence.single-arm-evidence-credibility",
+        "inspection-evidence.site-detail-becomes-regulatory-decision"
+      ]
+    },
+    {
+      "id": "portable-challenge",
+      "label": "The Portable Challenge",
+      "rangeLabel": null,
+      "description": "Turn experience into questions that survive vendors, platforms, implementations, and time.",
+      "promptIds": [
+        "portable-challenge.three-vendor-questions",
+        "portable-challenge.show-me-dont-tell-me",
+        "portable-challenge.negative-control",
+        "portable-challenge.provider-loss",
+        "portable-challenge.machine-refusal",
+        "portable-challenge.for-the-record"
+      ]
+    }
+  ],
+  "prompts": [
+    {
+      "id": "site-is-source.clean-row-origin",
+      "kind": "long_text",
+      "lensId": "site",
+      "text": "Pick one ordinary trial data point that later looked completely clean in EDC or a sponsor report. Reconstruct the moment it first became true at the site: where you were, who was present, which system or physical artifact existed first, and what work had to happen before anyone could enter the final row.",
+      "context": "Use a de-identified episode. Start before the screen, with the room, the patient, the staff, and the first source.",
+      "tags": [
+        "site",
+        "edc",
+        "source",
+        "workflow"
+      ],
+      "required": false,
+      "suggestedFollowUp": "What would a sponsor-side system miss if it started its story at the EDC entry rather than at the first site-created fact?"
+    },
+    {
+      "id": "site-is-source.fact-only-site-can-create",
+      "kind": "long_text",
+      "lensId": "source",
+      "text": "Name a clinical-trial fact that only the site can actually create, even though many downstream systems later copy or interpret it. Describe exactly when that fact becomes true, what proves it, and which later representations are merely projections of it.",
+      "context": "Think consent, drug administration, specimen collection, a performed assessment, an investigator judgment, or another event whose truth originates locally.",
+      "tags": [
+        "source-of-truth",
+        "provenance",
+        "site"
+      ],
+      "required": false
+    },
+    {
+      "id": "site-is-source.downstream-compression",
+      "kind": "long_text",
+      "lensId": "source",
+      "text": "Take one EHR, EDC, CTMS, CRO, or sponsor-facing record you know well. What operational facts get compressed or disappear by the time the event reaches that surface, and which of those missing facts would matter if the record were challenged months later?",
+      "context": "Protocol version, actor, delegation, clock, physical constraint, exception, correction, and uncertainty are all candidates. Use only the ones that were actually material in your experience.",
+      "tags": [
+        "compression",
+        "ehr",
+        "edc",
+        "ctms",
+        "provenance"
+      ],
+      "required": false
+    },
+    {
+      "id": "site-is-source.green-dashboard-bad-site-day",
+      "kind": "long_text",
+      "lensId": "inspection",
+      "text": "Describe a day when the downstream indicators looked acceptable while the site itself was under real operational strain. What looked green, what was actually failing or close to failing, and what did experienced site staff notice that the dashboard did not?",
+      "context": "The dashboard was calm. The work was not. Anchor this in one day or one protocol episode.",
+      "tags": [
+        "blind-spot",
+        "operations",
+        "metrics",
+        "inspection"
+      ],
+      "required": false,
+      "suggestedFollowUp": "If an auditor arrived that afternoon, which source or physical condition would have exposed the difference first?"
+    },
+    {
+      "id": "site-is-source.routine-work-nobody-models",
+      "kind": "long_text",
+      "lensId": "sop-gap",
+      "text": "What routine piece of site work do sponsors, CROs, or software designers usually treat as trivial even though experienced coordinators know it is load-bearing? Describe how it is actually done, how it fails, and the informal checks that keep it from becoming a finding.",
+      "context": "The work may never appear as a formal workflow because everyone assumes a competent site simply handles it.",
+      "tags": [
+        "tribal-knowledge",
+        "site-operations",
+        "unwritten-rule"
+      ],
+      "required": false
+    },
+    {
+      "id": "site-is-source.site-native-system-test",
+      "kind": "long_text",
+      "lensId": "fork",
+      "text": "Imagine two products claim to understand clinical-site operations. One was designed from sponsor workflows inward; the other from the site outward. What single realistic scenario would you give both systems so that, within ten minutes, an experienced operator could tell which one actually understands the site?",
+      "context": "Make the scenario small enough to replay but rich enough to expose a real category error.",
+      "tags": [
+        "adversarial",
+        "system-test",
+        "site-native"
+      ],
+      "required": false,
+      "suggestedFollowUp": "What exact wrong answer would immediately reveal that the product is still sponsor-native underneath the interface?"
+    },
+    {
+      "id": "protocol-in-motion.amendment-goes-live",
+      "kind": "long_text",
+      "lensId": "site",
+      "text": "Choose one protocol amendment that materially changed site work. Reconstruct the transition from old version to new: what happened before the effective date, what changed on the first live day, who had to know, and which obligations or participants remained governed by the prior state.",
+      "context": "Do not summarize the amendment. Reconstruct the operational cutover.",
+      "tags": [
+        "protocol",
+        "amendment",
+        "cutover",
+        "versioning"
+      ],
+      "required": false,
+      "suggestedFollowUp": "What could a version-blind system silently rewrite after the fact and thereby make the historical record look cleaner than reality?"
+    },
+    {
+      "id": "protocol-in-motion.old-version-shadow",
+      "kind": "long_text",
+      "lensId": "source",
+      "text": "Describe a case where an event correctly occurred under an earlier protocol version but later review happened under a newer one. What evidence lets you prove which version governed the original event without applying today's rules retrospectively?",
+      "context": "One participant, one visit, one specimen, one consent, or one safety obligation is enough.",
+      "tags": [
+        "version-lineage",
+        "source",
+        "protocol"
+      ],
+      "required": false
+    },
+    {
+      "id": "protocol-in-motion.deviation-before-paperwork",
+      "kind": "long_text",
+      "lensId": "clock",
+      "text": "Think of a protocol deviation that was obvious operationally before it existed as a formal deviation record. What was the earliest moment an experienced site person could see it becoming unavoidable, and what happened between that moment and the eventual documentation?",
+      "context": "The deviation record is downstream. Start at the first observable precursor.",
+      "tags": [
+        "deviation",
+        "early-warning",
+        "clock"
+      ],
+      "required": false,
+      "suggestedFollowUp": "Could a system have surfaced the risk earlier without pretending it had authority to classify the deviation? What would it have been allowed to say?"
+    },
+    {
+      "id": "protocol-in-motion.protocol-versus-sop",
+      "kind": "long_text",
+      "lensId": "fork",
+      "text": "Describe a moment when protocol language, sponsor instruction, site SOP, local practice, or clinical judgment pulled in different directions. Which sources were actually controlling, who had to resolve the conflict, and what made the final choice defensible?",
+      "context": "The interesting point is the fork before the answer was obvious, not the final memo that made it look settled.",
+      "tags": [
+        "protocol",
+        "sop",
+        "conflict",
+        "judgment"
+      ],
+      "required": false
+    },
+    {
+      "id": "protocol-in-motion.reconsent-reality",
+      "kind": "long_text",
+      "lensId": "seat",
+      "text": "Take an amendment that required evaluating whether existing participants needed new information or re-consent. Who decided what had to happen, what did the coordinator actually do, and what evidence would show later that the correct participant received the correct information at the correct time?",
+      "context": "Separate the existence of a signed form from the operational process that made the consent update valid.",
+      "tags": [
+        "consent",
+        "amendment",
+        "authority",
+        "timing"
+      ],
+      "required": false
+    },
+    {
+      "id": "protocol-in-motion.unwritten-amendment-rule",
+      "kind": "long_text",
+      "lensId": "sop-gap",
+      "text": "What is the unwritten rule experienced sites use when an amendment is technically effective but the surrounding tools, training, kits, EDC configuration, or sponsor instructions are not all synchronized yet?",
+      "context": "The protocol changed. The world did not change at the same instant.",
+      "tags": [
+        "amendment",
+        "unwritten-rule",
+        "implementation-gap"
+      ],
+      "required": false,
+      "suggestedFollowUp": "What must the site refuse to infer or improvise during that gap?"
+    },
+    {
+      "id": "authority.delegation-log-versus-authority",
+      "kind": "long_text",
+      "lensId": "site",
+      "text": "Describe a trial task where the delegation log looked simple but real authority was not. What had to be true about the person, protocol, task, training, supervision, and timing before you would regard the action as legitimately performed?",
+      "context": "Use one concrete task, not a general discussion of delegation.",
+      "tags": [
+        "delegation",
+        "authority",
+        "qualification"
+      ],
+      "required": false
+    },
+    {
+      "id": "authority.pi-oversight-visible",
+      "kind": "long_text",
+      "lensId": "seat",
+      "text": "Pick one moment when Principal Investigator oversight was genuinely necessary rather than ceremonial. What did the PI know or decide that could not simply be delegated to a coordinator, and what evidence later demonstrated real oversight rather than a signature?",
+      "context": "Separate accountable oversight from routine task execution.",
+      "tags": [
+        "pi",
+        "oversight",
+        "authority",
+        "evidence"
+      ],
+      "required": false
+    },
+    {
+      "id": "authority.monitor-sees-log-not-reality",
+      "kind": "long_text",
+      "lensId": "inspection",
+      "text": "Describe something a monitor could verify perfectly on a delegation or training record and still misunderstand about who was actually capable, available, or exercising judgment at the site.",
+      "context": "The document can be correct and the operating reality can still be weaker than it looks.",
+      "tags": [
+        "monitoring",
+        "delegation",
+        "competency",
+        "blind-spot"
+      ],
+      "required": false
+    },
+    {
+      "id": "authority.authority-at-time-t",
+      "kind": "long_text",
+      "lensId": "clock",
+      "text": "Reconstruct a case where whether an action was acceptable depended on the exact date or time: a delegation expired, training lagged, a role changed, a license or credential mattered, or an amendment changed scope. What would you need to prove authority at that historical moment?",
+      "context": "Current state is not historical authority.",
+      "tags": [
+        "temporal-authority",
+        "delegation",
+        "clock"
+      ],
+      "required": false,
+      "suggestedFollowUp": "What current-state shortcut would create a false retrospective answer?"
+    },
+    {
+      "id": "authority.machine-must-hold",
+      "kind": "long_text",
+      "lensId": "fork",
+      "text": "Name a site action or clinical disposition that a machine should refuse to clear even when most of the structured preconditions appear satisfied. What human judgment or authority is irreducible, and what may software safely prepare without crossing that line?",
+      "context": "The question is not what software can automate technically. It is where authority must remain human.",
+      "tags": [
+        "automation-boundary",
+        "refusal",
+        "human-authority"
+      ],
+      "required": false
+    },
+    {
+      "id": "authority.informal-authority-map",
+      "kind": "long_text",
+      "lensId": "sop-gap",
+      "text": "Every site has a difference between formal authority and the person everyone actually consults before a difficult action. Without naming anyone you should not identify, map the kinds of informal authority that matter and why the formal org chart or delegation log does not capture them.",
+      "context": "Who gets asked before the answer goes into the record?",
+      "tags": [
+        "informal-authority",
+        "tribal-knowledge",
+        "site"
+      ],
+      "required": false
+    },
+    {
+      "id": "patient-path.eligibility-judgment",
+      "kind": "long_text",
+      "lensId": "site",
+      "text": "Choose one screening or eligibility decision that looked binary on paper but required real clinical or operational judgment. What information had to be assembled, what was ambiguous, who resolved it, and what would a downstream system have seen?",
+      "context": "Use a de-identified example. Do not disclose participant identity or proprietary protocol identifiers.",
+      "tags": [
+        "eligibility",
+        "screening",
+        "judgment",
+        "patient"
+      ],
+      "required": false
+    },
+    {
+      "id": "patient-path.consent-beyond-signature",
+      "kind": "long_text",
+      "lensId": "source",
+      "text": "Describe what has to be true for informed consent to be operationally real beyond the existence of a signed form. Which facts about timing, discussion, version, person, capacity, questions, and sequence would matter if the consent were later challenged?",
+      "context": "The signed ICF is evidence. It is not the whole event.",
+      "tags": [
+        "informed-consent",
+        "source",
+        "versioning",
+        "patient"
+      ],
+      "required": false
+    },
+    {
+      "id": "patient-path.visit-that-did-not-fit",
+      "kind": "long_text",
+      "lensId": "clock",
+      "text": "Reconstruct a participant visit that did not follow the planned shape: late arrival, reschedule, missed procedure, outside result, hospitalization, or another disruption. What did the site have to decide in real time, and how did the eventual record compress that messiness?",
+      "context": "One visit. One clock. Walk it in sequence.",
+      "tags": [
+        "visit",
+        "window",
+        "exception",
+        "patient"
+      ],
+      "required": false
+    },
+    {
+      "id": "patient-path.ehr-edc-disagreement",
+      "kind": "long_text",
+      "lensId": "source",
+      "text": "Describe a situation where the EHR, source note, lab or imaging system, and EDC did not initially tell the same story. Which source was authoritative for which claim, and what did reconciliation actually require?",
+      "context": "Do not assume one system is the universal source of truth. Separate claim by claim.",
+      "tags": [
+        "ehr",
+        "edc",
+        "reconciliation",
+        "source"
+      ],
+      "required": false
+    },
+    {
+      "id": "patient-path.lost-to-follow-up-work",
+      "kind": "long_text",
+      "lensId": "inspection",
+      "text": "Before a participant becomes a clean status such as withdrawn, discontinued, or lost to follow-up, what work happens at the site? Describe one case where the eventual status hid substantial effort, uncertainty, or unresolved obligation.",
+      "context": "The final status is a compressed endpoint. Recover the work before it.",
+      "tags": [
+        "follow-up",
+        "discontinuation",
+        "status",
+        "inspection"
+      ],
+      "required": false
+    },
+    {
+      "id": "patient-path.patient-pool-conflict",
+      "kind": "long_text",
+      "lensId": "sop-gap",
+      "text": "When several protocols draw from the same patient population, what unwritten rules or judgments govern screening priority, competing eligibility, referral, and fairness? What would be dangerous about letting a sponsor-specific system optimize this alone?",
+      "context": "Think about the site as steward of a patient pool, not as a funnel for one protocol.",
+      "tags": [
+        "patient-pool",
+        "multi-protocol",
+        "ethics",
+        "unwritten-rule"
+      ],
+      "required": false,
+      "suggestedFollowUp": "What site-level fact may legitimately affect prioritization without being disclosed as another sponsor's confidential information?"
+    },
+    {
+      "id": "physical-trial.specimen-from-patient-to-result",
+      "kind": "long_text",
+      "lensId": "site",
+      "text": "Take one biospecimen from collection through labeling, processing, storage, handoff, shipment, receipt, and eventual result. Where are the real failure points, and which of them can leave a perfectly plausible electronic record behind?",
+      "context": "Use the actual physical sequence you trust, not the idealized process diagram.",
+      "tags": [
+        "biospecimen",
+        "chain-of-custody",
+        "lab",
+        "physical"
+      ],
+      "required": false
+    },
+    {
+      "id": "physical-trial.kit-or-courier-failure",
+      "kind": "long_text",
+      "lensId": "clock",
+      "text": "Describe a time a missing kit, courier cutoff, shipping condition, processing window, or central-lab dependency threatened protocol compliance. What did the site know first, what options were actually available, and what did the downstream systems know later?",
+      "context": "The clock and the physical object matter more than the eventual query.",
+      "tags": [
+        "lab-kit",
+        "courier",
+        "window",
+        "logistics"
+      ],
+      "required": false,
+      "suggestedFollowUp": "What early evidence could have warned the site without pretending the problem was already a protocol deviation?"
+    },
+    {
+      "id": "physical-trial.wrong-tube-right-data",
+      "kind": "long_text",
+      "lensId": "source",
+      "text": "Describe a specimen or procedure error where the electronic fields could still look superficially correct. What physical evidence or custody detail would you require before trusting the row?",
+      "context": "A correct timestamp and participant ID do not prove the specimen itself was valid.",
+      "tags": [
+        "specimen",
+        "physical-evidence",
+        "data-integrity"
+      ],
+      "required": false
+    },
+    {
+      "id": "physical-trial.drug-and-supply-reality",
+      "kind": "long_text",
+      "lensId": "seat",
+      "text": "Think of investigational product or study-supply readiness at the site. Which facts must be true before a planned treatment or procedure can actually occur, who owns each fact, and which of them are routinely absent from sponsor-facing scheduling views?",
+      "context": "Drug, pharmacy, accountability, equipment, kit, trained staff, room, and patient readiness may all live in different places.",
+      "tags": [
+        "investigational-product",
+        "supplies",
+        "pharmacy",
+        "readiness"
+      ],
+      "required": false
+    },
+    {
+      "id": "physical-trial.calibration-and-equipment",
+      "kind": "long_text",
+      "lensId": "inspection",
+      "text": "Choose one piece of equipment or local technical dependency where calibration, maintenance, validation, or availability could affect trial evidence. What would you ask to see before accepting data produced through it?",
+      "context": "The database can prove that a value exists. It may not prove that the instrument was fit to create it.",
+      "tags": [
+        "equipment",
+        "calibration",
+        "inspection",
+        "evidence"
+      ],
+      "required": false
+    },
+    {
+      "id": "physical-trial.physical-workaround",
+      "kind": "long_text",
+      "lensId": "sop-gap",
+      "text": "What physical or logistical workaround do experienced site teams use that is rarely represented in software but is essential to keeping trials moving safely and compliantly? Describe when it is legitimate, when it becomes dangerous, and how the team knows the difference.",
+      "context": "The workaround is not automatically misconduct. Sometimes it is the expertise that makes an imperfect environment function.",
+      "tags": [
+        "workaround",
+        "logistics",
+        "unwritten-rule",
+        "operations"
+      ],
+      "required": false
+    },
+    {
+      "id": "safety-clock.awareness-clock",
+      "kind": "long_text",
+      "lensId": "clock",
+      "text": "Pick one adverse-event or serious-adverse-event workflow you know intimately. What exact event starts the site's awareness clock, who may first learn it, and how do you distinguish the first fragment of information from the point at which a reportable obligation is understood?",
+      "context": "Start with the first human awareness, not with the completed safety form.",
+      "tags": [
+        "ae",
+        "sae",
+        "awareness",
+        "clock"
+      ],
+      "required": false,
+      "suggestedFollowUp": "Which timestamp would a simplistic system choose, and why could that be wrong?"
+    },
+    {
+      "id": "safety-clock.safety-judgment-seats",
+      "kind": "long_text",
+      "lensId": "seat",
+      "text": "For a meaningful safety event, separate the judgments made by the coordinator, investigator, sponsor or medical monitor, and any other relevant reviewer. Which judgments belong to which seat, and which must never be silently collapsed into one machine status?",
+      "context": "Seriousness, severity, causality, expectedness, clinical action, and reporting may belong to different authorities.",
+      "tags": [
+        "safety",
+        "authority",
+        "causality",
+        "seat"
+      ],
+      "required": false
+    },
+    {
+      "id": "safety-clock.after-hours-escalation",
+      "kind": "long_text",
+      "lensId": "site",
+      "text": "Describe the real after-hours path when a participant issue cannot wait for normal business hours. Who is reachable, what information is available, what is missing, and which parts of the response depend on relationships or local knowledge rather than the official contact sheet?",
+      "context": "Night, weekend, holiday, or the hour after everyone has left.",
+      "tags": [
+        "after-hours",
+        "escalation",
+        "site",
+        "patient-safety"
+      ],
+      "required": false
+    },
+    {
+      "id": "safety-clock.signal-before-edc",
+      "kind": "long_text",
+      "lensId": "source",
+      "text": "Describe a case where a laboratory value, ECG, imaging result, phone call, clinical observation, or outside record became a safety concern before the EDC or sponsor workflow reflected it. What was the earliest trustworthy signal?",
+      "context": "The safety reality may lead the database.",
+      "tags": [
+        "safety-signal",
+        "source",
+        "edc",
+        "latency"
+      ],
+      "required": false
+    },
+    {
+      "id": "safety-clock.safety-letter-into-work",
+      "kind": "long_text",
+      "lensId": "inspection",
+      "text": "Take an IND safety letter, sponsor safety communication, or comparable new-risk information. What has to happen at the site for that document to become operationally meaningful rather than merely filed, and what evidence would show that the right people understood and acted on it?",
+      "context": "Receipt is not implementation.",
+      "tags": [
+        "safety-letter",
+        "training",
+        "implementation",
+        "inspection"
+      ],
+      "required": false
+    },
+    {
+      "id": "safety-clock.early-phase-pressure",
+      "kind": "long_text",
+      "lensId": "sop-gap",
+      "text": "Think about the highest-risk early-phase oncology work you have been closest to. What changes at the site when dose escalation, sentinel treatment, DLT windows, rapid safety review, or similarly tight constraints make ordinary trial operations insufficient?",
+      "context": "If you have not directly worked a first-in-human study, use the closest early-phase setting you know and say where your knowledge stops.",
+      "tags": [
+        "early-phase",
+        "oncology",
+        "safety",
+        "unwritten-rule"
+      ],
+      "required": false,
+      "suggestedFollowUp": "What would a sponsor-level dashboard almost certainly underrepresent about the site's burden in that setting?"
+    },
+    {
+      "id": "many-protocols.coordinator-collision",
+      "kind": "long_text",
+      "lensId": "site",
+      "text": "Describe a day when one coordinator or small team had obligations to multiple protocols that could not all be treated as independent. What collided, who noticed first, and how did the site decide what moved and what could not?",
+      "context": "Same person, same hour, different sponsors. Reconstruct the actual triage.",
+      "tags": [
+        "multi-protocol",
+        "staffing",
+        "collision",
+        "site"
+      ],
+      "required": false
+    },
+    {
+      "id": "many-protocols.shared-resource-collision",
+      "kind": "long_text",
+      "lensId": "clock",
+      "text": "Choose one shared physical resource, such as an infusion chair, procedure room, pharmacy window, lab capability, imaging slot, courier pickup, or investigator time. How does the site manage collisions that no individual sponsor can fully see?",
+      "context": "The conflict exists at the site layer even when each protocol schedule looks internally valid.",
+      "tags": [
+        "resource",
+        "collision",
+        "multi-protocol",
+        "clock"
+      ],
+      "required": false
+    },
+    {
+      "id": "many-protocols.capacity-without-leakage",
+      "kind": "long_text",
+      "lensId": "source",
+      "text": "What site-level capacity or risk facts should be visible across protocols, and how can they be represented without revealing another sponsor's confidential protocol details, participant information, or commercial strategy?",
+      "context": "The site needs one operational truth without one universal disclosure surface.",
+      "tags": [
+        "sponsor-isolation",
+        "capacity",
+        "privacy",
+        "projection"
+      ],
+      "required": false
+    },
+    {
+      "id": "many-protocols.patient-pool-across-sponsors",
+      "kind": "long_text",
+      "lensId": "seat",
+      "text": "Describe how the site thinks about a shared patient pool when several studies could plausibly compete for the same people. Who is allowed to know what, who makes which decisions, and where would sponsor-local optimization create a conflict with site or patient obligations?",
+      "context": "The site is not owned by any one sponsor.",
+      "tags": [
+        "patient-pool",
+        "sponsor-isolation",
+        "authority",
+        "ethics"
+      ],
+      "required": false
+    },
+    {
+      "id": "many-protocols.both-sponsors-think-capacity-exists",
+      "kind": "long_text",
+      "lensId": "inspection",
+      "text": "Describe a pattern where two sponsors can each receive reasonable assurances from the same site while the combined commitments create a risk neither sponsor's monitoring can see. What evidence would expose the aggregate problem early?",
+      "context": "Each protocol can be green while the site is overcommitted.",
+      "tags": [
+        "capacity",
+        "monitoring",
+        "aggregate-risk",
+        "inspection"
+      ],
+      "required": false,
+      "suggestedFollowUp": "Which metric would falsely reassure both sponsors, and what site-native metric would be harder to game?"
+    },
+    {
+      "id": "many-protocols.cross-protocol-unwritten-triage",
+      "kind": "long_text",
+      "lensId": "sop-gap",
+      "text": "When two protocols legitimately demand attention at the same time, what unwritten triage principles do experienced site teams actually use? Which of those principles should software expose as a constraint without turning them into an automated clinical decision?",
+      "context": "The thing everyone competent knows, but no sponsor SOP can fully specify for the whole site.",
+      "tags": [
+        "triage",
+        "unwritten-rule",
+        "multi-protocol",
+        "automation-boundary"
+      ],
+      "required": false
+    },
+    {
+      "id": "cross-seat.deviation-five-seats",
+      "kind": "long_text",
+      "lensId": "site",
+      "text": "Take one de-identified protocol deviation or near-deviation and replay it from four seats you know: site coordinator, monitor, investigator, and QA or auditor. What did each seat know first, what did each seat care about, and what could each seat easily misunderstand about the others?",
+      "context": "Do not give four summaries. Walk the same event through four information positions.",
+      "tags": [
+        "cross-seat",
+        "deviation",
+        "crc",
+        "cra",
+        "pi",
+        "qa"
+      ],
+      "required": false,
+      "suggestedFollowUp": "Which seat had the earliest useful signal, and which seat had the formal authority to classify or close the issue?"
+    },
+    {
+      "id": "cross-seat.amendment-site-monitor-irb",
+      "kind": "long_text",
+      "lensId": "fork",
+      "text": "Choose one amendment or material protocol change and compare how it looks from the site, the monitor or sponsor, and the IRB or ethics-review seat. Where do their legitimate concerns differ, and where can one seat mistake its own projection for the whole trial?",
+      "context": "Same amendment. Different duties, evidence, and clocks.",
+      "tags": [
+        "cross-seat",
+        "amendment",
+        "irb",
+        "monitoring"
+      ],
+      "required": false
+    },
+    {
+      "id": "cross-seat.safety-site-sponsor-regulator",
+      "kind": "long_text",
+      "lensId": "clock",
+      "text": "Take one safety scenario and compare the site operator's sequence of facts with the sponsor's safety workflow and the later regulator or inspector view. What information appears at each stage, and what is permanently lost if the site sequence is not preserved?",
+      "context": "The later reviewer sees a record. The site lived the clock.",
+      "tags": [
+        "cross-seat",
+        "safety",
+        "regulatory",
+        "timeline"
+      ],
+      "required": false
+    },
+    {
+      "id": "cross-seat.operator-versus-executive",
+      "kind": "long_text",
+      "lensId": "seat",
+      "text": "Describe an operational problem that looks different from a coordinator's desk and from an executive or CMO seat. What does the operator know that leadership cannot see directly, and what resource or governance constraint does leadership know that the operator may not?",
+      "context": "You have occupied both levels. Use that difference rather than choosing one as the correct view.",
+      "tags": [
+        "cross-seat",
+        "executive",
+        "operations",
+        "governance"
+      ],
+      "required": false
+    },
+    {
+      "id": "cross-seat.clean-record-four-interpretations",
+      "kind": "long_text",
+      "lensId": "source",
+      "text": "Pick one final clinical-trial record that appears clean. How would a coordinator, a CRA, an auditor, and a regulatory reviewer interrogate that same record differently before trusting it?",
+      "context": "One row. Four questions. The record does not change; the evidentiary burden does.",
+      "tags": [
+        "cross-seat",
+        "edc",
+        "audit",
+        "regulatory-evidence"
+      ],
+      "required": false
+    },
+    {
+      "id": "cross-seat.judgment-changed-by-seat",
+      "kind": "long_text",
+      "lensId": "sop-gap",
+      "text": "Name an aspect of clinical research that you understood differently after occupying another role, for example moving from site execution to monitoring, PI oversight, auditing, IRB review, or executive governance. What did your earlier seat systematically fail to see?",
+      "context": "The most valuable knowledge may be the correction one role made to another.",
+      "tags": [
+        "cross-seat",
+        "perspective",
+        "unwritten-rule",
+        "learning"
+      ],
+      "required": false,
+      "suggestedFollowUp": "If part of that shift came from working across different national or regulatory systems, what did one system make visible that the other taught you not to take for granted?"
+    },
+    {
+      "id": "inspection-evidence.inspector-after-clean-edc",
+      "kind": "long_text",
+      "lensId": "inspection",
+      "text": "Imagine an FDA BIMO inspector or comparably rigorous auditor arrives after the sponsor shows a clean EDC and clean metrics. What is the first site-level object, sequence, or contradiction you would inspect to determine whether the cleanliness is earned?",
+      "context": "Do not list an inspection checklist. Pick the first high-yield move and explain why.",
+      "tags": [
+        "bimo",
+        "inspection",
+        "edc",
+        "evidence"
+      ],
+      "required": false
+    },
+    {
+      "id": "inspection-evidence.real-capa",
+      "kind": "long_text",
+      "lensId": "fork",
+      "text": "Take one finding that led to correction or CAPA. What separated a real root-cause analysis from paperwork that merely satisfied the finding, and what evidence later showed whether the corrective action actually changed the system?",
+      "context": "Correction closes the immediate gap. CAPA claims the mechanism changed. How did you tell?",
+      "tags": [
+        "capa",
+        "rca",
+        "quality",
+        "effectiveness"
+      ],
+      "required": false
+    },
+    {
+      "id": "inspection-evidence.audit-ready-theater",
+      "kind": "long_text",
+      "lensId": "sop-gap",
+      "text": "What does 'audit ready' sometimes mean in organizations that is not the same as being ready for an adversarial reconstruction of what happened? Describe the difference between document readiness and operational truth.",
+      "context": "A beautiful binder can coexist with a weak process.",
+      "tags": [
+        "audit-readiness",
+        "unwritten-rule",
+        "quality"
+      ],
+      "required": false
+    },
+    {
+      "id": "inspection-evidence.amendment-safety-data-integrity",
+      "kind": "long_text",
+      "lensId": "inspection",
+      "text": "From an IRB, ethics, or regulatory-review perspective, how do you judge whether a protocol amendment changes subject safety or data integrity in a way that should alter site behavior rather than merely documentation?",
+      "context": "Use the review seat you actually know: IRB or ethics committee, competent authority, regulator, sponsor governance, or another formal review body.",
+      "tags": [
+        "irb",
+        "amendment",
+        "safety",
+        "data-integrity"
+      ],
+      "required": false
+    },
+    {
+      "id": "inspection-evidence.single-arm-evidence-credibility",
+      "kind": "long_text",
+      "lensId": "source",
+      "text": "Consider a single-arm study contributing to an accelerated-approval argument or another program where a relatively small evidence base carries unusual weight. Which site-level weaknesses can disproportionately damage the credibility of the final evidence, even when the analysis itself is statistically clean?",
+      "context": "Focus on conduct and evidentiary provenance, not on a specific confidential program.",
+      "tags": [
+        "accelerated-approval",
+        "single-arm",
+        "evidence-credibility",
+        "regulatory"
+      ],
+      "required": false
+    },
+    {
+      "id": "inspection-evidence.site-detail-becomes-regulatory-decision",
+      "kind": "long_text",
+      "lensId": "seat",
+      "text": "From your experience reconstructing regulatory histories, name a kind of site-level operational detail that executives or sponsors may treat as minor at the time but that can become decisive later in an inspection, review, approval, or postmarketing judgment. Why does its significance grow downstream?",
+      "context": "Connect the site event to the complete development history: scientific evidence, operations, inspection, review, and the later strategic or regulatory consequence.",
+      "tags": [
+        "regulatory-history",
+        "inspection",
+        "site",
+        "decision"
+      ],
+      "required": false,
+      "suggestedFollowUp": "What should have been preserved at the moment of execution so the later reviewer would not have to infer it?"
+    },
+    {
+      "id": "portable-challenge.three-vendor-questions",
+      "kind": "long_text",
+      "lensId": "site",
+      "text": "You are given ten minutes with any vendor claiming to solve clinical-site operations. What three questions do you ask first to determine whether the product understands the site rather than merely presenting sponsor or CRO abstractions through a new interface?",
+      "context": "Write the questions so another experienced operator could carry them into a completely different demo.",
+      "tags": [
+        "challenge",
+        "vendor",
+        "portable",
+        "site-native"
+      ],
+      "required": false,
+      "suggestedFollowUp": "For each question, write the answer that would immediately make you stop trusting the product."
+    },
+    {
+      "id": "portable-challenge.show-me-dont-tell-me",
+      "kind": "long_text",
+      "lensId": "inspection",
+      "text": "What should a clinical-operations system be required to show, reconstruct, or export before you accept a claim such as 'inspection ready,' 'protocol compliant,' 'source verified,' or 'site optimized'?",
+      "context": "Convert marketing language into an evidentiary demand.",
+      "tags": [
+        "challenge",
+        "evidence",
+        "claims",
+        "inspection"
+      ],
+      "required": false
+    },
+    {
+      "id": "portable-challenge.negative-control",
+      "kind": "long_text",
+      "lensId": "fork",
+      "text": "Design one negative control for a site-operations system: deliberately remove, stale, contradict, or mis-version one critical input. What should a trustworthy system refuse to conclude, what should it surface, and what would a dangerous system silently infer?",
+      "context": "A strong system is defined partly by the claims it will not make.",
+      "tags": [
+        "challenge",
+        "negative-control",
+        "refusal",
+        "adversarial"
+      ],
+      "required": false
+    },
+    {
+      "id": "portable-challenge.provider-loss",
+      "kind": "long_text",
+      "lensId": "source",
+      "text": "If the site had to fire its clinical-operations platform tomorrow, what exact objects, source identities, authority history, protocol lineage, projections, receipts, and reconstruction rules would it need to own and export so another implementation could reproduce the operational record without rebuilding the site from memory?",
+      "context": "Assume the vendor disappears. What must remain institution-owned?",
+      "tags": [
+        "challenge",
+        "portability",
+        "provider-loss",
+        "ownership"
+      ],
+      "required": false,
+      "suggestedFollowUp": "Which exported artifact would prove portability rather than merely promise it?"
+    },
+    {
+      "id": "portable-challenge.machine-refusal",
+      "kind": "long_text",
+      "lensId": "seat",
+      "text": "Write the strongest refusal rule you would want carried into every clinical system you use: when evidence, authority, timing, or source is ambiguous, what must the machine stop short of declaring, even if a user would prefer a convenient green status?",
+      "context": "Phrase it as a rule another implementation can test.",
+      "tags": [
+        "challenge",
+        "refusal",
+        "authority",
+        "safety"
+      ],
+      "required": false
+    },
+    {
+      "id": "portable-challenge.for-the-record",
+      "kind": "long_text",
+      "lensId": "sop-gap",
+      "text": "For the record: what do most people who design clinical-research systems still misunderstand about the site, and what question should every future system have to survive before it is allowed to claim that it understands site operations?",
+      "context": "This is the portable weapon. Make it specific enough to falsify a system, not broad enough to become a slogan.",
+      "tags": [
+        "challenge",
+        "for-the-record",
+        "unwritten-rule",
+        "portable"
+      ],
+      "required": false
+    }
+  ],
+  "exportDefaults": {
+    "basename": "clinical-site-operators-deposition"
+  }
+}

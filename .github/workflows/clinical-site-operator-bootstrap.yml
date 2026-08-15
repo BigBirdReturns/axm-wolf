@@ -53,21 +53,7 @@ jobs:
         run: npm ci
 
       - name: Required Wolf quality gate
-        shell: bash
-        run: |
-          set +e
-          npm run check > .github/import-clinical-site-operator-v2/last-check.log 2>&1
-          code=$?
-          set -e
-          cat .github/import-clinical-site-operator-v2/last-check.log
-          if [ "$code" -ne 0 ]; then
-            git config user.name "axm-wolf-pack-bootstrap"
-            git config user.email "actions@users.noreply.github.com"
-            git add .github/import-clinical-site-operator-v2/last-check.log
-            git commit -m "bootstrap: capture clinical pack qualification failure"
-            git push origin HEAD:feature/clinical-site-operators-deposition
-            exit "$code"
-          fi
+        run: npm run check
 
       - name: Static e2e smoke
         run: npm run test:e2e
@@ -84,7 +70,7 @@ jobs:
           git add src/packs/clinical-site-operators-deposition
           git add src/app/lib/examplePacks.ts
           git add tests/packs/clinical-site-operators-deposition.test.ts
-          git rm -r .github/import-clinical-site-operator .github/import-clinical-site-operator-v2
-          git rm .github/workflows/clinical-site-operator-bootstrap.yml
+          git rm -r -f .github/import-clinical-site-operator .github/import-clinical-site-operator-v2
+          git rm -f .github/workflows/clinical-site-operator-bootstrap.yml
           git commit -m "wolf: add clinical site operator deposition pack"
           git push origin HEAD:feature/clinical-site-operators-deposition
